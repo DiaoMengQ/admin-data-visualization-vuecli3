@@ -9,7 +9,7 @@ import Cookies from 'js-cookie'
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   withCredentials: true, // 当跨域请求时发送cookie
-  timeout: 5000 // 请求超时
+  timeout: 4 * 1000 // 请求超时
 })
 
 // request拦截器
@@ -38,6 +38,7 @@ service.interceptors.response.use(
    * 要先 return  response => response
   */
   response => {
+    console.log(response)
     return response
   },
   /**
