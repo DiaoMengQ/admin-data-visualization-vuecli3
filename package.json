@@ -3,7 +3,10 @@
   "version": "4.2.1",
   "description": "A vue admin template with Element UI & axios & iconfont & permission control & lint",
   "author": "DiaoMengqi <diumung@gmail.com>",
-  "repository": {"type": "git","url": "https://github.com/adiuuu/vuecli4.0-admin-data-visualization.git"},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adiuuu/vuecli4.0-admin-data-visualization.git"
+  },
   "license": "MIT",
   "scripts": {
     "dev": "vue-cli-service serve",
