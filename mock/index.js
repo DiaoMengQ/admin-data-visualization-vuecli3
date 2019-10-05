@@ -9,7 +9,7 @@ const mocks = [
   ...table
 ]
 
-// for front mock
+// for 前端模拟
 // please use it cautiously, it will redefine XMLHttpRequest,
 // which will cause many of your third-party libraries to be invalidated(like progress event).
 export function mockXHR() {
@@ -50,7 +50,7 @@ export function mockXHR() {
   }
 }
 
-// for mock server
+// for 模拟服务器
 const responseFake = (url, type, respond) => {
   return {
     url: new RegExp(`/mock${url}`),

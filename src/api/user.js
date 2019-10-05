@@ -1,8 +1,9 @@
+/** 用于api请求 */
 import request from '@/utils/request'
 
 export function login(data) {
   return request({
-    url: '/user/login',
+    url: 'http://172.20.13.20:8080/user/login',
     method: 'post',
     data
   })
@@ -10,7 +11,7 @@ export function login(data) {
 
 export function getInfo(token) {
   return request({
-    url: '/user/info',
+    url: 'http://172.20.13.20:8080/user/login',
     method: 'get',
     params: { token }
   })

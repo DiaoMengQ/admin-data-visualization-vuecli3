@@ -1,4 +1,3 @@
-
 const tokens = {
   admin: {
     token: 'admin-token'
@@ -24,7 +23,7 @@ const users = {
 }
 
 export default [
-  // user login
+  // 用户登录
   {
     url: '/user/login',
     type: 'post',
@@ -36,7 +35,7 @@ export default [
       if (!token) {
         return {
           code: 60204,
-          message: 'Account and password are incorrect.'
+          message: '账户密码错误.'
         }
       }
 
@@ -47,7 +46,7 @@ export default [
     }
   },
 
-  // get user info
+  // 获取用户信息
   {
     url: '/user/info\.*',
     type: 'get',
@@ -59,7 +58,7 @@ export default [
       if (!info) {
         return {
           code: 50008,
-          message: 'Login failed, unable to get user details.'
+          message: '登录失败，无法获取用户信息！'
         }
       }
 
@@ -70,7 +69,7 @@ export default [
     }
   },
 
-  // user logout
+  // 退出
   {
     url: '/user/logout',
     type: 'post',

@@ -1,4 +1,5 @@
 module.exports = {
+  //此项是用来告诉eslint找当前配置文件不能往父级查找
   root: true,
   parserOptions: {
     parser: 'babel-eslint',
@@ -9,10 +10,10 @@ module.exports = {
     node: true,
     es6: true,
   },
-  extends: ['plugin:vue/recommended', 'eslint:recommended'],
-
-  // add your custom rules here
-  //it is base on https://github.com/vuejs/eslint-config-vue
+  // 此项是用来配置标准的js风格，就是说写代码的时候要规范的写，如果你使用vs-code我觉得应该可以避免出错
+  extends: ["eslint:recommended","plugin:vue/recommended"],
+  // 用户自定义规则
+  // it is base on https://github.com/vuejs/eslint-config-vue
   rules: {
     "vue/max-attributes-per-line": [2, {
       "singleline": 10,

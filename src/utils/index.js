@@ -1,9 +1,9 @@
 /**
- * Created by PanJiaChen on 16/11/18.
+ * Created by DiaoMengqi on 16/11/18.
  */
 
 /**
- * Parse the time to string
+ * 解析时间为字符串
  * @param {(Object|string|number)} time
  * @param {string} cFormat
  * @returns {string}
