@@ -70,14 +70,14 @@ export default {
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
-        callback(new Error("Please enter the correct user name"));
+        callback(new Error("请输入正确的用户名和密码"));
       } else {
         callback();
       }
     };
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error("The password can not be less than 6 digits"));
+        callback(new Error("密码不能少于 6 位数!"));
       } else {
         callback();
       }
@@ -109,6 +109,7 @@ export default {
       immediate: true
     }
   },
+
   methods: {
     showPwd() {
       if (this.passwordType === "password") {
@@ -120,6 +121,7 @@ export default {
         this.$refs.password.focus();
       });
     },
+
     // 登录判断 登录按键触发事件
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
@@ -145,8 +147,8 @@ export default {
 </script>
 
 <style lang="scss">
-/* input 背景 光标变色 */
 
+/* input 背景 光标变色 */
 $bg: #283443;
 $light_gray: #fff;
 $cursor: #fff;
