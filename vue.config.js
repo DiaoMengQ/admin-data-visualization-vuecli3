@@ -55,6 +55,7 @@ module.exports = {
     name: name,
     resolve: {
       alias: {
+        // 配置路径别名
         '@': resolve('src')
       }
     }
