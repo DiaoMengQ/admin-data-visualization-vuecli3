@@ -1,6 +1,9 @@
+/** 用于获取Vue页面传过来的数据以及发送网络请求 */
 import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
+
+var Md54str = require('crypto-js/md5')
 
 const state = {
   token: getToken(),
@@ -8,6 +11,7 @@ const state = {
   avatar: ''
 }
 
+// 重载
 const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
@@ -25,14 +29,21 @@ const actions = {
   login({ commit }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
+      const pwd = Md54str(password)
+      console.log('view/index.vue: 加密后数据' + pwd)
+      // 传输用户名和加密后的数据
+      login({ username: username.trim(), password: pwd.toString() })
+        // .then((data)=>{ })里的data是指接口成功返回的数据,包含请求头,请求体,等信息
+        // .then(response => {
+        //   const { data } = response
+        //   commit('SET_TOKEN', data.token)
+        //   setToken(data.token)
+        //   resolve()
+        //   // console.log('view/index.vue: 请求返回的token' + data.token)
+        // }).catch(error => {
+        //   console.log('view/index.vue: 请求错误 ' + error)
+        //   reject(error)
+        // })
     })
   },
 
@@ -57,7 +68,7 @@ const actions = {
     })
   },
 
-  // user logout
+  // 退出账号
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
       logout(state.token).then(() => {
@@ -71,7 +82,7 @@ const actions = {
     })
   },
 
-  // remove token
+  // 移除token
   resetToken({ commit }) {
     return new Promise(resolve => {
       commit('SET_TOKEN', '')

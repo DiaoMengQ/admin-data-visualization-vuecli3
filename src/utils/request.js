@@ -3,7 +3,7 @@ import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 
-import Cookies from 'js-cookie'
+// import Cookies from 'js-cookie'
 
 // 创建axios实例
 const service = axios.create({
@@ -16,7 +16,6 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // 请求发送前操作
-
     if (store.getters.token) {
       // 让每一个请求都带上token
       // ['X-Token'] 自定义请求头key
@@ -24,9 +23,10 @@ service.interceptors.request.use(
     }
     return config
   },
+
+  // 请求错误
   error => {
-    // 请求错误
-    console.log(error) // for debug
+    console.log('utils/request.js: ' + error) // for debug
     return Promise.reject(error)
   }
 )
@@ -36,18 +36,19 @@ service.interceptors.response.use(
   /**
    * 如果要获取headers or status等http状态信息
    * 要先 return  response => response
-  */
+   */
   response => {
-    console.log(response)
-    return response
+    console.log('utils/request.js: 获取request中的数据' + response.data)
+    return response.data // 必须要".data" Vue要求返回的数据必须是一个对象
   },
   /**
    * 通过返回的代码确定请求状态
    */
   response => {
     const res = response.data
-    Cookies.get(res.token)
-
+    // console.debug('token**********************************')
+    // console.debug(response.data.token)
+    // Cookies.get(res.token)
     // 如果返回码不是200，则提示错误
     if (res.code !== 200) {
       Message({

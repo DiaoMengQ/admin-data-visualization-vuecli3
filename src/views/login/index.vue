@@ -11,7 +11,6 @@
       <div class="title-container">
         <h3 class="title">登录</h3>
       </div>
-
       <el-form-item prop="username">
         <span class="svg-container">
           <svg-icon icon-class="user" />
@@ -19,7 +18,7 @@
         <el-input
           ref="username"
           v-model="loginForm.username"
-          placeholder="淸输入账号"
+          placeholder="请输入账号"
           name="username"
           type="text"
           tabindex="1"
@@ -54,10 +53,6 @@
         @click.native.prevent="handleLogin"
       >登录</el-button>
 
-      <div class="tips">
-        <span style="margin-right:20px;">username: admin</span>
-        <span>password: any</span>
-      </div>
     </el-form>
   </div>
 </template>
@@ -68,6 +63,7 @@ import { validUsername } from '@/utils/validate'
 export default {
   name: 'Login',
   data() {
+    // 判断用户名是否有效
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
         callback(new Error('请输入正确的用户名和密码'))
@@ -75,6 +71,7 @@ export default {
         callback()
       }
     }
+    // 判断用户输入的密码格式是否正确
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
         callback(new Error('密码不能少于 6 位数!'))
@@ -86,9 +83,7 @@ export default {
       // 登录框默认值
       loginForm: {
         username: 'zhyxadmin',
-        password: 'e10adc3949ba59abbe56e057f20f883e'
-        // username: 'admin',
-        // password: '123456'
+        password: '123456'
       },
       loginRules: {
         username: [
@@ -111,7 +106,6 @@ export default {
       immediate: true
     }
   },
-
   methods: {
     showPwd() {
       if (this.passwordType === 'password') {
@@ -126,13 +120,14 @@ export default {
 
     // 登录判断 登录按键触发事件
     handleLogin() {
+      console.log('view/index.vue: 当前用户输入的密码' + this.loginForm.password)
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
           this.$store
-            .dispatch('user/login', this.loginForm) // 登录成功之后重定向到首页
+            .dispatch('user/login', this.loginForm) // 传输数据
             .then(() => {
-              // this.$router.push({ path: this.redirect || '/' })
+              this.$router.push({ path: this.redirect || '/' }) // 登录成功之后重定向到主页
               this.loading = false
             })
             .catch(() => {
@@ -212,18 +207,6 @@ $light_gray: #eee;
     padding: 160px 35px 0;
     margin: 0 auto;
     overflow: hidden;
-  }
-
-  .tips {
-    font-size: 14px;
-    color: #fff;
-    margin-bottom: 10px;
-
-    span {
-      &:first-of-type {
-        margin-right: 16px;
-      }
-    }
   }
 
   .svg-container {
