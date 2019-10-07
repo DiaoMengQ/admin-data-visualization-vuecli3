@@ -31,7 +31,7 @@ export default [
       const { username } = config.body
       const token = tokens[username]
 
-      // mock error
+      // 用户输入error
       if (!token) {
         return {
           code: 60204,
@@ -40,7 +40,7 @@ export default [
       }
 
       return {
-        code: 20000,
+        code: 200,
         data: token
       }
     }
@@ -57,13 +57,13 @@ export default [
       // mock error
       if (!info) {
         return {
-          code: 50008,
+          code: 508,
           message: '登录失败，无法获取用户信息！'
         }
       }
 
       return {
-        code: 20000,
+        code: 200,
         data: info
       }
     }
@@ -75,7 +75,7 @@ export default [
     type: 'post',
     response: _ => {
       return {
-        code: 20000,
+        code: 200,
         data: 'success'
       }
     }
