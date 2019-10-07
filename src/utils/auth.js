@@ -1,13 +1,10 @@
 /** 获取后台传输的token并储存 */
 import Cookies from 'js-cookie'
-// eslint-disable-next-line no-unused-vars
-import store from '@/store'
 
 const TokenKey = 'vue_admin_template_token'
 
 export function getToken() {
-  console.info(store)
-  return Cookies.get(TokenKey) // 拿到token
+  return Cookies.get(TokenKey) // 拿token
 }
 
 export function setToken(token) {
