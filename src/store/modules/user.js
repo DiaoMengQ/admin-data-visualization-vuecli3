@@ -30,20 +30,19 @@ const actions = {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       const pwd = Md54str(password)
-      console.log('view/index.vue: 加密后数据' + pwd)
+      console.log('加密后数据: ' + pwd.toString())
       // 传输用户名和加密后的数据
-      login({ username: username.trim(), password: pwd.toString() })
-        // .then((data)=>{ })里的data是指接口成功返回的数据,包含请求头,请求体,等信息
-        // .then(response => {
-        //   const { data } = response
-        //   commit('SET_TOKEN', data.token)
-        //   setToken(data.token)
-        //   resolve()
-        //   // console.log('view/index.vue: 请求返回的token' + data.token)
-        // }).catch(error => {
-        //   console.log('view/index.vue: 请求错误 ' + error)
-        //   reject(error)
-        // })
+      login({ username: username.trim(), password: pwd.toString() }).then(response => {
+        console.log('应答: ' + response)
+        const { data } = response
+        commit('SET_TOKEN', data.token)
+        setToken(data.token)
+        resolve()
+        // console.log('view/index.vue: 请求返回的token' + data.token)
+      }).catch(error => {
+        console.log('请求错误 ' + error)
+        reject(error)
+      })
     })
   },
 

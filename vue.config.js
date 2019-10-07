@@ -13,7 +13,7 @@ const name = defaultSettings.title || 'vue Admin Template' // page title
 // For example, Mac: sudo npm run
 // You can change the port by the following methods:
 // port = 5980 npm run dev OR npm run dev --port = 5980
-const port = process.env.port || process.env.npm_config_port || 5980 // dev port
+const port = process.env.port || process.env.npm_config_port || 9527 // dev port
 
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
@@ -39,8 +39,10 @@ module.exports = {
     proxy: {
       // change xxx-api/login => mock/login
       // detail: https://cli.vuejs.org/config/#devserver-proxy
+      // 属性参数是定义的base api,如果匹配到了这个api则代理成下面target中的地址
       [process.env.VUE_APP_BASE_API]: {
-        target: process.env.VUE_APP_URL,
+        target: `http://127.0.0.1:${port}/mock`,
+        // target: process.env.VUE_APP_REQUEST_API + process.env.VUE_APP_REQUEST_PORT,
         changeOrigin: true, // 是否改变域名
 
         // pathRewrite: {
@@ -52,9 +54,9 @@ module.exports = {
           ['^' + process.env.VUE_APP_BASE_API]: ''
         }
       }
-    }
+    },
     // 如果是本地自己mock, 则用after这个属性，线上环境一定要去掉
-    // after: require('./mock/mock-server.js')
+    after: require('./mock/mock-server.js')
   },
   configureWebpack: {
     // 在webpack的名称字段中提供应用程序的标题，以便

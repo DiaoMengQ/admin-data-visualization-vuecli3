@@ -22,17 +22,15 @@ import '@/permission' // permission control
  * 目前MockJs将在生产环境中使用，
  * 请在上线前删除!!!
  */
-import {
-  mockXHR
-} from '../mock'
-if (process.env.NODE_ENV === 'production') {
-  mockXHR()
-}
+// import {
+//   mockXHR
+// } from '../mock'
+// if (process.env.NODE_ENV === 'production') {
+//   mockXHR()
+// }
 
 // 设置默认语言为中文
-Vue.use(ElementUI, {
-  locale
-})
+Vue.use(ElementUI, { locale })
 
 Vue.config.productionTip = false
 
@@ -42,3 +40,5 @@ new Vue({
   store,
   render: h => h(App)
 })
+
+console.log(process.env.VUE_APP_BASE_API)
