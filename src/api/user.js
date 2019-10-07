@@ -2,7 +2,9 @@
 import request from '@/utils/request'
 
 export function login(data) {
+  console.log('api/user.js: 到达')
   console.log('api/user.js: 传到api的数据' + data)
+
   // 调用发送请求方法并返回数据
   return request({
     url: '/user/login',

@@ -3,11 +3,12 @@ import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 
-// import Cookies from 'js-cookie'
+import Cookies from 'js-cookie'
 
 // 创建axios实例
 const service = axios.create({
-  baseURL: process.env.VUE_APP_REQUEST_API + ':' + process.env.VUE_APP_REQUEST_PORT, // url = request url + request port
+  baseURL: process.env.VUE_APP_BASE_API, // url = request url + request port
+  // baseURL: process.env.VUE_APP_REQUEST_API + ':' + process.env.VUE_APP_REQUEST_PORT, // url = request url + request port
   withCredentials: true, // 当跨域请求时发送cookie
   timeout: 4 * 1000 // 请求超时
 })

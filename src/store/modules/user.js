@@ -28,21 +28,28 @@ const actions = {
   // 用户登录
   login({ commit }, userInfo) {
     const { username, password } = userInfo
+
     return new Promise((resolve, reject) => {
       const pwd = Md54str(password)
-      console.log('store/user.js: 加密后数据: ' + pwd.toString())
       // 传输用户名和加密后的数据
-      login({ username: username.trim(), password: pwd.toString() }).then(response => {
-        console.log('store/user.js: 应答: ' + response)
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
-        resolve()
-        // console.log('view/index.vue: 请求返回的token' + data.token)
-      }).catch(error => {
-        console.log('请求错误 ' + error)
-        reject(error)
+      console.log('store/user.js: 加密后数据: ' + pwd.toString())
+      
+      login({
+        username: username.trim(),
+        password: pwd.toString()
       })
+      // login({username:username.trim(), password:pwd})
+      // .then(response => {
+      //   console.log('store/user.js: 应答: ' + response)
+      //   const { data } = response
+      //   commit('SET_TOKEN', data.token)
+      //   setToken(data.token)
+      //   resolve()
+      //   // console.log('view/index.vue: 请求返回的token' + data.token)
+      // }).catch(error => {
+      //   // console.log('请求错误 ' + error)
+      //   reject(error)
+      // })
     })
   },
 
