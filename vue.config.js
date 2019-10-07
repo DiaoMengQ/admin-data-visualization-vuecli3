@@ -41,8 +41,8 @@ module.exports = {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       // 属性参数是定义的base api,如果匹配到了这个api则代理成下面target中的地址
       [process.env.VUE_APP_BASE_API]: {
-        target: `http://127.0.0.1:${port}/mock`,
-        // target: process.env.VUE_APP_REQUEST_API + process.env.VUE_APP_REQUEST_PORT,
+        // target: `http://127.0.0.1:${port}/mock`,
+        target: process.env.VUE_APP_REQUEST_API + process.env.VUE_APP_REQUEST_PORT,
         changeOrigin: true, // 是否改变域名
 
         // pathRewrite: {
@@ -54,9 +54,9 @@ module.exports = {
           ['^' + process.env.VUE_APP_BASE_API]: ''
         }
       }
-    },
+    }
     // 如果是本地自己mock, 则用after这个属性，线上环境一定要去掉
-    after: require('./mock/mock-server.js')
+    // after: require('./mock/mock-server.js')
   },
   configureWebpack: {
     // 在webpack的名称字段中提供应用程序的标题，以便
@@ -106,7 +106,6 @@ module.exports = {
       .when(process.env.NODE_ENV === 'development',
         config => config.devtool('cheap-source-map')
       )
-
     config
       .when(process.env.NODE_ENV !== 'development',
         config => {

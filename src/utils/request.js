@@ -46,8 +46,8 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
-    // console.debug('token**********************************')
-    // console.debug(response.data.token)
+    // console.log('@/utils/request: token**********************************')
+    // console.log(response.data.token)
     // Cookies.get(res.token)
     // 如果返回码不是200，则提示错误
     if (res.code !== 200) {

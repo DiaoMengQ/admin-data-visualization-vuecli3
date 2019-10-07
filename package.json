@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/adiuuu/vuecli4.0-admin-data-visualization.git"
+    "url": "https://github.com/DiaoMengQ/vuecli4.0-admin-data-visualization.git"
   },
   "scripts": {
     "dev": "vue-cli-service serve",

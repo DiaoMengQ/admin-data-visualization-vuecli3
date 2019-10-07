@@ -30,10 +30,10 @@ const actions = {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       const pwd = Md54str(password)
-      console.log('加密后数据: ' + pwd.toString())
+      console.log('store/user.js: 加密后数据: ' + pwd.toString())
       // 传输用户名和加密后的数据
       login({ username: username.trim(), password: pwd.toString() }).then(response => {
-        console.log('应答: ' + response)
+        console.log('store/user.js: 应答: ' + response)
         const { data } = response
         commit('SET_TOKEN', data.token)
         setToken(data.token)
