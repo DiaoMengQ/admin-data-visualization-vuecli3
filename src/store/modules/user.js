@@ -1,5 +1,5 @@
 /** 用于获取Vue页面传过来的数据以及发送网络请求 */
-import { login, logout, getInfo } from '@/api/user'
+import { req4login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
@@ -19,6 +19,9 @@ const mutations = {
   SET_NAME: (state, name) => {
     state.name = name
   },
+  SET_USERID: (state, userid) => {
+    state.userid = userid
+  },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
   }
@@ -28,44 +31,40 @@ const actions = {
   // 用户登录
   login({ commit }, userInfo) {
     const { username, password } = userInfo
-
     return new Promise((resolve, reject) => {
-      const pwd = Md54str(password)
       // 传输用户名和加密后的数据
-      console.log('store/user.js: 加密后数据: ' + pwd.toString())
-      
-      login({
-        username: username.trim(),
-        password: pwd.toString()
-      })
-      // login({username:username.trim(), password:pwd})
-      // .then(response => {
-      //   console.log('store/user.js: 应答: ' + response)
-      //   const { data } = response
-      //   commit('SET_TOKEN', data.token)
-      //   setToken(data.token)
-      //   resolve()
-      //   // console.log('view/index.vue: 请求返回的token' + data.token)
-      // }).catch(error => {
-      //   // console.log('请求错误 ' + error)
-      //   reject(error)
-      // })
+      const pwd = Md54str(password).toString()
+      // console.log('store/user.js: 加密后数据: ' + pwd.toString())
+
+      req4login({ username: username.trim(), password: pwd })
+        .then(response => {
+          const { headers } = response
+          commit('SET_TOKEN', headers['access_token']) // 设置路由状态,使用commit是为了方便追踪
+          setToken(headers['access_token'])
+          resolve()
+        }).catch(error => {
+        // console.log('请求错误 ' + error)
+          reject(error)
+        })
     })
   },
 
   // 获取用户信息
   getInfo({ commit, state }) {
+    console.log(commit)
     return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
+      console.log(state.token)
+      getInfo({ userId: state.userid }).then(response => {
         const { data } = response
 
         if (!data) {
           reject('验证失败，请重新登录.')
         }
 
-        const { name, avatar } = data
+        const { name, userid, avatar } = data
 
         commit('SET_NAME', name)
+        commit('SET_USERID', userid)
         commit('SET_AVATAR', avatar)
         resolve(data)
       }).catch(error => {

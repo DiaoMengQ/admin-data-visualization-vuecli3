@@ -31,32 +31,11 @@ module.exports = {
   productionSourceMap: false,
   devServer: {
     port: port,
-    open: true,
+    // open: true, // 自动打开浏览器
     overlay: {
       warnings: false,
       errors: true
-    },
-    proxy: {
-      // change xxx-api/login => mock/login
-      // detail: https://cli.vuejs.org/config/#devserver-proxy
-      // 属性参数是定义的base api,如果匹配到了这个api则代理成下面target中的地址
-      [process.env.VUE_APP_BASE_API]: {
-        // target: `http://127.0.0.1:${port}/mock`,
-        target: process.env.VUE_APP_REQUEST_API + process.env.VUE_APP_REQUEST_PORT,
-        changeOrigin: true, // 是否改变域名
-
-        // pathRewrite: {
-        //   // 路径重写
-        //   "/api": "" // 这个意思就是以api开头的，定向到哪里, 如果你的后边还有路径的话， 会自动拼接上
-        // }
-
-        pathRewrite: {
-          ['^' + process.env.VUE_APP_BASE_API]: ''
-        }
-      }
     }
-    // 如果是本地自己mock, 则用after这个属性，线上环境一定要去掉
-    // after: require('./mock/mock-server.js')
   },
   configureWebpack: {
     // 在webpack的名称字段中提供应用程序的标题，以便

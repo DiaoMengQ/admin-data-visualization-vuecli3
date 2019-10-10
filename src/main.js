@@ -40,5 +40,3 @@ new Vue({
   store,
   render: h => h(App)
 })
-
-console.log(process.env.VUE_APP_BASE_API)

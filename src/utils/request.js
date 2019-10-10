@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+/** 网络请求与返回数据拦截 */
+
 import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
@@ -5,11 +8,23 @@ import { getToken } from '@/utils/auth'
 
 import Cookies from 'js-cookie'
 
+const TokenKey = 'user-token'
+
 // 创建axios实例
 const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API, // url = request url + request port
-  // baseURL: process.env.VUE_APP_REQUEST_API + ':' + process.env.VUE_APP_REQUEST_PORT, // url = request url + request port
+  baseURL: process.env.VUE_APP_BASE_API, // 请求的基础路径 base_url
   withCredentials: true, // 当跨域请求时发送cookie
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, // 请求头附加信息
+  transformRequest: [function(data) { // 在向服务器发送前，对请求数据格式进行处理
+    // 只能用在 'PUT', 'POST' 和 'PATCH' 这几个请求方法
+    let res4format = ''
+    for (const it in data) {
+      res4format += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+    }
+    res4format = res4format.substring(0, res4format.lastIndexOf('&'))
+    console.log('转换结果' + res4format)
+    return res4format
+  }],
   timeout: 4 * 1000 // 请求超时
 })
 
@@ -20,11 +35,10 @@ service.interceptors.request.use(
     if (store.getters.token) {
       // 让每一个请求都带上token
       // ['X-Token'] 自定义请求头key
-      config.headers['X-Token'] = getToken()
+      config.headers['access_token'] = getToken()
     }
     return config
   },
-
   // 请求错误
   error => {
     console.log('utils/request.js: ' + error) // for debug
@@ -39,21 +53,23 @@ service.interceptors.response.use(
    * 要先 return  response => response
    */
   response => {
-    console.log('utils/request.js: 获取request中的数据' + response.data)
-    return response.data // 必须要".data" Vue要求返回的数据必须是一个对象
+    // console.log(response)
+    return response
   },
   /**
    * 通过返回的代码确定请求状态
    */
   response => {
     const res = response.data
-    // console.log('@/utils/request: token**********************************')
-    // console.log(response.data.token)
-    // Cookies.get(res.token)
+    console.log(res)
+
+    if (res.code === 200) {
+      localStorage.setItem(TokenKey, response.headers['access_token'])
+    }
     // 如果返回码不是200，则提示错误
     if (res.code !== 200) {
       Message({
-        message: res.message || '发生错误',
+        message: res.msg || '发生错误',
         type: 'error',
         duration: 5 * 1000
       })
@@ -73,6 +89,7 @@ service.interceptors.response.use(
       }
       return Promise.reject(new Error(res.message || '发生错误'))
     } else {
+      // return res
       return res
     }
   },
