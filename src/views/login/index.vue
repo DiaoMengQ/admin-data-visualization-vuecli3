@@ -107,6 +107,7 @@ export default {
     }
   },
   methods: {
+    // 密码隐藏和显示
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -120,13 +121,21 @@ export default {
 
     // 登录判断 登录按键触发事件
     handleLogin() {
-      console.log('view/index.vue: 当前用户输入的密码' + this.loginForm.password)
+      // this.loading = true
+      // this.$router.push({ path: this.redirect || '/' })
+      // this.loading = false
       this.$refs.loginForm.validate(valid => {
         if (valid) {
+          // 做耗时操作时显示loading动画效果
           this.loading = true
-          this.$store
-            .dispatch('user/login', this.loginForm) // 传输数据
+          /**
+           * 一个 store.dispatch 在不同模块中可以触发多个 action 函数。
+           * 在这种情况下，只有当所有触发函数完成后，返回的 Promise 才会执行。
+           */
+          this.$store.dispatch('user/login', this.loginForm) // 传输数据
             .then(() => {
+              // 当前路由路径
+              console.log(this.$route.path)
               this.$router.push({ path: this.redirect || '/' }) // 登录成功之后重定向到主页
               this.loading = false
             })

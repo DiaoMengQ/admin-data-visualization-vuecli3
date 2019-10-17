@@ -22,7 +22,7 @@ const service = axios.create({
       res4format += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
     }
     res4format = res4format.substring(0, res4format.lastIndexOf('&'))
-    console.log('转换结果' + res4format)
+    // console.log('转换结果' + res4format)
     return res4format
   }],
   timeout: 4 * 1000 // 请求超时
@@ -52,20 +52,18 @@ service.interceptors.response.use(
    * 如果要获取headers or status等http状态信息
    * 要先 return  response => response
    */
-  response => {
-    // console.log(response)
-    return response
-  },
+  // response => {
+  //   // console.log(response)
+  //   return response
+  // },
   /**
    * 通过返回的代码确定请求状态
    */
   response => {
     const res = response.data
     console.log(res)
+    console.log('token in 响应头： ' + response.headers['access_token'])
 
-    if (res.code === 200) {
-      localStorage.setItem(TokenKey, response.headers['access_token'])
-    }
     // 如果返回码不是200，则提示错误
     if (res.code !== 200) {
       Message({
