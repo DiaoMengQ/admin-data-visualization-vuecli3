@@ -10,6 +10,9 @@ import user from './modules/user'
  */
 Vue.use(Vuex)
 
+/**
+ * store本质上是一个容器，储存应用中大部分的状态 (state in store/modules/app.js)
+ */
 const store = new Vuex.Store({
   modules: {
     app,

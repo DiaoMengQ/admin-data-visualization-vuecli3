@@ -22,7 +22,7 @@ const state = {
  * addAge (state) {
     Vue.set(state.student, 'age', 18)
     // 或者： state.student = { ...state.student, age: 18 }
-  }
+   }
  * 使用常量来替代 mutation 事件的名字
  */
 const mutations = {
