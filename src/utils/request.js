@@ -49,20 +49,13 @@ service.interceptors.request.use(
 // response 拦截器
 service.interceptors.response.use(
   /**
-   * 如果要获取headers or status等http状态信息
-   * 要先 return  response => response
-   */
-  // response => {
-  //   // console.log(response)
-  //   return response
-  // },
-  /**
    * 通过返回的代码确定请求状态
    */
   response => {
     const res = response.data
-    console.log(res)
-    console.log('token in 响应头： ' + response.headers['access_token'])
+    // console.log('返回的数据： ')
+    // console.log(res)
+    // console.log('token in 响应头： ' + response.headers['access_token'])
 
     // 如果返回码不是200，则提示错误
     if (res.code !== 200) {
@@ -74,7 +67,7 @@ service.interceptors.response.use(
 
       // 508: 非法token; 512: 账号在其他端登入; 50014: Token expired;
       if (res.code === 508 || res.code === 512 || res.code === 514) {
-        // to re-login
+        // 跳转 重新登录
         MessageBox.confirm('您已注销，您可以取消以停留在此页，或重新登录', '确定', {
           confirmButtonText: '重新登录',
           cancelButtonText: '取消',
@@ -87,8 +80,11 @@ service.interceptors.response.use(
       }
       return Promise.reject(new Error(res.message || '发生错误'))
     } else {
-      // return res
-      return res
+        /**
+         * 如果要获取headers or status等http状态信息
+         * 则返回 response
+         */
+      return response
     }
   },
   error => {

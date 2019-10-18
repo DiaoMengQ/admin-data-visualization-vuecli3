@@ -121,32 +121,31 @@ export default {
 
     // 登录判断 登录按键触发事件
     handleLogin() {
-      this.$router.replace({ path: this.redirect || '/' })
-      
       // this.$router.push({ path: this.redirect || '/' })
-      // this.$refs.loginForm.validate(valid => {
-      //   if (valid) {
-      //     // 做耗时操作时显示loading动画效果
-      //     this.loading = true
-      //     /**
-      //      * 一个 store.dispatch 在不同模块中可以触发多个 action 函数。
-      //      * 在这种情况下，只有当所有触发函数完成后，返回的 Promise 才会执行。
-      //      */
-      //     this.$store.dispatch('user/login', this.loginForm) // 传输数据
-      //       .then(() => {
-      //         // 当前路由路径
-      //         console.log(this.$route.path)
-      //         this.$router.push({ path: this.redirect || '/' }) // 登录成功之后重定向到主页
-      //         this.loading = false
-      //       })
-      //       .catch(() => {
-      //         this.loading = false
-      //       })
-      //   } else {
-      //     console.log('发生传输错误!') // 登录信息传输错误提示错误
-      //     return false
-      //   }
-      // })
+      
+      this.$refs.loginForm.validate(valid => {
+        if (valid) {
+          // 做耗时操作时显示loading动画效果
+          this.loading = true
+          /**
+           * 一个 store.dispatch 在不同模块中可以触发多个 action 函数。
+           * 在这种情况下，只有当所有触发函数完成后，返回的 Promise 才会执行。
+           */
+          this.$store.dispatch('user/login', this.loginForm) // 传输数据
+            .then(() => {
+              // 当前路由路径
+              console.log(this.$route.path)
+              this.$router.push({ path: this.redirect || '/' }) // 登录成功之后重定向到主页
+              this.loading = false
+            })
+            .catch(() => {
+              this.loading = false
+            })
+        } else {
+          console.log('发生传输错误!') // 登录信息传输错误提示错误
+          return false
+        }
+      })
     }
   }
 }
@@ -199,7 +198,7 @@ $cursor: #fff;
 </style>
 
 <style lang="scss" scoped>
-$bg: #2d3a4b;
+$bg: #e4e4e4;
 $dark_gray: #889aa4;
 $light_gray: #eee;
 

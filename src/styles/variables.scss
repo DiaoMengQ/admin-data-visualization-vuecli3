@@ -1,13 +1,18 @@
-// sidebar
-$menuText:#bfcbd9;
-$menuActiveText:#409EFF;
-$subMenuActiveText:#f4f4f5; //https://github.com/ElemeFE/element/issues/12951
+// 侧边栏字体
+$menuText:#2f3942;
+// 侧边栏选中时字体
+$menuActiveText:rgb(69, 167, 247);
+$subMenuActiveText:rgb(46, 127, 209); //https://github.com/ElemeFE/element/issues/12951
+$menuActiveTextFontWeight:bold;
 
-$menuBg:#304156;
-$menuHover:#263445;
+// 侧边栏背景
+$menuBg:#ffffff;
+// 鼠标覆盖时样式
+$menuHover:#fafafa;
 
-$subMenuBg:#1f2d3d;
-$subMenuHover:#001528;
+// 菜单抽屉背景
+$subMenuBg:#f6f6f6;
+$subMenuHover:#eaf5f8;
 
 $sideBarWidth: 210px;
 

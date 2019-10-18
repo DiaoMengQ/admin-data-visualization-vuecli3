@@ -18,6 +18,7 @@ export function getInfo(para) {
   })
 }
 
+// 退出的方法
 export function logout() {
   return request({
     url: '/user/logout',

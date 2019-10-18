@@ -1,12 +1,3 @@
-const tokens = {
-  admin: {
-    token: 'admin-token'
-  },
-  editor: {
-    token: 'editor-token'
-  }
-}
-
 const users = {
   'admin-token': {
     roles: ['admin'],

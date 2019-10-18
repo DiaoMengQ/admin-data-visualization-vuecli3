@@ -3,7 +3,7 @@
     <!-- 需要获取值的键（相当于ID） -->
     <!-- <div class="dashboard-text">当前用户: {{ name }}</div> -->
     <div class="dashboard-text">当前用户: {{ name }}</div>
-    <!-- <div class="dashboard-text">roles: <span v-for="role in roles" :key="role">{{ role }}</span></div> -->
+    <div class="dashboard-text">roles: <span v-for="role in roles" :key="role">{{ role }}</span></div>
   </div>
 </template>
 

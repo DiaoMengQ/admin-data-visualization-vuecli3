@@ -8,8 +8,10 @@ var Md54str = require('crypto-js/md5')
 
 const state = {
   token: getToken(),
-  name: '',
-  avatar: ''
+  userid:'',
+  name: 'test管理员',
+  avatar: '',
+    roles: ['admin']
 }
 
 /**
@@ -37,6 +39,9 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_ROLES: (state, roles) => {
+    state.roles = roles
   }
 }
 
@@ -71,17 +76,20 @@ const actions = {
             type: 'info',
             duration: 5 * 1000
           })
-          const { headers } = response
-          if (response.data.code === 200) {
-            console.log(response.headers['access_token'])
-            localStorage.setItem('user-token', response.headers['access_token'])
-          }
-          // 同步改变全局参数的数值，任何由 commit(XXX) 中XXX导致的状态变更都应该在此刻完成。
-          commit('SET_TOKEN', headers['access_token']) 
-          setToken(headers['access_token'])
+          const {data} = response.data
+          console.log(data)
+
+            // 同步改变全局参数的数值，任何由 commit(XXX) 中XXX导致的状态变更都应该在此刻完成。
+            commit('SET_TOKEN', response.headers['access_token'])
+            setToken(response.headers['access_token'])
+                    commit('SET_ROLES', data['roleType'])
+                    commit('SET_NAME', data['nickname'])
+                    commit('SET_USERID', data['userId'])
+                    commit('SET_AVATAR', data['http://172.20.13.20:8080/4b0c9604-3b9c-4415-bb7c-4a2f26d0b76f.png'])
+
           resolve()
         }).catch(error => {
-        // console.log('请求错误 ' + error)
+        console.log('请求错误 ' + error)
           reject(error)
         })
     })
@@ -89,40 +97,43 @@ const actions = {
 
   // 获取用户信息
   getInfo({ commit, state }) {
-    console.log(commit)
-    return new Promise((resolve, reject) => {
       console.log(state.token)
-      getInfo({ userId: state.userid }).then(response => {
-        const { data } = response
-        console.log(response)
 
-        if (!data) {
-          reject('验证失败，请重新登录.')
-        }
+    // return new Promise((resolve, reject) => {
+    //   console.log(state.token)
+    //   getInfo({ userId: state.userid }).then(response => {
+    //     const { data } = response
+    //     console.log(response)
 
-        const { name, userid, avatar } = data
+    //     if (!data) {
+    //       reject('验证失败，请重新登录.')
+    //     }
 
-        commit('SET_NAME', name)
-        commit('SET_USERID', userid)
-        commit('SET_AVATAR', avatar)
-        resolve(data)
-      }).catch(error => {
-        reject(error)
-      })
-    })
+    //     const {roles,name,userid,avatar} = data
+
+    //     commit('SET_ROLES', roles)
+    //     commit('SET_NAME', name)
+    //     commit('SET_USERID', userid)
+    //     commit('SET_AVATAR', avatar)
+    //     resolve(data)
+    //   }).catch(error => {
+    //     reject(error)
+    //   })
+    // })
   },
 
   // 退出账号
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
+      // logout(state.token).then(() => {
         commit('SET_TOKEN', '')
+        commit('SET_ROLES', [])
         removeToken()
         resetRouter()
         resolve()
-      }).catch(error => {
-        reject(error)
-      })
+      // }).catch(error => {
+      //   reject(error)
+      // })
     })
   },
 
@@ -130,6 +141,7 @@ const actions = {
   resetToken({ commit }) {
     return new Promise(resolve => {
       commit('SET_TOKEN', '')
+      commit('SET_ROLES', [])
       removeToken()
       resolve()
     })

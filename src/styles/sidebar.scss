@@ -73,6 +73,7 @@
 
     .is-active>.el-submenu__title {
       color: $subMenuActiveText !important;
+      font-weight: $menuActiveTextFontWeight !important;
     }
 
     & .nest-menu .el-submenu>.el-submenu__title,

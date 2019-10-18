@@ -9,10 +9,9 @@ export function getToken() {
 
 // 登录成功后将token存储在cookie之中
 export function setToken(token) {
-  // console.log(token)
   localStorage.setItem(TokenKey, token)
 }
 
 export function removeToken() {
-  return localStorage.removeItem(TokenKey) // 清除token
+  localStorage.removeItem(TokenKey) // 清除token
 }
