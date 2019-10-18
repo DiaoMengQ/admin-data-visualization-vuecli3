@@ -10,18 +10,11 @@ export function req4login(data) {
   })
 }
 
+// 获取用户数据
 export function getInfo(para) {
   return request({
     url: '/user/login',
     method: 'get',
     params: para
-  })
-}
-
-// 退出的方法
-export function logout() {
-  return request({
-    url: '/user/logout',
-    method: 'post'
   })
 }

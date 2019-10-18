@@ -16,10 +16,7 @@
               个人信息
             </el-dropdown-item>
           </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">
-            <el-dropdown-item>Github</el-dropdown-item>
-          </a>
-          <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
+          <a target="_blank" href="#">
             <el-dropdown-item>使用文档</el-dropdown-item>
           </a>
           <el-dropdown-item divided>
@@ -35,6 +32,7 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import { Message } from 'element-ui'
 
 export default {
   components: {
@@ -52,10 +50,15 @@ export default {
       this.$store.dispatch('app/toggleSideBar')
     },
     /**
-     * async 异步
+     * async 异步方法
      */
     async logout() {
-      await this.$store.dispatch('user/logout')
+      await this.$store.dispatch('user/logout') // await表示要执行完await后的代码且有返回结果后，才继续执行下面的内容
+      Message({
+        message: '账户已退出',
+        type: 'info',
+        duration: 3 * 1000
+      })
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
     }
   }

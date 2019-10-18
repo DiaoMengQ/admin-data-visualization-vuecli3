@@ -46,7 +46,7 @@ export default {
       return name.trim().toLocaleLowerCase() === 'Dashboard'.toLocaleLowerCase()
     },
     pathCompile(path) {
-      // 解决问题: 面包屑不支持':id'的方式？ Breadcrumb not support params https://github.com/PanJiaChen/vue-element-admin/issues/561
+      // 解决问题: 面包屑不支持':id'的方式 https://github.com/PanJiaChen/vue-element-admin/issues/561
       const { params } = this.$route
       var toPath = pathToRegexp.compile(path)
       return toPath(params)

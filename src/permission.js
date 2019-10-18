@@ -19,9 +19,9 @@ router.beforeEach(async(to, from, next) => {
 
   // 确定用户是否已登录
   const hasToken = getToken()
+  // 如果已登录，则重定向到主页
   if (hasToken) {
     if (to.path === '/login') {
-      // 如果已登录，则重定向到主页
       next({ path: '/' })
       // 进度条加载完成动画
       NProgress.done()
@@ -31,9 +31,8 @@ router.beforeEach(async(to, from, next) => {
         next()
       } else {
         try {
-          // 获取用户信息
+          // 同步获取用户信息
           await store.dispatch('user/getInfo')
-
           next()
         } catch (error) {
           // 如果获取错误,则删除token,进入登录页面重新登录
@@ -46,7 +45,6 @@ router.beforeEach(async(to, from, next) => {
     }
   } else {
     /* 无token */
-
     if (whiteList.indexOf(to.path) !== -1) {
       // 在免登录白名单，直接进入
       next()

@@ -4,18 +4,23 @@
 import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
-import { getToken } from '@/utils/auth'
+import { getToken, getUserID } from '@/utils/auth'
 
 import Cookies from 'js-cookie'
+import { type } from 'os'
 
 const TokenKey = 'user-token'
 
 // 创建axios实例
 const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API, // 请求的基础路径 base_url
-  withCredentials: true, // 当跨域请求时发送cookie
-  headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, // 请求头附加信息
-  transformRequest: [function(data) { // 在向服务器发送前，对请求数据格式进行处理
+  // 请求的基础路径 base_url
+  baseURL: process.env.VUE_APP_BASE_API,
+  // 发送cookie
+  // withCredentials: true,
+  // 请求头附加信息
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  // 在向服务器发送前，对请求数据格式进行处理
+  transformRequest: [function(data) {
     // 只能用在 'PUT', 'POST' 和 'PATCH' 这几个请求方法
     let res4format = ''
     for (const it in data) {
@@ -28,25 +33,24 @@ const service = axios.create({
   timeout: 4 * 1000 // 请求超时
 })
 
-// request拦截器
+// 请求拦截器 即请求发送前操作
 service.interceptors.request.use(
   config => {
-    // 请求发送前操作
-    if (store.getters.token) {
-      // 让每一个请求都带上token
-      // ['X-Token'] 自定义请求头key
+    if (getToken()) {
+      // 让每一个请求带上token，['XXX'] 自定义请求头key
       config.headers['access_token'] = getToken()
     }
+    console.log(config) // for debug
     return config
   },
   // 请求错误
   error => {
-    console.log('utils/request.js: ' + error) // for debug
+    console.log(error) // for debug
     return Promise.reject(error)
   }
 )
 
-// response 拦截器
+// 响应拦截器
 service.interceptors.response.use(
   /**
    * 通过返回的代码确定请求状态
@@ -55,7 +59,6 @@ service.interceptors.response.use(
     const res = response.data
     // console.log('返回的数据： ')
     // console.log(res)
-    // console.log('token in 响应头： ' + response.headers['access_token'])
 
     // 如果返回码不是200，则提示错误
     if (res.code !== 200) {
@@ -65,7 +68,15 @@ service.interceptors.response.use(
         duration: 5 * 1000
       })
 
-      // 508: 非法token; 512: 账号在其他端登入; 50014: Token expired;
+      // 500: 服务器错误
+      if (res.code === 500) {
+        Message({
+          message: '服务器错误' + res,
+          type: 'error',
+          duration: 3 * 1000
+        })
+      }
+      // 508: 非法token; 512: 账号在其他端登入; 514: Token expired;
       if (res.code === 508 || res.code === 512 || res.code === 514) {
         // 跳转 重新登录
         MessageBox.confirm('您已注销，您可以取消以停留在此页，或重新登录', '确定', {
@@ -80,19 +91,19 @@ service.interceptors.response.use(
       }
       return Promise.reject(new Error(res.message || '发生错误'))
     } else {
-        /**
-         * 如果要获取headers or status等http状态信息
-         * 则返回 response
-         */
+      /**
+       * 如果要获取headers or status等http状态信息
+       * 则返回 response
+       */
       return response
     }
   },
   error => {
-    console.log('错误：' + error) // for debug
+    console.log('请求时' + error) // for debug
     Message({
-      message: error.message,
+      message: error,
       type: 'error',
-      duration: 5 * 1000
+      duration: 3 * 1000
     })
     return Promise.reject(error)
   }

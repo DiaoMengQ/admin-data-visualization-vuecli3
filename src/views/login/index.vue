@@ -82,7 +82,7 @@ export default {
     return {
       // 登录框默认值
       loginForm: {
-        username: 'zhyxadmin',
+        username: 'superadmin',
         password: '123456'
       },
       loginRules: {
@@ -122,7 +122,6 @@ export default {
     // 登录判断 登录按键触发事件
     handleLogin() {
       // this.$router.push({ path: this.redirect || '/' })
-      
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           // 做耗时操作时显示loading动画效果
@@ -134,7 +133,7 @@ export default {
           this.$store.dispatch('user/login', this.loginForm) // 传输数据
             .then(() => {
               // 当前路由路径
-              console.log(this.$route.path)
+              // console.log(this.$route.path)
               this.$router.push({ path: this.redirect || '/' }) // 登录成功之后重定向到主页
               this.loading = false
             })
