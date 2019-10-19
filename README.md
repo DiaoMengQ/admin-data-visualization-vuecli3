@@ -7,10 +7,6 @@
 [国内访问](https://panjiachen.gitee.io/vue-admin-template)
 
 
-## Extra
-
-如果你想要根据用户角色来动态生成侧边栏和 router，你可以使用该分支[permission-control](https://github.com/PanJiaChen/vue-admin-template/tree/permission-control)
-
 ## 相关项目
 
 [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin)
