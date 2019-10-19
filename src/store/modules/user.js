@@ -79,10 +79,12 @@ const actions = {
           const { data } = response.data
           console.log(data)
 
-          // 调用将token保存至本地的方法
+          // 将token保存至本地
           const userInfo = { token: response.headers['access_token'], userid: data['userId'] }
           setUserInfo(userInfo)
 
+          // 调用将token保存至js全局变量（内存中）的方法
+          // *注意刷新页面后内存中数据会清空
           // 同步改变全局参数的数值，任何由 commit(XXX) 中XXX导致的状态变更都应该在此刻完成。
           commit('SET_TOKEN', response.headers['access_token'])
           commit('SET_ROLES', data['roleType'])

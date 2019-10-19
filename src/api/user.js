@@ -13,7 +13,7 @@ export function req4login(data) {
 // 获取用户数据
 export function getInfo(para) {
   return request({
-    url: '/user/login',
+    url: '/user/userInfo',
     method: 'get',
     params: para
   })

@@ -1,9 +1,14 @@
-/** 获取后台传输的token并储存 */
+/** token相关处理 */
 const TokenKey = 'user-token'
 const userIDKey = 'user-id'
 
 // 获取本地保存的Token
 export function getToken() {
+  // if (localStorage.getItem(TokenKey)) {
+  //   console.info('返回本地token：')
+  //   console.info(localStorage.getItem(TokenKey))
+  // }
+
   return localStorage.getItem(TokenKey)
 }
 
