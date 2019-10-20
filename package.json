@@ -2,11 +2,11 @@
   "name": "vuecli4.0-admin-data-visualization",
   "version": "4.2.1",
   "description": "Data manage and data visualization base on Vue",
-  "author": "Diaomengqi <diumung@gmail.com>",
+  "author": "Diaomengqi <diao.mq@qq.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/DiaoMengQ/vuecli4.0-admin-data-visualization.git"
+    "url": "https://github.com/DiaoMengQ/admin-data-visualization-vuecli3.git"
   },
   "scripts": {
     "dev": "vue-cli-service serve",

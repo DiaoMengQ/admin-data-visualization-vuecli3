@@ -36,6 +36,17 @@ module.exports = {
       warnings: false,
       errors: true
     }
+    // proxy: {
+    //   // change xxx-api/login => mock/login
+    //   // detail: https://cli.vuejs.org/config/#devserver-proxy
+    //   [process.env.VUE_APP_BASE_API]: {
+    //     target: `http://172.20.13.20/userInfo`,
+    //     changeOrigin: true,
+    //     pathRewrite: {
+    //       ['^' + process.env.VUE_APP_BASE_API]: ''
+    //     }
+    //   }
+    // }
   },
   configureWebpack: {
     // 在webpack的名称字段中提供应用程序的标题，以便
