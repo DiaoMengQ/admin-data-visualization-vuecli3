@@ -11,10 +11,17 @@ export function req4login(data) {
 }
 
 // 获取用户数据
-export function getInfo(para) {
+export function getUserInfo(para) {
   return request({
     url: '/user/userInfo',
     method: 'get',
     params: para
+  })
+}
+
+export function getManaRange(data) {
+  return request({
+    url: '/auth/getManaRange',
+    method: 'POST'
   })
 }

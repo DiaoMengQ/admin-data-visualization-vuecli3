@@ -26,7 +26,7 @@ export default {
   name: 'Page404',
   computed: {
     message() {
-      return '“你想进入这个页面？”' + '\n管理员：“不，你不想”'
+      return '啊哈，想不到吧！'
     }
   }
 }

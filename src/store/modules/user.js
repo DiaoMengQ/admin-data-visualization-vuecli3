@@ -1,5 +1,5 @@
 /** 用于获取Vue页面传过来的数据以及发送网络请求 */
-import { req4login, getInfo } from '@/api/user'
+import { req4login, getUserInfo } from '@/api/user'
 import { getUserID, getToken, setUserInfo, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 import { Message } from 'element-ui'
@@ -77,7 +77,7 @@ const actions = {
             duration: 3 * 1000
           })
           const { data } = response.data
-          console.log(data)
+          // console.log(data)
 
           // 将token保存至本地
           const userInfo = { token: response.headers['access_token'], userid: data['userId'] }
@@ -102,28 +102,27 @@ const actions = {
   },
 
   // 获取用户信息
-  getInfo({ commit, state }) {
-    // console.log(state.token)
-
+  getUserInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getInfo({ userId: getUserID() }).then(response => {
-        const { data } = response
-        console.log(response)
-
+      getUserInfo({ userId: getUserID() }).then(response => {
+        const { data } = response.data
+        // console.log('API getuserInfo test: ', data)
         if (!data) {
           reject('验证失败，请重新登录.')
         }
 
-        const { roles, name, userid, avatar } = data
-        if (!roles || roles.length <= 0) {
-          reject('getInfo: 角色必须是非空数组!')
+        const userInfo = { token: getToken(), userid: data['userId'] }
+        setUserInfo(userInfo)
+
+        commit('SET_TOKEN', response.headers['access_token'])
+        commit('SET_ROLES', data['roleType'])
+        commit('SET_NAME', data['nickname'])
+        commit('SET_USERID', data['userId'])
+        commit('SET_AVATAR', 'http://172.20.13.20/default.jpg')
+
+        if (!state.roles || state.roles.length <= 0) {
+          reject('获取用户角色失败: 请重新登录!')
         }
-
-        commit('SET_ROLES', roles)
-        commit('SET_NAME', name)
-        commit('SET_USERID', userid)
-        commit('SET_AVATAR', avatar)
-
         resolve(data)
       }).catch(error => {
         reject(error)

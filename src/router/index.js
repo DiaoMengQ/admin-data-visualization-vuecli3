@@ -31,72 +31,55 @@ import Layout from '@/layout'
  * all roles can be accessed
  */
 export const constantRoutes = [
+  // *登录页
   {
     path: '/login',
     component: () => import('@/views/login/index'),
     hidden: true
   },
-
+  // *404错误页
   {
     path: '/404',
     component: () => import('@/views/404'),
     hidden: true
   },
 
+  // *主页
   {
-    path: '/',
+    path: '/', // Url相对根路径路径
     component: Layout,
-    redirect: '/dashboard',
+    redirect: '/home', // 重定向路径（可以直接写路径，也可以写成“ redirect:{ name:'foo'} ”）
     children: [{
-      path: 'dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: '主页test', icon: 'dashboard' }
+      path: 'home', // url显示的路径
+      name: 'home', // 用于路由间的调用
+      component: () => import('@/views/home/index'),
+      meta: { title: '首页', icon: 'dashboard' }
     }]
   },
 
+  // *七彩评价相关
+  // TODO: 加载时默认获取市级管理员管辖区域，提供选择学校功能
+  // TODO: 选择学校后同步展示可选年级和班级
+  // TODO: 选择学校后异步展示学生列表
   {
-    path: '/example',
+    path: '/qcpj',
     component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: '表格', icon: 'example' },
-    children: [
-      {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
-      }
-    ]
+    children: [{
+      path: 'index',
+      name: 'qcpj',
+      component: () => import('@/views/qcpj/index'),
+      meta: { title: '七彩评价', icon: 'tree' }
+    }]
   },
 
-  {
-    path: '/form',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
-      }
-    ]
-  },
-
+  // *阅读海洋相关
   {
     path: '/nested',
     component: Layout,
     redirect: '/nested/menu1',
     name: 'Nested',
     meta: {
-      title: 'Nested',
+      title: '阅读海洋',
       icon: 'nested'
     },
     children: [
@@ -144,6 +127,29 @@ export const constantRoutes = [
         path: 'menu2',
         component: () => import('@/views/nested/menu2/index'),
         meta: { title: 'menu2' }
+      }
+    ]
+  },
+
+  // *图表
+  {
+    path: '/example',
+    component: Layout,
+    redirect: '/example/table',
+    name: 'Example',
+    meta: { title: '图表管理', icon: 'example' },
+    children: [
+      {
+        path: 'table',
+        name: 'Table',
+        component: () => import('@/views/table/index'),
+        meta: { title: 'Table', icon: 'table' }
+      },
+      {
+        path: 'tree',
+        name: 'Tree',
+        component: () => import('@/views/tree/index'),
+        meta: { title: 'Tree', icon: 'tree' }
       }
     ]
   },

@@ -4,11 +4,6 @@ const userIDKey = 'user-id'
 
 // 获取本地保存的Token
 export function getToken() {
-  // if (localStorage.getItem(TokenKey)) {
-  //   console.info('返回本地token：')
-  //   console.info(localStorage.getItem(TokenKey))
-  // }
-
   return localStorage.getItem(TokenKey)
 }
 
@@ -19,11 +14,11 @@ export function getUserID() {
 
 // 登录成功后将token和userid存储在cookie之中
 export function setUserInfo(userInfo) {
-  // console.log(userInfo)
   localStorage.setItem(TokenKey, userInfo['token'])
   localStorage.setItem(userIDKey, userInfo['userid'])
 }
 
+// 清除token
 export function removeToken() {
-  localStorage.removeItem(TokenKey) // 清除token
+  localStorage.removeItem(TokenKey)
 }

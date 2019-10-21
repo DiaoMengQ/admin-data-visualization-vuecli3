@@ -1,3 +1,7 @@
+/** 、
+ * 权限控制管理
+ */
+
 import router from './router'
 import store from './store'
 import { Message } from 'element-ui'
@@ -32,7 +36,7 @@ router.beforeEach(async(to, from, next) => {
       } else {
         try {
           // 同步获取用户信息
-          await store.dispatch('user/getInfo')
+          await store.dispatch('user/getUserInfo')
           next()
         } catch (error) {
           // 如果获取错误,则删除token,进入登录页面重新登录

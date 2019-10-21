@@ -1,13 +1,13 @@
 <template>
   <div class="app-container">
     <el-form ref="form" :model="form" label-width="120px">
-      <el-form-item label="Activity name">
+      <!-- <el-form-item label="Activity name">
         <el-input v-model="form.name" />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="Activity zone">
         <el-select v-model="form.region" placeholder="please select your zone">
-          <el-option label="Zone one" value="shanghai" />
-          <el-option label="Zone two" value="beijing" />
+          <el-option label="上海" value="shanghai" />
+          <el-option label="北京" value="beijing" />
         </el-select>
       </el-form-item>
       <el-form-item label="Activity time">
@@ -40,8 +40,8 @@
         <el-input v-model="form.desc" type="textarea" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">Create</el-button>
-        <el-button @click="onCancel">Cancel</el-button>
+        <el-button type="primary" @click="onSubmit">添加</el-button>
+        <el-button @click="onCancel">取消</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -63,6 +63,14 @@ export default {
       }
     }
   },
+  mounted: {
+    // TODO: 获取用户管理权限
+    getManaRange() {
+      this.loading = true
+      this.$store.dispatch('user/login', this.loginForm)
+      this.loading = false
+    }
+  },
   methods: {
     onSubmit() {
       this.$message('submit!')
@@ -82,4 +90,3 @@ export default {
   text-align: center;
 }
 </style>
-

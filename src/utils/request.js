@@ -42,12 +42,12 @@ service.interceptors.request.use(
       // config.headers['Content-Type'] = 'multipart/form-data;charset=UTF-8'
       config.headers['access_token'] = getToken()
     }
-    console.log(config) // for debug
+    // console.log(config) // for debug
     return config
   },
   // 请求错误
   error => {
-    console.log(error) // for debug
+    // console.log(error) // for debug
     return Promise.reject(error)
   }
 )
@@ -97,7 +97,7 @@ service.interceptors.response.use(
        * 如果要获取headers or status等http状态信息
        * 则返回 response
        */
-      console.log(response)
+      // console.log(response)
       return response
     }
   },
