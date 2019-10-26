@@ -1,8 +1,21 @@
-/** 用于获取Vue页面传过来的数据以及发送网络请求 */
-import { req4login, getUserInfo } from '@/api/user'
+/**
+ * * 用户类属性（成员变量）及相关操作（成员方法）
+ *
+ * * state 用户类成员变量
+ *   - token 用户登录后保存的token
+ *   - userid 用户ID
+ *   - name 用户名
+ *   - avatar 用户头像
+ *   - roles 用户角色（含多个）
+ *
+ * * Mutations （同步）改变成员变量的方法，以载荷形式分发
+ * * Action （异步）改变成员变量的方法，以对象形式分发
+ */
+import { req4login, getUserInfo, getManaRange } from '@/api/user'
 import { getUserID, getToken, setUserInfo, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 import { Message } from 'element-ui'
+import { resolve, reject } from 'q'
 
 var Md54str = require('crypto-js/md5')
 
@@ -17,17 +30,18 @@ const state = {
 /**
  * 载荷（payload）
  * 大多数情况下，载荷是一个对象，能够让我们更加易读，更明确地追踪到状态的变化
- * 通过 store.commit 触发
- * ！！只能同步执行！！
+ * 改变 store 中状态的唯一途径就是显式地提交 (commit) mutation
  *
+ * ！只能同步执行！
+ *
+ * 要触发变化则在组件的 methods 中提交 mutation
  * 动态修改时：e.g.
- * addAge (state) {
+ * addAge (state)
     Vue.set(state.student, 'age', 18)
     // 或者： state.student = { ...state.student, age: 18 }
-   }
- * 使用常量来替代 mutation 事件的名字
  */
 const mutations = {
+  // 使用常量来替代 mutation 数据改变事件的名字
   SET_TOKEN: (state, token) => {
     state.token = token
   },
@@ -49,7 +63,7 @@ const mutations = {
  * Action 类似于 mutation，不同在于：
 
  * 1、Action 提交的是 mutation，而不是直接变更状态。
- * 2、Action 可以包含任意！异步！操作。
+ * 2、Action 可以包含任意*异步*操作，而mutation只能进行*同步*操作。
  *
  * 通过 store.dispatch 方法触发
  */
@@ -149,6 +163,14 @@ const actions = {
       removeToken()
       resolve()
     })
+  },
+
+  // 获取用户权限
+  getUserManaRange({ commit, state }) {
+    return new Promise((resolve, reject) => {
+      getManaRange()
+    }
+    )
   }
 }
 

@@ -26,9 +26,9 @@ import Layout from '@/layout'
  */
 
 /**
- * constantRoutes
- * a base page that does not have permission requirements
- * all roles can be accessed
+ * 固定的路由
+ * 没有权限要求的基本页
+ * 所有角色都可访问
  */
 export const constantRoutes = [
   // *登录页
@@ -37,6 +37,7 @@ export const constantRoutes = [
     component: () => import('@/views/login/index'),
     hidden: true
   },
+
   // *404错误页
   {
     path: '/404',
@@ -58,7 +59,7 @@ export const constantRoutes = [
   },
 
   // *七彩评价相关
-  // TODO: 加载时默认获取市级管理员管辖区域，提供选择学校功能
+  // 页面加载时默认获取市级管理员管辖区域，提供选择学校功能
   // TODO: 选择学校后同步展示可选年级和班级
   // TODO: 选择学校后异步展示学生列表
   {

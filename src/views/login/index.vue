@@ -82,7 +82,7 @@ export default {
     return {
       // 登录框默认值
       loginForm: {
-        username: 'superadmin',
+        username: 'zhyxadmin',
         password: '123456'
       },
       loginRules: {
@@ -121,7 +121,6 @@ export default {
 
     // 登录判断 登录按键触发事件
     handleLogin() {
-      // this.$router.push({ path: this.redirect || '/' })
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           // 做耗时操作时显示loading动画效果
@@ -130,7 +129,7 @@ export default {
            * 一个 store.dispatch 在不同模块中可以触发多个 action 函数。
            * 在这种情况下，只有当所有触发函数完成后，返回的 Promise 才会执行。
            */
-          this.$store.dispatch('user/login', this.loginForm) // 传输数据
+          this.$store.dispatch('user/login', this.loginForm) // 触发命名为login的Action
             .then(() => {
               // 当前路由路径
               // console.log(this.$route.path)

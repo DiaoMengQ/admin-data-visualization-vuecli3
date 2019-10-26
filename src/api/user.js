@@ -1,8 +1,10 @@
-/** 用于api网络请求 */
+/**
+ * 用户相关请求操作
+ */
 import request from '@/utils/request'
 
+// 调用发送请求方法并返回数据
 export function req4login(data) {
-  // 调用发送请求方法并返回数据
   return request({
     url: '/user/login',
     method: 'post',
@@ -19,7 +21,8 @@ export function getUserInfo(para) {
   })
 }
 
-export function getManaRange(data) {
+// 获取用户管辖范围
+export function getManaRange() {
   return request({
     url: '/auth/getManaRange',
     method: 'POST'

@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <el-tag v-model="alertInfo" />
     <el-form ref="form" :model="form" label-width="120px">
       <!-- <el-form-item label="Activity name">
         <el-input v-model="form.name" />
@@ -40,7 +41,7 @@
         <el-input v-model="form.desc" type="textarea" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">添加</el-button>
+        <el-button type="primary" @click="onSubmit">查询</el-button>
         <el-button @click="onCancel">取消</el-button>
       </el-form-item>
     </el-form>
@@ -63,13 +64,19 @@ export default {
       }
     }
   },
-  mounted: {
-    // TODO: 获取用户管理权限
-    getManaRange() {
-      this.loading = true
-      this.$store.dispatch('user/login', this.loginForm)
-      this.loading = false
+  mounted() {
+    //  获取用户管理权限
+    this.loading = true
+    console.log(this.$store.state.user['roles'])
+    // TODO: 判断用户角色及权限范围并显示对应界面
+    const roles = this.$store.state.user['roles']
+    if (roles.indexOf('SCHOOL_ADMIN') > -1) {
+      this.$store.dispatch('user/getUserManaRange')
+        .then(() => {
+          this.alertInfo = 'SCHOOL_ADMIN'
+        })
     }
+    this.loading = false
   },
   methods: {
     onSubmit() {
