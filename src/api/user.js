@@ -1,5 +1,7 @@
 /**
- * 用户相关请求操作
+ * 用户相关请求操作，发送网络请求
+ * @author 刁梦齐 <diaomeowqi@qq.com>
+ * @version 0.0.1
  */
 import request from '@/utils/request'
 
@@ -12,7 +14,7 @@ export function req4login(data) {
   })
 }
 
-// 获取用户数据
+// 网络请求用户数据
 export function getUserInfo(para) {
   return request({
     url: '/user/userInfo',
@@ -21,7 +23,7 @@ export function getUserInfo(para) {
   })
 }
 
-// 获取用户管辖范围
+// 网络请求用户管辖范围
 export function getManaRange() {
   return request({
     url: '/auth/getManaRange',

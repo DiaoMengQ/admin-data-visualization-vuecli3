@@ -1,5 +1,7 @@
 /**
- * Created by DiaoMengqi on 19/10/18.
+ * 工具集
+ * @author 刁梦齐 <diaomeowqi@qq.com>
+ * @version 0.0.1
  */
 
 /**

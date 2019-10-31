@@ -12,10 +12,9 @@
  * * Action （异步）改变成员变量的方法，以对象形式分发
  */
 import { req4login, getUserInfo, getManaRange } from '@/api/user'
-import { getUserID, getToken, setUserInfo, removeToken } from '@/utils/auth'
+import { getUserID, getToken, setUserInfo, removeToken, setUserManaRange } from '@/utils/auth'
 import { resetRouter } from '@/router'
 import { Message } from 'element-ui'
-import { resolve, reject } from 'q'
 
 var Md54str = require('crypto-js/md5')
 
@@ -168,7 +167,14 @@ const actions = {
   // 获取用户权限
   getUserManaRange({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getManaRange()
+      getManaRange().then(response => {
+        const { data } = response.data
+        console.log('user.js/getUserManaRange: ', data)
+        setUserManaRange(data)
+      }).catch(error => {
+        console.log('请求错误 ' + error)
+        reject(error)
+      })
     }
     )
   }

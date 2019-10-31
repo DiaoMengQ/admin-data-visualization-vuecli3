@@ -1,10 +1,13 @@
 /**
  * 七彩评价平台相关操作
+ * @author 刁梦齐 <diaomeowqi@qq.com>
+ * @version 0.0.1
  */
+
 import request from '@/utils/request'
 
 /**
- * 获取七彩评价管辖学校列表
+ * 发送网络请求获取七彩评价管辖学校列表
  *
  * @export
  * @param {areaCode,cityId,provinceId,schoolId} data

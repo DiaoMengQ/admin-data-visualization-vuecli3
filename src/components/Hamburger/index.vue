@@ -16,6 +16,10 @@
 <script>
 export default {
   name: 'Hamburger',
+  /**
+   * 可以用 v-bind 动态绑定 props 的值到父组件的数据中
+   * 每当父组件的数据变化时，该变化也会传导给子组件
+   */
   props: {
     isActive: {
       type: Boolean,

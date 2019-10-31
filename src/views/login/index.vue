@@ -99,6 +99,7 @@ export default {
     }
   },
   watch: {
+    /** 如果 `router` 发生改变，这个函数就会运行 */
     $route: {
       handler: function(route) {
         this.redirect = route.query && route.query.redirect

@@ -1,13 +1,15 @@
-/** 、
+/**
  * 权限控制管理
+ * @author 刁梦齐 <diaomeowqi@qq.com>
+ * @version 0.0.1
  */
 
 import router from './router'
 import store from './store'
 import { Message } from 'element-ui'
-import NProgress from 'nprogress' // progress bar
-import 'nprogress/nprogress.css' // progress bar style
-import { getToken } from '@/utils/auth' // 从cookie中拿取token
+import NProgress from 'nprogress' // 进度条
+import 'nprogress/nprogress.css' // 进度条样式
+import { getToken } from '@/utils/auth' // 从localStorage中拿取token
 import getPageTitle from '@/utils/get-page-title'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
