@@ -22,14 +22,14 @@
       </el-col>
     </el-row>
 
-    <el-tabs v-for="(value,key) in schoolList" :key="key" type="border-card">
-      <li>{{ value }}</li>
-      <el-tab-pane
-        label="用户管理"
-      >用户管理</el-tab-pane>
+    <el-tabs type="border-card">
+      <li v-for="(value,key) in schoolList" :key="key">
+        <span>{{ value }}</span>
+      </li>
+      <!-- <el-tab-pane label="用户管理">用户管理</el-tab-pane>
       <el-tab-pane label="配置管理">配置管理</el-tab-pane>
       <el-tab-pane label="角色管理">角色管理</el-tab-pane>
-      <el-tab-pane label="定时任务补偿">定时任务补偿</el-tab-pane>
+      <el-tab-pane label="定时任务补偿">定时任务补偿</el-tab-pane> -->
     </el-tabs>
 
   </div>
@@ -71,7 +71,7 @@ export default {
       this.$store.dispatch('user/getUserManaRange')
       const manaRange = getUserManaRange()
       if (manaRange) {
-
+        this.schoolList = manaRange
       }
     }
   },
