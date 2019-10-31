@@ -24,7 +24,10 @@
 
     <el-tabs type="border-card">
       <li v-for="(value,key) in schoolList" :key="key">
-        <span>{{ value }}</span>
+        <span>{{ key }}</span>
+        <!-- <span>{{ value }}</span> -->
+        <span>{{ value['schoolId'] }}</span>
+        <span>{{ value['schoolName'] }}</span>
       </li>
       <!-- <el-tab-pane label="用户管理">用户管理</el-tab-pane>
       <el-tab-pane label="配置管理">配置管理</el-tab-pane>
