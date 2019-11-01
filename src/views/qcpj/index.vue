@@ -7,12 +7,12 @@
 
     <el-row>
 
-      <el-col v-for="(o, index) in 2" :key="o" :span="8" :offset="index > 0 ? 2 : 0">
+      <!-- span 设定每个循环样式中的空白 -->
+      <el-col v-for="(value,key) in schoolList" :key="key" :span="8">
         <el-card :body-style="{ padding: '0px' }">
           <!-- <img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png" class="image"> -->
           <div style="padding: 14x;">
-            <span>这是一个标题</span>
-            <div class="" />
+            <span>{{ value['schoolName'] }}</span>
             <!-- <div class="bottom clearfix">
               <time class="time">{{ currentDate }}</time>
               <el-button type="text" class="button">操作按钮</el-button>
@@ -22,18 +22,17 @@
       </el-col>
     </el-row>
 
-    <el-tabs type="border-card">
+    <!-- <el-tabs type="border-card">
       <li v-for="(value,key) in schoolList" :key="key">
         <span>{{ key }}</span>
-        <!-- <span>{{ value }}</span> -->
         <span>{{ value['schoolId'] }}</span>
         <span>{{ value['schoolName'] }}</span>
-      </li>
-      <!-- <el-tab-pane label="用户管理">用户管理</el-tab-pane>
+      </li> -->
+    <!-- <el-tab-pane label="用户管理">用户管理</el-tab-pane>
       <el-tab-pane label="配置管理">配置管理</el-tab-pane>
       <el-tab-pane label="角色管理">角色管理</el-tab-pane>
       <el-tab-pane label="定时任务补偿">定时任务补偿</el-tab-pane> -->
-    </el-tabs>
+    <!-- </el-tabs> -->
 
   </div>
 </template>
@@ -45,9 +44,10 @@ export default {
   data() {
     return {
       currentDate: new Date(),
-      schoolList: [
-        { schoolId: 4404001, schoolName: '珠海市香洲区第一小学', provinceId: 44, cityid: 4, areaCode: 440400 },
-        { schoolId: 4404002, schoolName: '珠海共乐幼儿园', provinceId: 66, cityid: 4 }]
+      schoolList: []
+      // schoolList: [
+      //   { schoolId: 4404001, schoolName: '珠海市香洲区第一小学', provinceId: 44, cityid: 4, areaCode: 440400 },
+      //   { schoolId: 4404002, schoolName: '珠海共乐幼儿园', provinceId: 66, cityid: 4 }]
     }
   },
   // 计算属性
@@ -71,11 +71,16 @@ export default {
         duration: 3 * 1000
       })
 
-      this.$store.dispatch('user/getUserManaRange')
-      const manaRange = getUserManaRange()
-      if (manaRange) {
-        this.schoolList = manaRange
-      }
+      this.$store.dispatch('user/getUserManaRange').then(
+        getUserManaRange()
+
+      )
+      // const manaRange = getUserManaRange().split(',') // 获取的数据为字符串，将字符串分割为obj数组
+      // JSON.parse(manaRange)
+      // console.log('qcpj/index.vue: ', typeof manaRange)
+      // if (manaRange) {
+      //   this.schoolList = manaRange
+      // }
     }
   },
   methods: {

@@ -169,7 +169,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       getManaRange().then(response => {
         const { data } = response.data
-        console.log('user.js/getUserManaRange: ', data)
+        // console.log('user.js/getUserManaRange: ', data)
         setUserManaRange(data)
       }).catch(error => {
         console.log('请求错误 ' + error)
