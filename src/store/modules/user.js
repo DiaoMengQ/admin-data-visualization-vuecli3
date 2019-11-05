@@ -90,7 +90,6 @@ const actions = {
             duration: 3 * 1000
           })
           const { data } = response.data
-          // console.log(data)
 
           // 将token保存至本地
           const userInfo = { token: response.headers['access_token'], userid: data['userId'] }
@@ -106,7 +105,7 @@ const actions = {
           // commit('SET_AVATAR', data['headImg'])
           commit('SET_AVATAR', 'http://172.20.13.20/default.jpg')
 
-          resolve()
+          resolve()// 注意不能漏掉这句，这是告诉调用该方法的方法此异步方法已完成
         }).catch(error => {
           console.log('请求错误 ' + error)
           reject(error)
@@ -169,8 +168,10 @@ const actions = {
     return new Promise((resolve, reject) => {
       getManaRange().then(response => {
         const { data } = response.data
-        // console.log('user.js/getUserManaRange: ', data)
+        // console.log('it\'s action user/getUserManaRange: ', data)
         setUserManaRange(data)
+
+        resolve()
       }).catch(error => {
         console.log('请求错误 ' + error)
         reject(error)

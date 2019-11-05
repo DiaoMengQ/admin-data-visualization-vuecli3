@@ -39,7 +39,7 @@
 
 <script>
 import path from 'path'
-import { isExternal } from '@/utils/validate'
+import { isExternal } from '@/utils/multiple'
 import Item from './Item'
 import AppLink from './Link'
 import FixiOSBug from './FixiOSBug'

@@ -26,20 +26,11 @@ export function getUserID() {
 
 // setter: 用户权限
 export function setUserManaRange(permInfo) {
-  // console.log('auth.js/setUserManaRange: ', permInfo)
   localStorage.setItem(userManaRangeKey, JSON.stringify(permInfo)) // obj自动存为obj的值的类型字符串，故需手动转为字符串，防止取数据时出错
 }
 
 // getter: 用户权限
 export function getUserManaRange() {
-  var arr = localStorage.getItem(userManaRangeKey)
-  arr = arr.replace('},{', '}|{')
-  arr = arr.replace('[{', '{')
-  arr = arr.replace('}]', '}')
-
-  arr = arr.split('|')
-  // JSON.parse(arr)
-  console.log('auth.js/getUserManaRange: ', arr)
   return localStorage.getItem(userManaRangeKey)
 }
 

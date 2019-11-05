@@ -2,7 +2,8 @@
   <div class="dashboard-container">
     <!-- 需要获取值的键（相当于ID） -->
     <div class="dashboard-text">当前用户:  {{ name }}</div>
-    <div class="dashboard-text">用户身份:  <span v-for="role in roles" :key="role">{{ role }}</span></div>
+    <!-- v-for 中(value,index) in Array -->
+    <div class="dashboard-text">用户身份:  <span v-for="(role,index) in roles" :key="index">{{ role }}</span></div>
   </div>
 </template>
 

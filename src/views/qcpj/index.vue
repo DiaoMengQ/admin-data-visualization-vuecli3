@@ -39,6 +39,7 @@
 
 <script>
 import { getUserID, getUserManaRange } from '@/utils/auth'
+import { str2obj } from '@/utils/multiple'
 
 export default {
   data() {
@@ -53,7 +54,7 @@ export default {
   // 计算属性
   computed: {
     alertInfo: function() {
-      console.log(this.$store.state.user['roles'])
+      // console.log(this.$store.state.user['roles'])
       // TODO: 判断用户角色及权限范围并显示对应界面
       const roles = this.$store.state.user['roles']
       if (roles.indexOf('SCHOOL_ADMIN') > -1) {
@@ -64,23 +65,33 @@ export default {
     }
   },
   mounted() {
+    // console.log('index.vue: ', getUserID())
     if (getUserID()) {
-      this.$message({
-        message: 'userId: ' + getUserID(),
-        type: 'info',
-        duration: 3 * 1000
-      })
+      // this.$message({
+      //   message: 'userId: ' + getUserID(),
+      //   type: 'info',
+      //   duration: 3 * 1000
+      // })
 
-      this.$store.dispatch('user/getUserManaRange').then(
-        getUserManaRange()
+      // 调用action方法，通常是异步操作
+      this.$store.dispatch('user/getUserManaRange').then(() => {
+        var schoolarr = getUserManaRange() // from cookie
+        schoolarr = schoolarr.replace('},{', '}|{')
+        schoolarr = schoolarr.replace('[{', '{')
+        schoolarr = schoolarr.replace('}]', '}')
+        schoolarr = schoolarr.split('|')
 
+        // 若使用foreach，调用方法后是不会改变原数组的值
+        // schoolarr.forEach(element => { str2obj(element) })
+        // 故使用map迭代器对每一个元素调用方法
+        schoolarr = schoolarr.map(str2obj)
+        console.log('auth.js/getUserManaRange: ', schoolarr[1])
+        if (schoolarr) {
+          this.schoolList = schoolarr
+        }
+        console.log(this.alertInfo)
+      }
       )
-      // const manaRange = getUserManaRange().split(',') // 获取的数据为字符串，将字符串分割为obj数组
-      // JSON.parse(manaRange)
-      // console.log('qcpj/index.vue: ', typeof manaRange)
-      // if (manaRange) {
-      //   this.schoolList = manaRange
-      // }
     }
   },
   methods: {
