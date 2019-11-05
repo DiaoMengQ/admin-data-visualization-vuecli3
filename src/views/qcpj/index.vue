@@ -6,19 +6,20 @@
     <el-tag>{{ alertInfo }}</el-tag>
 
     <el-row>
+      <!-- TODO: 设定下拉框，获取下拉框的值并进行数据请求 -->
 
       <!-- span 设定每个循环样式中的空白 -->
       <el-col v-for="(value,key) in schoolList" :key="key" :span="8">
-        <el-card :body-style="{ padding: '0px' }">
+        <el-button :body-style="{ padding: '0px' }">
           <!-- <img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png" class="image"> -->
-          <div style="padding: 14x;">
+          <div style="padding: 0px;">
             <span>{{ value['schoolName'] }}</span>
             <!-- <div class="bottom clearfix">
               <time class="time">{{ currentDate }}</time>
               <el-button type="text" class="button">操作按钮</el-button>
             </div> -->
           </div>
-        </el-card>
+        </el-button>
       </el-col>
     </el-row>
 
@@ -65,7 +66,6 @@ export default {
     }
   },
   mounted() {
-    // console.log('index.vue: ', getUserID())
     if (getUserID()) {
       // this.$message({
       //   message: 'userId: ' + getUserID(),
@@ -76,17 +76,18 @@ export default {
       // 调用action方法，通常是异步操作
       this.$store.dispatch('user/getUserManaRange').then(() => {
         var schoolarr = getUserManaRange() // from cookie
-        schoolarr = schoolarr.replace('},{', '}|{')
-        schoolarr = schoolarr.replace('[{', '{')
-        schoolarr = schoolarr.replace('}]', '}')
-        schoolarr = schoolarr.split('|')
-
-        // 若使用foreach，调用方法后是不会改变原数组的值
-        // schoolarr.forEach(element => { str2obj(element) })
-        // 故使用map迭代器对每一个元素调用方法
-        schoolarr = schoolarr.map(str2obj)
-        console.log('auth.js/getUserManaRange: ', schoolarr[1])
         if (schoolarr) {
+          schoolarr = schoolarr.replace('},{', '}|{')
+          schoolarr = schoolarr.replace('[{', '{')
+          schoolarr = schoolarr.replace('}]', '}')
+          schoolarr = schoolarr.split('|')
+
+          // 若使用foreach，调用方法后是不会改变原数组的值
+          // schoolarr.forEach(element => { str2obj(element) })
+          // 故使用map迭代器对每一个元素调用方法
+          schoolarr = schoolarr.map(str2obj)
+          // console.log('index.vue: ', schoolarr[0])
+
           this.schoolList = schoolarr
         }
         console.log(this.alertInfo)
