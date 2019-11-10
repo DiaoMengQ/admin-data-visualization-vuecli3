@@ -10,21 +10,17 @@
       <!-- TODO: 设定下拉框，获取下拉框的值并进行数据请求 -->
 
       <!-- span 设定每个循环样式中的空白 -->
-      <el-col v-for="(value, key) in schoolList" :key="key" :span="8">
-        <el-button :body-style="{ padding: '0px' }" @click="getClassInfo(value)">
-          <!-- <img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png" class="image"> -->
+      <!-- <el-col v-for="(value, key) in schoolList" :key="key" :span="8"> -->
+      <el-col v-for="(school, schoolListkey) in schoolList" :key="schoolListkey" :span="8">
+        <el-button :body-style="{ padding: '0px' }" @click="getClassInfo(school)">
           <div style="padding: 0px;">
-            <span>{{ value["schoolName"] }}</span>
-            <!-- <div class="bottom clearfix">
-              <time class="time">{{ currentDate }}</time>
-              <el-button type="text" class="button">操作按钮</el-button>
-            </div> -->
+            <span>{{ school["schoolName"] }}</span>
           </div>
         </el-button>
       </el-col>
     </el-row>
 
-    <el-tabs type="border-card">
+    <!-- <el-tabs type="border-card">
       <el-tab-pane
         v-for="(value, key) in schoolList"
         :key="key"
@@ -36,22 +32,35 @@
           <span>{{ value["schoolName"] }}</span>
         </li>
       </el-tab-pane>
-    </el-tabs>
+    </el-tabs> -->
+    <el-select v-model="value" placeholder="请选择年级范围">
+      <el-option
+        v-for="item in options"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value"
+        :disabled="item.disabled"
+      />
+    </el-select>
   </div>
 </template>
 
 <script>
 import { getUserID, getUserManaRange } from '@/utils/auth'
 import { str2obj } from '@/utils/multiple'
-import { async } from 'q'
 
 import { getClassInfo } from '@/api/school'
 
 export default {
   data() {
     return {
+      options: [
+        { value: '1', label: '流奶捞' },
+        { value: '2', label: '蒸饺子', disabled: true }],
+      value: '',
+
       currentDate: new Date(),
-      schoolList: []
+      schoolList: [],
       // schoolList: [
       //   {
       //     schoolId: 4404001,
@@ -67,6 +76,9 @@ export default {
       //     cityid: 4
       //   }
       // ]
+      startGrade: 1,
+      endGrade: 6,
+      classList: []
     }
   },
   // 计算属性
@@ -113,9 +125,10 @@ export default {
       // this.$store.dispatch('user/getClassList').then(() => {
       // })
 
-      const reqClassData = { 'startGradeId': 1, 'endGradeId': 6, 'schoolId': chosenSch['schoolId'] }
+      const reqClassData = { 'startGradeId': this.startGrade, 'endGradeId': this.endGrade, 'schoolId': chosenSch['schoolId'] }
       var classList = await getClassInfo(reqClassData)
       console.log('班级列表： ' + classList)
+      this.classList = classList
     },
     onSubmit() {
       this.$message('submit!')
@@ -131,16 +144,6 @@ export default {
 </script>
 
 <style scoped>
-.time {
-  font-size: 13px;
-  color: #999;
-}
-
-.bottom {
-  margin-top: 13px;
-  line-height: 12px;
-}
-
 .button {
   padding: 0;
   float: right;
