@@ -5,7 +5,7 @@
  */
 import request from '@/utils/request'
 
-// 调用发送请求方法并返回数据
+// 登录，返回个人信息
 export function req4login(data) {
   return request({
     url: '/user/login',
@@ -14,7 +14,7 @@ export function req4login(data) {
   })
 }
 
-// 网络请求用户数据
+// 请求用户数据
 export function getUserInfo(para) {
   return request({
     url: '/user/userInfo',
@@ -23,7 +23,7 @@ export function getUserInfo(para) {
   })
 }
 
-// 网络请求用户管辖范围
+// 请求用户管辖范围
 export function getManaRange() {
   return request({
     url: '/auth/getManaRange',

@@ -1,5 +1,5 @@
 /**
- * 本地用户信息存取操作
+ * 本地用户信息存取操作(cookie)
  * @author 刁梦齐 <diaomeowqi@qq.com>
  * @version 0.0.1
  */
@@ -19,6 +19,11 @@ export function getToken() {
   return localStorage.getItem(TokenKey)
 }
 
+// clean token
+export function removeToken() {
+  localStorage.removeItem(TokenKey)
+}
+
 // getter: userID
 export function getUserID() {
   return localStorage.getItem(userIDKey)
@@ -32,9 +37,4 @@ export function setUserManaRange(permInfo) {
 // getter: 用户权限
 export function getUserManaRange() {
   return localStorage.getItem(userManaRangeKey)
-}
-
-// clean token
-export function removeToken() {
-  localStorage.removeItem(TokenKey)
 }

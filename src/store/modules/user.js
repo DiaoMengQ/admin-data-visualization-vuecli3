@@ -164,7 +164,7 @@ const actions = {
   },
 
   // 获取用户权限
-  getUserManaRange({ commit, state }) {
+  getUserManaRange({ commit }) {
     return new Promise((resolve, reject) => {
       getManaRange().then(response => {
         const { data } = response.data
@@ -178,6 +178,10 @@ const actions = {
       })
     }
     )
+  },
+
+  getClassList({ commit }, schoolInfo) {
+    this.$message('in user modules')
   }
 }
 
