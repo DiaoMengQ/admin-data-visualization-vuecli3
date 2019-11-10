@@ -7,11 +7,11 @@ import request from '@/utils/request'
  * @param {schoolId,startGradeId,endGradeId} data
  * @returns
  */
-export function getClassInfo(data) {
-  console.log(data)
+export function getClassInfo(para) {
+  console.log('in class request: ', para)
   return request({
     url: '/qcpj/common/getQcpjClasses',
     method: 'GET',
-    data
+    params: para
   })
 }

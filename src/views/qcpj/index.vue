@@ -109,12 +109,13 @@ export default {
   },
   methods: {
     async getClassInfo(chosenSch) {
-      this.$message('点击了： ' + chosenSch['schoolName'])
+      // this.$message('点击了： ' + chosenSch['schoolName'])
       // this.$store.dispatch('user/getClassList').then(() => {
       // })
-      const reqClassData = { 'startGrade': 1, 'endGrade': 6, 'schoolId': chosenSch['schoolId'] }
+
+      const reqClassData = { 'startGradeId': 1, 'endGradeId': 6, 'schoolId': chosenSch['schoolId'] }
       var classList = await getClassInfo(reqClassData)
-      this.$message('班级列表： ' + classList)
+      console.log('班级列表： ' + classList)
     },
     onSubmit() {
       this.$message('submit!')
