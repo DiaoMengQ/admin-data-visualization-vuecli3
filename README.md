@@ -1,4 +1,4 @@
-# vue-admin-template
+# vue-admin-template（author：panjiache）
 
 > 这是一个数据可视化管理后台，使用 vue-cli 3.0+ 版本搭建。包含 Element UI & axios & iconfont & permission control & lint
 
