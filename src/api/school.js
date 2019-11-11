@@ -8,7 +8,6 @@ import request from '@/utils/request'
  * @returns
  */
 export function getClassInfo(para) {
-  console.log('in class request: ', para)
   return request({
     url: '/qcpj/common/getQcpjClasses',
     method: 'GET',
