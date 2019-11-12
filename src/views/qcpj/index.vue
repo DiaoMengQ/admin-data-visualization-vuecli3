@@ -11,8 +11,15 @@
 
       <!-- span 设定每个循环样式中的空白 -->
       <!-- <el-col v-for="(value, key) in schoolList" :key="key" :span="8"> -->
-      <el-col v-for="(school, schoolListkey) in schoolList" :key="schoolListkey" :span="8">
-        <el-button :body-style="{ padding: '0px' }" @click="getClassInfo(school)">
+      <el-col
+        v-for="(school, schoolListkey) in schoolList"
+        :key="schoolListkey"
+        :span="8"
+      >
+        <el-button
+          :body-style="{ padding: '0px' }"
+          @click="getClassInfo(school)"
+        >
           <div style="padding: 0px;">
             <span>{{ school["schoolName"] }}</span>
           </div>
@@ -33,15 +40,50 @@
         </li>
       </el-tab-pane>
     </el-tabs> -->
-    <el-select v-model="value" placeholder="请选择年级范围">
-      <el-option
-        v-for="item in options"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value"
-        :disabled="item.disabled"
-      />
-    </el-select>
+    <el-col v-if="showStartGrade">
+      <el-select v-model="storeLocation" placeholder="请选择年级范围">
+        <el-option
+          v-for="item in options"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+          :disabled="item.disabled"
+        />
+      </el-select>
+      <span> - </span>
+      <el-select v-model="endGreade" placeholder="至年级">
+        <el-option
+          v-for="item in options"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+          :disabled="item.disabled"
+        />
+      </el-select>
+    </el-col>
+
+    <el-dialog
+      :visible.sync="changeStoreVisible"
+      class="taskDialog delete-shortcut-dialog"
+      width="420px"
+      :modal="false"
+      :show-close="false"
+      :close-on-click-modal="false"
+    >
+      <span style="font-size:16px;font-weight:400;">
+        <i
+          class="iconfont icon-warning"
+          style="font-size:20px;color:rgba(23,155,255,1);margin-right:5px;"
+        />是否改变选项值
+      </span>
+      <p class="tips-text" style="height: 38px;">
+        <span style="color:red;font-size:14px;">改变选项值，</span>是否继续?
+      </p>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="changeStoreCancle">取 消</el-button>
+        <el-button type="primary" @click="changeStoreForm">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -55,9 +97,17 @@ export default {
   data() {
     return {
       options: [
-        { value: '1', label: '流奶捞' },
-        { value: '2', label: '蒸饺子', disabled: true }],
-      value: '',
+        { value: '1', label: '一年级' },
+        { value: '2', label: '二年级' }
+      ],
+
+      // 控制是否隐藏选择年级控件
+      showStartGrade: false,
+
+      storeLocation: '初始值',
+      changeStoreVisible: false,
+      beforeStorageValue: '',
+      afterStorageValue: '',
 
       currentDate: new Date(),
       schoolList: [],
@@ -94,6 +144,22 @@ export default {
       }
     }
   },
+  // 监视方法(或用@change属性代替)
+  watch: {
+    storeLocation: {
+      immediate: true,
+      handler(val, old) {
+        console.log('值已改变')
+        console.log('val:', val, 'old:', old)
+        if (this.beforeStorageValue && val !== this.beforeStorageValue) {
+          // console.log( 'val:', val, 'old:', old,
+          //   'this.beforeStorageValue', this.beforeStorageValue
+          // )
+          // this.changeStoreVisible = true
+        }
+      }
+    }
+  },
   mounted() {
     if (getUserID()) {
       // this.$message({
@@ -115,19 +181,38 @@ export default {
           this.schoolList = schoolarr
         }
         console.log(this.alertInfo)
-      }
-      )
+      })
     }
+
+    this.beforeStorageValue = this.storeLocation
   },
   methods: {
+    // 弹框取消改变
+    changeStoreCancle() {
+      this.storeLocation = this.beforeStorageValue
+      this.changeStoreVisible = false
+    },
+    // 弹框确认改变
+    changeStoreForm() {
+      this.changeStoreVisible = false
+    },
+
     async getClassInfo(chosenSch) {
       // this.$message('点击了： ' + chosenSch['schoolName'])
       // this.$store.dispatch('user/getClassList').then(() => {
       // })
 
-      const reqClassData = { 'startGradeId': this.startGrade, 'endGradeId': this.endGrade, 'schoolId': chosenSch['schoolId'] }
+      // 显示年级选择控件
+      this.showStartGrade = true
+
+      const reqClassData = {
+        startGradeId: this.startGrade,
+        endGradeId: this.endGrade,
+        schoolId: chosenSch['schoolId']
+      }
       var classList = await getClassInfo(reqClassData)
-      console.log('班级列表： ' + classList)
+      console.log(classList)
+
       this.classList = classList
     },
     onSubmit() {
