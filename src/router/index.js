@@ -155,6 +155,18 @@ export const constantRoutes = [
     ]
   },
 
+  // *人员管理
+  {
+    path: '/adminList',
+    component: Layout,
+    children: [{
+      path: 'index',
+      name: 'adminList',
+      component: () => import('@/views/adminList/index'),
+      meta: { title: '人员管理', icon: 'tree' }
+    }]
+  },
+
   {
     path: 'external-link',
     component: Layout,
@@ -166,12 +178,12 @@ export const constantRoutes = [
     ]
   },
 
-  // 404 page must be placed at the end !!!
+  // 404页必须放在末尾！！
   { path: '*', redirect: '/404', hidden: true }
 ]
 
 const createRouter = () => new Router({
-  // mode: 'history', // require service support
+  mode: 'history', // 需要服务器支持
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })

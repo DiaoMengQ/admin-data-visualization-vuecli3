@@ -22,7 +22,7 @@ const state = {
   token: getToken(),
   userid: '',
   name: '',
-  avatar: '',
+  avatar: process.env.VUE_APP_BASE_API + '/' + 'default.jpg',
   roles: []
 }
 
@@ -130,7 +130,8 @@ const actions = {
         commit('SET_ROLES', data['roleType'])
         commit('SET_NAME', data['nickname'])
         commit('SET_USERID', data['userId'])
-        commit('SET_AVATAR', 'http://172.20.13.20/default.jpg')
+        console.log(data['headImg'])
+        if (data['headImg'] !== '') { commit('SET_AVATAR', process.env.VUE_APP_BASE_API + '' + data['headImg']) }
 
         if (!state.roles || state.roles.length <= 0) {
           reject('获取用户角色失败: 请重新登录!')
@@ -183,6 +184,7 @@ const actions = {
   getClassList({ commit }, schoolInfo) {
     this.$message('in user modules')
   }
+
 }
 
 export default {

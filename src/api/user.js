@@ -14,7 +14,7 @@ export function req4login(data) {
   })
 }
 
-// 请求用户数据
+// 请求登录管理员账号信息
 export function getUserInfo(para) {
   return request({
     url: '/user/userInfo',
@@ -28,5 +28,32 @@ export function getManaRange() {
   return request({
     url: '/auth/getManaRange',
     method: 'POST'
+  })
+}
+
+// 请求自己权限级别的管理员列表
+export function getAdminList(para) {
+  return request({
+    url: '/user/myCreateUserInfo',
+    method: 'GET',
+    params: para
+  })
+}
+
+// 删除管理员账户
+export function deleteAdminAccount(adminId) {
+  return request({
+    url: '',
+    method: 'GET',
+    params: adminId
+  })
+}
+
+// 修改管理员账户信息
+export function updateAdminInfo(adminData) {
+  return request({
+    url: '/user/batchUpdateUserInfo',
+    method: 'POST',
+    adminData
   })
 }

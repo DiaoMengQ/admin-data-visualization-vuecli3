@@ -82,7 +82,7 @@ export default {
     return {
       // 登录框默认值
       loginForm: {
-        username: 'zhyxadmin',
+        username: 'superadmin',
         password: '123456'
       },
       loginRules: {
