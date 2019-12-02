@@ -102,7 +102,6 @@ export default {
   // 计算属性
   computed: {
     alertInfo: function() {
-      // console.log(this.$store.state.user['roles'])
       // TODO: 判断用户角色及权限范围并显示对应界面
       const roles = this.$store.state.user['roles']
       if (roles.indexOf('SCHOOL_ADMIN') > -1) {
@@ -135,6 +134,8 @@ export default {
     },
     updateAdminAccount(adminID) {
       // console.log(adminID)
+      this.$router.push(``, adminID)
+
       getUserInfo({ 'userId': adminID }).then(response => {
         console.log(response.data)
       })

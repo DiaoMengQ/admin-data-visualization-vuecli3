@@ -1,5 +1,9 @@
 /* eslint-disable no-unused-vars */
-/** 网络请求与返回数据拦截 */
+/**
+ * axios
+ * 网络请求与返回数据拦截
+ * 拦截后进行参数配置
+ */
 
 import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
