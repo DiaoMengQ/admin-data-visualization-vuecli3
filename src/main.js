@@ -12,6 +12,9 @@ import App from './App'
 import store from './store'
 import router from './router'
 
+import cookie from 'vue-cookies'
+Vue.prototype.$cookie = cookie
+
 import '@/icons' // icon
 import '@/permission' // permission control
 
@@ -30,7 +33,7 @@ import '@/permission' // permission control
 // }
 
 // 设置默认语言为中文
-Vue.use(ElementUI, { locale })
+Vue.use(ElementUI, { locale }, cookie)
 
 Vue.config.productionTip = false
 

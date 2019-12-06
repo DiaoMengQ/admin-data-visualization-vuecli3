@@ -125,9 +125,9 @@ export const constantRoutes = [
         ]
       },
       {
-        path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
-        meta: { title: 'menu2' }
+        path: 'gthx',
+        component: () => import('@/components/LJH/gthx'),
+        meta: { title: '个体画像' }
       }
     ]
   },

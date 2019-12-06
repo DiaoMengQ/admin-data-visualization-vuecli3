@@ -21,7 +21,40 @@ const store = new Vuex.Store({
     settings,
     user
   },
-  getters
+  getters,
+  state: {
+    token: '',
+    Grade: [],
+    Class: [],
+    Stu: []
+  },
+  mutations: {
+    // 对token进行监管
+    set_token(state, token) {
+      state.token = token
+      localStorage.token = token
+    },
+    // 对年级信息进行存储
+    setGrade(state, grade) {
+      state.Grade = grade
+    },
+    // 对班级信息进行存储
+    setClass(state, thisclass) {
+      state.Class = thisclass
+    },
+    // 获取学生每周分数
+    setStu(state, stu) {
+      state.Stu = stu
+    }
+    // // 存学校id
+    // set_schoolId (state, schoolId) {
+    //   state.schoolId = schoolId
+    //   localStorage.schoolId = schoolId
+    // }
+  },
+  actions: {
+    commitGrade: ({ commit }, Grade) => commit('setGrade', Grade)
+  }
 })
 
 export default store
