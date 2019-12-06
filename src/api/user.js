@@ -1,5 +1,5 @@
 /**
- * 用户相关请求操作，发送网络请求
+ * 用户相关请求
  * @author 刁梦齐 <diaomeowqi@qq.com>
  * @version 0.0.1
  */

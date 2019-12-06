@@ -18,14 +18,14 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="姓名" align="center">
+      <el-table-column label="登录名" align="center">
         <!-- {{ adminList.adminName }} -->
         <template slot-scope="scope">
           {{ scope.row['username'] }}
         </template>
       </el-table-column>
 
-      <el-table-column label="管理类型" align="center" width="110">
+      <el-table-column label="管理员类型" align="center" width="110">
         <span>{{ adminList.roletype }}</span>
 
         <template slot-scope="scope">
@@ -53,12 +53,12 @@
         align="center"
       >
         <template slot-scope="scope">
-          <el-tag type="danger" @click="deleteAdminAccount(scope.row['userId'])">
-            删除
-          </el-tag>
-          <el-tag @click="updateAdminAccount(scope.row['userId'])">
+          <el-button type="primary" plain @click="updateAdminAccount(scope.row['userId'])">
             修改
-          </el-tag>
+          </el-button>
+          <el-button type="danger" plain @click="deleteAdminAccount(scope.row['userId'])">
+            删除
+          </el-button>
         </template>
       </el-table-column>
 
@@ -102,7 +102,6 @@ export default {
   // 计算属性
   computed: {
     alertInfo: function() {
-      // console.log(this.$store.state.user['roles'])
       // TODO: 判断用户角色及权限范围并显示对应界面
       const roles = this.$store.state.user['roles']
       if (roles.indexOf('SCHOOL_ADMIN') > -1) {
@@ -135,7 +134,9 @@ export default {
     },
     updateAdminAccount(adminID) {
       // console.log(adminID)
+
       getUserInfo({ 'userId': adminID }).then(response => {
+        this.$router.push(``, adminID)
         console.log(response.data)
       })
     },

@@ -215,9 +215,6 @@ export default {
 
       this.classList = classList
     },
-    onSubmit() {
-      this.$message('submit!')
-    },
     onCancel() {
       this.$message({
         message: 'cancel!',

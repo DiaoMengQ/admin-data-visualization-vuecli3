@@ -53,7 +53,7 @@ export default {
      * async 异步方法
      */
     async logout() {
-      await this.$store.dispatch('user/logout') // await表示要执行完await后的代码且有返回结果后，才继续执行下面的内容
+      await this.$store.dispatch('user/logout') // 异步中必须同步执行的部分，await表示要执行完await后的代码且有返回结果后，才继续执行下面的内容
       Message({
         message: '账户已退出',
         type: 'info',
