@@ -69,7 +69,7 @@ service.interceptors.response.use(
     // 如果返回码不是200，则提示错误
     if (res.code !== 200) {
       Message({
-        message: res.msg || '发生错误',
+        message: res.code || '发生错误',
         type: 'error',
         duration: 5 * 1000
       })
