@@ -65,11 +65,27 @@ export const constantRoutes = [
   {
     path: '/qcpj',
     component: Layout,
+    meta: {
+      title: '七彩评价',
+      icon: 'tree'
+    },
+    redirect: '/qcpj/groupProfile',
     children: [{
-      path: 'index',
-      name: 'qcpj',
-      component: () => import('@/views/qcpj/index'),
-      meta: { title: '七彩评价', icon: 'tree' }
+      path: 'groupProfile',
+      component: () => import('@/views/qcpj/groupProfile/index'), // Parent router-view
+      name: 'GroupProfile',
+      meta: { title: '群体画像' },
+      children: [{
+        path: 'teaEvaAvg',
+        meta: { title: '班级评价积分平均值' },
+        component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/index'),
+        children: [{
+          path: 'line',
+          meta: { title: '柱状图' },
+          component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/BarChart')
+        }]
+      }]
+
     }]
   },
 
