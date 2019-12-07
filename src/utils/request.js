@@ -1,5 +1,9 @@
 /* eslint-disable no-unused-vars */
-/** 网络请求与返回数据拦截 */
+/**
+ * axios
+ * 网络请求与返回数据拦截
+ * 拦截后进行参数配置
+ */
 
 import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
@@ -65,7 +69,7 @@ service.interceptors.response.use(
     // 如果返回码不是200，则提示错误
     if (res.code !== 200) {
       Message({
-        message: res.msg || '发生错误',
+        message: res.code || '发生错误',
         type: 'error',
         duration: 5 * 1000
       })
