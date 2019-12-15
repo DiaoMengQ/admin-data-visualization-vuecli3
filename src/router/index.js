@@ -180,7 +180,15 @@ export const constantRoutes = [
       name: 'adminList',
       component: () => import('@/views/adminList/index'),
       meta: { title: '人员管理', icon: 'tree' }
-    }]
+    },
+    {
+      path: 'edit/:id(\\d+)',
+      component: () => import('@/views/adminList/edit'),
+      name: 'EditArticle',
+      meta: { title: '管理账户编辑', noCache: true },
+      hidden: true
+    }
+    ]
   },
 
   {

@@ -23,7 +23,7 @@ import '@/permission' // permission control
  * 你可以执行:mockXHR()
  *
  * 目前MockJs将在生产环境中使用，
- * 请在上线前删除!!!
+ * 需在上线前删除
  */
 // import {
 //   mockXHR
