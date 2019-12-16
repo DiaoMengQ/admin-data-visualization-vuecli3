@@ -1,79 +1,89 @@
 <template>
   <div class="createPost-container">
-    <el-form ref="postForm" :model="postForm" :rules="rules" class="form-container">
-
-      <div :z-index="10" :class-name="'sub-navbar '+postForm.status">
-        <el-button v-loading="loading" style="margin-left: 10px;" type="success">
-          保存
-        </el-button>
-        <el-button v-loading="loading" type="warning">
-          取消
-        </el-button>
-      </div>
-
+    <el-form
+      ref="postForm"
+      label-position="left"
+      :model="postForm"
+      :rules="rules"
+      class="form-container"
+    >
       <div class="createPost-main-container">
+        <!-- 单行 -->
         <el-row>
-          <el-col :span="24">
-            <el-form-item style="margin-bottom: 40px;" prop="title">
-              <el-form-item v-model="postForm.title" :maxlength="100" name="name" required>
-                标题
-              </el-form-item>
+          <div class="postInfo-container">
+            <el-form-item
+              label-width="120px"
+              label="管理员姓名:"
+              class="postInfo-container-item"
+            >
+              <el-input
+                v-model="postForm.author"
+                default-first-option
+                remote
+                placeholder="Search user"
+              >
+              </el-input>
             </el-form-item>
-
-            <div class="postInfo-container">
-              <el-row>
-                <el-col :span="8">
-                  <el-form-item label-width="60px" label="作者:" class="postInfo-container-item">
-                    <el-select v-model="postForm.author" :remote-method="getRemoteUserList" filterable default-first-option remote placeholder="Search user">
-                      <el-option v-for="(item,index) in userListOptions" :key="item+index" :label="item" :value="item" />
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-
-                <el-col :span="10">
-                  <el-form-item label-width="120px" label="发布时间:" class="postInfo-container-item">
-                    <el-date-picker v-model="displayTime" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="Select date and time" />
-                  </el-form-item>
-                </el-col>
-
-                <el-col :span="6">
-                  <el-form-item label-width="90px" label="重要性:" class="postInfo-container-item">
-                    <el-rate
-                      v-model="postForm.importance"
-                      :max="3"
-                      :colors="['#99A9BF', '#F7BA2A', '#FF9900']"
-                      :low-threshold="1"
-                      :high-threshold="3"
-                      style="display:inline-block"
-                    />
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </div>
-          </el-col>
+          </div>
         </el-row>
 
-        <el-form-item style="margin-bottom: 40px;" label-width="70px" label="概要:">
-          <el-input v-model="postForm.content_short" :rows="1" type="textarea" class="article-textarea" autosize placeholder="Please enter the content" />
-          <span v-show="contentShortLength" class="word-counter">{{ contentShortLength }}words</span>
+        <el-row>
+          <el-form-item
+            label-width="120px"
+            label="创建时间:"
+            class="postInfo-container-item"
+          >
+            <el-date-picker
+              v-model="displayTime"
+              type="datetime"
+              format="yyyy-MM-dd HH:mm:ss"
+              placeholder="Select date and time"
+            />
+          </el-form-item>
+        </el-row>
+
+        <el-form-item
+          style="margin-bottom: 40px;"
+          label-width="100px"
+          label="概要:"
+        >
+          <el-input
+            v-model="postForm.content_short"
+            :rows="1"
+            type="textarea"
+            class="article-textarea"
+            autosize
+            placeholder="Please enter the content"
+          />
+          <span v-show="contentShortLength" class="word-counter"
+            >{{ contentShortLength }}个字符</span
+          >
         </el-form-item>
 
+        <el-row class="admin-info-post-controler" type="flex" justify="end">
+          <el-button v-loading="loading" type="primary">
+            保存
+          </el-button>
+          <el-button v-loading="loading" type="primary" plain>
+            取消
+          </el-button>
+        </el-row>
       </div>
     </el-form>
   </div>
 </template>
 
 <script>
-
 const defaultForm = {
-  status: '草稿',
-  title: '', // 文章题目
-  content_short: '', // 文章摘要
-  image_uri: '', // 文章图片
-  display_time: undefined, // 前台展示时间
-  id: undefined,
-  importance: 0
+  userId: '', // 管理员ID
+  userName: '', // 管理员姓名
+  userPhone: '', // 管理员联系电话
+  content_short: '', // 附加信息
+  image_uri: '', // 管理员头像
+  display_time: null // 创建时间
 }
+
+import { getUserInfo } from '@/api/user'
 
 export default {
   name: 'ArticleDetail',
@@ -99,7 +109,6 @@ export default {
     return {
       postForm: Object.assign({}, defaultForm),
       loading: false,
-      userListOptions: [],
       rules: {
         image_uri: [{ validator: validateRequire }],
         title: [{ validator: validateRequire }],
@@ -118,7 +127,7 @@ export default {
       // back end return => "2013-06-25 06:59:25"
       // front end need timestamp => 1372114765000
       get() {
-        return (+new Date(this.postForm.display_time))
+        return +new Date(this.postForm.display_time)
       },
       set(val) {
         this.postForm.display_time = new Date(val)
@@ -131,34 +140,35 @@ export default {
       this.fetchData(id)
     }
 
-    // Why need to make a copy of this.$route here?
-    // Because if you enter this page and quickly switch tag, may be in the execution of the setTagsViewTitle function, this.$route is no longer pointing to the current page
-    // https://github.com/PanJiaChen/vue-element-admin/issues/1221
+    // 为什么要在这里复制this.$route
+    // 因为如果您进入此页并快速切换标记，可能是在执行setTagsViewTitle函数时，this.$route不再指向当前页
     this.tempRoute = Object.assign({}, this.$route)
   },
   methods: {
     fetchData(id) {
       console.log(id)
-      // fetchArticle(id).then(response => {
-      // this.postForm = response.data
-      this.postForm = {}
+      getUserInfo({ userId: id }).then(response => {
+        console.log(response.data)
+        // this.postForm = response.data
+        this.postForm = {}
 
-      // just for test
-      this.postForm.title += `   Article Id:${this.postForm.id}`
-      this.postForm.content_short += `   Article Id:${this.postForm.id}`
+        this.postForm.title += `   Article Id:${this.postForm.id}`
+        this.postForm.content_short += `   Article Id:${this.postForm.id}`
 
-      // // set tagsview title
-      // this.setTagsViewTitle()
+        // // set tagsview title
+        // this.setTagsViewTitle()
 
-      // // set page title
-      // this.setPageTitle()
-      // }).catch(err => {
-      //   console.log(err)
-      // })
+        // // set page title
+        // this.setPageTitle()
+        // }).catch(err => {
+        //   console.log(err)
+      })
     },
     setTagsViewTitle() {
       const title = 'Edit Article'
-      const route = Object.assign({}, this.tempRoute, { title: `${title}-${this.postForm.id}` })
+      const route = Object.assign({}, this.tempRoute, {
+        title: `${title}-${this.postForm.id}`
+      })
       this.$store.dispatch('tagsView/updateVisitedView', route)
     },
     setPageTitle() {
@@ -183,14 +193,8 @@ export default {
           return false
         }
       })
-    },
-
-    getRemoteUserList(query) {
-      // searchUser(query).then(response => {
-      //   if (!response.data.items) return
-      //   this.userListOptions = response.data.items.map(v => v.name)
-      // })
     }
+
   }
 }
 </script>
@@ -203,20 +207,10 @@ export default {
 
   .createPost-main-container {
     padding: 40px 45px 20px 50px;
-
-    .postInfo-container {
-      position: relative;
-      @include clearfix;
-      margin-bottom: 10px;
-
-      .postInfo-container-item {
-        float: left;
-      }
-    }
   }
 
   .word-counter {
-    width: 40px;
+    color: #aaa;
     position: absolute;
     right: 10px;
     top: 0px;

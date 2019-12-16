@@ -185,7 +185,7 @@ export const constantRoutes = [
       path: 'edit/:id(\\d+)',
       component: () => import('@/views/adminList/edit'),
       name: 'EditArticle',
-      meta: { title: '管理账户编辑', noCache: true },
+      meta: { title: '账户信息编辑', noCache: true },
       hidden: true
     }
     ]
