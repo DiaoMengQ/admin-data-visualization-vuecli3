@@ -102,8 +102,8 @@ const actions = {
           commit('SET_ROLES', data['roleType'])
           commit('SET_NAME', data['nickname'])
           commit('SET_USERID', data['userId'])
-          // commit('SET_AVATAR', data['headImg'])
-          commit('SET_AVATAR', 'http://172.20.13.20/default.jpg')
+          commit('SET_AVATAR', data['headImg'])
+          // commit('SET_AVATAR', 'http://172.20.13.20/default.jpg')
 
           resolve()// 注意不能漏掉这句，这是告诉调用该方法的方法此异步方法已完成
         }).catch(error => {

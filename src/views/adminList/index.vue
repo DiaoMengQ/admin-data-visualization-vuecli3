@@ -53,11 +53,16 @@
         align="center"
       >
         <template slot-scope="scope">
-          <el-button type="primary" plain @click="updateAdminAccount(scope.row['userId'])">
+          <router-link :to="'/adminList/edit/'+scope.row['userId']">
+            <el-button type="primary" plain size="small" icon="el-icon-edit">
+              编辑
+            </el-button>
+          </router-link>
+          <!-- <el-button type="primary" plain @click="updateAdminAccount(scope.row['userId'])">
             修改
-          </el-button>
-          <el-button type="danger" plain @click="deleteAdminAccount(scope.row['userId'])">
-            删除
+          </el-button> -->
+          <el-button type="danger" plain @click="frozenAdminAccount(scope.row['userId'])">
+            冻结
           </el-button>
         </template>
       </el-table-column>
@@ -129,7 +134,7 @@ export default {
   },
 
   methods: {
-    deleteAdminAccount(adminID) {
+    frozenAdminAccount(adminID) {
       console.log(adminID)
     },
     updateAdminAccount(adminID) {
