@@ -22,7 +22,7 @@ import ClassPicker from "@/components/class/ClassPicker";
 import { getClassTeaEvaAvg } from "@/api/qcpj";
 
 export default {
-  name: "TeaEvaAvgBarChart",
+  name: "TeaEvaAvgLineChart",
   components: { ClassPicker },
   data() {
     return {
@@ -52,14 +52,14 @@ export default {
         week: this.week
       }).then(res => {
         self.data = JSON.parse(res.data.data.score);
-        self.makeBarChart()
+        self.makeLineChart();
       });
     },
-    makeBarChart() {
-      const barChart = echarts.init(this.$refs.chart);
+    makeLineChart() {
+      const lineChart = echarts.init(this.$refs.chart);
       // 清空echarts画布，避免图像重叠显示
-      barChart.clear();
-      barChart.setOption({
+      lineChart.clear();
+      lineChart.setOption({
         title: { text: `第${this.week}周平均积分` },
         grid: {
           left: "3%",
@@ -69,6 +69,7 @@ export default {
         },
         xAxis: {
           data: this.labels,
+          type: "category",
           axisLabel: {
             inside: false,
             textStyle: {
@@ -84,6 +85,7 @@ export default {
           z: 10
         },
         yAxis: {
+          type: "value",
           axisLine: {
             show: false
           },
@@ -104,19 +106,17 @@ export default {
         ],
         series: [
           {
-            // For shadow
-            type: "bar",
-            itemStyle: {
-              normal: { color: "rgba(0,0,0,0.05)" }
+            type: "line",
+            label: {
+              normal: {
+                show: true,
+                position: "top"
+              }
             },
-            barGap: "-100%",
-            barCategoryGap: "40%",
-            data: this.shadows,
-            animation: false
-          },
-          {
-            type: "bar",
-            itemStyle: {
+            lineStyle: {
+                color: "#2378f7"
+            },
+            areaStyle: {
               normal: {
                 color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                   { offset: 0, color: "#83bff6" },
@@ -130,12 +130,6 @@ export default {
                   { offset: 0.7, color: "#2378f7" },
                   { offset: 1, color: "#83bff6" }
                 ])
-              }
-            },
-            label: {
-              normal: {
-                show: true,
-                position: "top"
               }
             },
             data: this.values
