@@ -80,9 +80,17 @@ export const constantRoutes = [
         meta: { title: '班级评价积分平均值' },
         component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/index'),
         children: [{
-          path: 'line',
+          path: 'bar',
           meta: { title: '柱状图' },
           component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/BarChart')
+        }, {
+          path: 'radar',
+          meta: { title: '雷达图' },
+          component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/RadarChart')
+        }, {
+          path: 'line',
+          meta: { title: '折线图' },
+          component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/LineChart')
         }]
       }]
 

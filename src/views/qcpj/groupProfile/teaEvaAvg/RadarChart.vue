@@ -22,7 +22,7 @@ import ClassPicker from "@/components/class/ClassPicker";
 import { getClassTeaEvaAvg } from "@/api/qcpj";
 
 export default {
-  name: "TeaEvaAvgBarChart",
+  name: "TeaEvaAvgRadarChart",
   components: { ClassPicker },
   data() {
     return {
@@ -36,7 +36,7 @@ export default {
       return Object.keys(this.data);
     },
     values() {
-      return Object.values(this.data).map(num => num.toFixed(2));
+      return Object.values(this.data).map(num => num.toFixed(0));
     },
     shadows() {
       return new Array(this.data.length).fill(500);
@@ -52,93 +52,76 @@ export default {
         week: this.week
       }).then(res => {
         self.data = JSON.parse(res.data.data.score);
-        self.makeBarChart()
+        self.makeRadarChart();
       });
     },
-    makeBarChart() {
-      const barChart = echarts.init(this.$refs.chart);
+    makeRadarChart() {
+      const radarChart = echarts.init(this.$refs.chart);
       // 清空echarts画布，避免图像重叠显示
-      barChart.clear();
-      barChart.setOption({
-        title: { text: `第${this.week}周平均积分` },
-        grid: {
-          left: "3%",
-          right: "4%",
-          bottom: "3%",
-          containLabel: true
+      radarChart.clear();
+      radarChart.setOption({
+        title: {
+          text: "基础雷达图"
         },
-        xAxis: {
-          data: this.labels,
-          axisLabel: {
-            inside: false,
+        radar: {
+          //   shape: "circle",
+          name: {
             textStyle: {
-              color: "#222"
+              color: "#fff",
+              backgroundColor: "#2378f7",
+              borderRadius: 3,
+              padding: [3, 5]
             }
           },
-          axisTick: {
-            show: false
-          },
-          axisLine: {
-            show: false
-          },
-          z: 10
+          indicator: this.labels.map(label => {
+            return {
+              name: label,
+            //   max: 100
+            };
+          })
         },
-        yAxis: {
-          axisLine: {
-            show: false
-          },
-          axisTick: {
-            show: false
-          },
-          axisLabel: {
-            textStyle: {
-              color: "#999"
-            }
-          },
-          max: 100
-        },
-        dataZoom: [
-          {
-            type: "inside"
-          }
-        ],
         series: [
           {
-            // For shadow
-            type: "bar",
-            itemStyle: {
-              normal: { color: "rgba(0,0,0,0.05)" }
-            },
-            barGap: "-100%",
-            barCategoryGap: "40%",
-            data: this.shadows,
-            animation: false
-          },
-          {
-            type: "bar",
-            itemStyle: {
+            name: "当周该班的积分情况",
+            type: "radar",
+            areaStyle: {
               normal: {
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                  { offset: 0, color: "#83bff6" },
-                  { offset: 0.5, color: "#188df0" },
-                  { offset: 1, color: "#188df0" }
-                ])
-              },
-              emphasis: {
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                opacity: 0.9,
+                color: new echarts.graphic.RadialGradient(0, 0, 0, 1, [
                   { offset: 0, color: "#2378f7" },
                   { offset: 0.7, color: "#2378f7" },
                   { offset: 1, color: "#83bff6" }
                 ])
               }
             },
-            label: {
-              normal: {
-                show: true,
-                position: "top"
+            data: [
+              {
+                value: this.values,
+                name: "积分情况",
+                symbolSize: 1,
+                lineStyle: {
+                  normal: {
+                    color: "#2378f7"
+                  }
+                },
+                areaStyle: {
+                  normal: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                      { offset: 0, color: "#83bff6" },
+                      { offset: 0.5, color: "#188df0" },
+                      { offset: 1, color: "#188df0" }
+                    ])
+                  },
+                  emphasis: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                      { offset: 0, color: "#2378f7" },
+                      { offset: 0.7, color: "#2378f7" },
+                      { offset: 1, color: "#83bff6" }
+                    ])
+                  }
+                }
               }
-            },
-            data: this.values
+            ]
           }
         ]
       });
