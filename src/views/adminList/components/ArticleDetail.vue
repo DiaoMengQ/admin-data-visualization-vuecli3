@@ -166,7 +166,7 @@ export default {
       getUserInfo({ userId: id }).then(response => {
         console.log(response.data)
         this.adminInfo = response.data.data
-        // `${XXX.xx}` 与 XXX['xx'] 用法相同 
+        // `${XXX.xx}` 与 XXX['xx'] 用法相同
         console.log(`${this.adminInfo.userId}`)
 
         // this.adminInfo.userId = `${this.adminInfo.id}`
