@@ -1,63 +1,67 @@
 <template>
   <div class="createPost-container">
+    <!-- <input class="input-info" value="111"> -->
+
     <el-form
-      ref="postForm"
+      ref="adminInfo"
       label-position="left"
-      :model="postForm"
+      :model="adminInfo"
       :rules="rules"
       class="form-container"
     >
       <div class="createPost-main-container">
-        <!-- 单行 -->
-        <el-row>
-          <div class="postInfo-container">
+        <!-- row 单行 -->
+        <el-row :gutter="20">
+          <el-col :span="12" class="postInfo-container">
             <el-form-item
               label-width="120px"
               label="管理员姓名:"
               class="postInfo-container-item"
             >
               <el-input
-                v-model="postForm.author"
-                default-first-option
+                v-model="adminInfo.username"
+                readonly
+                class="data-cannot-be-change"
                 remote
-                placeholder="Search user"
-              >
-              </el-input>
+                placeholder="name"
+              />
             </el-form-item>
-          </div>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item
+              label-width="120px"
+              label="创建时间:"
+              class="postInfo-container-item"
+            >
+              <el-input
+                class="data-cannot-be-change"
+                readonly
+                type="datetime"
+                format="yyyy-MM-dd HH:mm:ss"
+                placeholder="time"
+              /> </el-form-item></el-col>
         </el-row>
 
-        <el-row>
-          <el-form-item
-            label-width="120px"
-            label="创建时间:"
-            class="postInfo-container-item"
-          >
-            <el-date-picker
-              v-model="displayTime"
-              type="datetime"
-              format="yyyy-MM-dd HH:mm:ss"
-              placeholder="Select date and time"
-            />
-          </el-form-item>
-        </el-row>
+        <el-row />
 
         <el-form-item
           style="margin-bottom: 40px;"
           label-width="100px"
-          label="概要:"
+          label="描述:"
         >
           <el-input
-            v-model="postForm.content_short"
+            v-model="adminInfo.content_short"
             :rows="1"
             type="textarea"
             class="article-textarea"
             autosize
             placeholder="Please enter the content"
           />
-          <span v-show="contentShortLength" class="word-counter"
-            >{{ contentShortLength }}个字符</span
-          >
+          <span
+            v-show="contentShortLength"
+            class="word-counter"
+          >{{ contentShortLength }}个字符</span>
         </el-form-item>
 
         <el-row class="admin-info-post-controler" type="flex" justify="end">
@@ -74,16 +78,26 @@
 </template>
 
 <script>
-const defaultForm = {
-  userId: '', // 管理员ID
-  userName: '', // 管理员姓名
-  userPhone: '', // 管理员联系电话
-  content_short: '', // 附加信息
-  image_uri: '', // 管理员头像
-  display_time: null // 创建时间
-}
-
 import { getUserInfo } from '@/api/user'
+
+const defaultForm = {
+  // content_short: '', // 附加信息
+  // image_uri: '',
+  // display_time: null,
+
+  nickname: '', // 昵称
+  parentId: -1, // 所属管理员ID
+  userId: -1, // ID
+  username: '', // 账户名（登录名）
+  roleType: '', // 身份级别
+  sex: 0, // 性别
+  tel: 0, // 联系电话
+  headImg: '', // 头像
+  status: '', // 账户状态
+  createTime: '', // 创建时间
+  updateId: '', // 最后一次资料更新时间
+  status: '' // 账户状态
+}
 
 export default {
   name: 'ArticleDetail',
@@ -107,7 +121,7 @@ export default {
       }
     }
     return {
-      postForm: Object.assign({}, defaultForm),
+      adminInfo: Object.assign({}, defaultForm),
       loading: false,
       rules: {
         image_uri: [{ validator: validateRequire }],
@@ -119,20 +133,22 @@ export default {
   },
   computed: {
     contentShortLength() {
-      return this.postForm.content_short.length
-    },
-    displayTime: {
-      // set and get is useful when the data
-      // returned by the back end api is different from the front end
-      // back end return => "2013-06-25 06:59:25"
-      // front end need timestamp => 1372114765000
-      get() {
-        return +new Date(this.postForm.display_time)
-      },
-      set(val) {
-        this.postForm.display_time = new Date(val)
-      }
+      // return this.adminInfo.content_short.length
+      return 1
     }
+    // 当前时间
+    // displayTime: {
+    //   // set and get is useful when the data
+    //   // returned by the back end api is different from the front end
+    //   // back end return => "2013-06-25 06:59:25"
+    //   // front end need timestamp => 1372114765000
+    //   get() {
+    //     return +new Date(this.adminInfo.display_time)
+    //   },
+    //   set(val) {
+    //     this.adminInfo.display_time = new Date(val)
+    //   }
+    // }
   },
   created() {
     if (this.isEdit) {
@@ -149,11 +165,14 @@ export default {
       console.log(id)
       getUserInfo({ userId: id }).then(response => {
         console.log(response.data)
-        // this.postForm = response.data
-        this.postForm = {}
+        this.adminInfo = response.data.data
+        // `${XXX.xx}` 与 XXX['xx'] 用法相同 
+        console.log(`${this.adminInfo.userId}`)
 
-        this.postForm.title += `   Article Id:${this.postForm.id}`
-        this.postForm.content_short += `   Article Id:${this.postForm.id}`
+        // this.adminInfo.userId = `${this.adminInfo.id}`
+
+        this.adminInfo.title += `   Article Id:${this.adminInfo.id}`
+        this.adminInfo.content_short += `   Article Id:${this.adminInfo.id}`
 
         // // set tagsview title
         // this.setTagsViewTitle()
@@ -167,17 +186,17 @@ export default {
     setTagsViewTitle() {
       const title = 'Edit Article'
       const route = Object.assign({}, this.tempRoute, {
-        title: `${title}-${this.postForm.id}`
+        title: `${title}-${this.adminInfo.id}`
       })
       this.$store.dispatch('tagsView/updateVisitedView', route)
     },
     setPageTitle() {
       const title = 'Edit Article'
-      document.title = `${title} - ${this.postForm.id}`
+      document.title = `${title} - ${this.adminInfo.id}`
     },
     submitForm() {
-      console.log(this.postForm)
-      this.$refs.postForm.validate(valid => {
+      console.log(this.adminInfo)
+      this.$refs.adminInfo.validate(valid => {
         if (valid) {
           this.loading = true
           this.$notify({
@@ -186,7 +205,7 @@ export default {
             type: 'success',
             duration: 2000
           })
-          this.postForm.status = 'published'
+          this.adminInfo.status = 'published'
           this.loading = false
         } else {
           console.log('error submit!!')
@@ -194,13 +213,25 @@ export default {
         }
       })
     }
-
   }
 }
 </script>
 
 <style lang="scss" scoped>
 @import "~@/styles/mixin.scss";
+
+/*  因子组件中使用了 Element UI 的标签，vue-loader无法识别 el-input标签
+    通过查看浏览器中页面渲染后的源代码，得知 Element UI 中的
+    <el-input class='class-key'></el-input> 标签渲染为
+    <div class='class-key'> <input /> </div> 的嵌套形式，
+    故此处使用 .class-key > * 的方式进行元素的筛选 */
+/* 解决所引用组件，样式无法覆盖问题 */
+/*  使用 /deep/ 或 >>> 来修改所引用的组件中的样式
+    不需去掉子组件中 scoped ，造成全局样式的改变
+    参考来源：https://zhuanlan.zhihu.com/p/29266022 */
+.createPost-container >>> .data-cannot-be-change > * {
+  border: 0 none;
+}
 
 .createPost-container {
   position: relative;
