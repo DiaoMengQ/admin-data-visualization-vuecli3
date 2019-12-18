@@ -106,12 +106,10 @@ export default {
   },
   mounted() {
     // 获取自身管理级别下管理员列表
-    // console.log(this.$store.state.user['userid'])
     getAdminList({ parentId: this.$store.state.user['userid'] })
       .then(response => {
         this.adminList = response.data
         this.adminList.adminID = response.data['userId']
-        // console.log('index.vue/getAdminList: ', response.data)
       })
       .catch(error => {
         console.log('请求错误 ' + error)
