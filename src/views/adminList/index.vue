@@ -104,18 +104,6 @@ export default {
       listLoading: true
     }
   },
-  // 计算属性
-  computed: {
-    alertInfo: function() {
-      // TODO: 判断用户角色及权限范围并显示对应界面
-      const roleType = this.$store.state.user['roleType']
-      if (roleType.indexOf('SCHOOL_ADMIN') > -1) {
-        return roleType
-      } else {
-        return '无权限'
-      }
-    }
-  },
   mounted() {
     // 获取自身管理级别下管理员列表
     // console.log(this.$store.state.user['userid'])
