@@ -29,19 +29,42 @@
           </el-col>
 
           <el-col :span="12">
+            <el-select v-model="adminInfo.roleType" placeholder="权限级别">
+              <el-option
+                v-for="item in roleTypeOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
+
             <el-form-item
               label-width="120px"
-              label="创建时间:"
+              label="权限级别:"
               class="postInfo-container-item"
             >
               <el-input
-                class="data-cannot-be-change"
-                readonly
-                type="datetime"
-                format="yyyy-MM-dd HH:mm:ss"
-                placeholder="time"
-              /> </el-form-item></el-col>
+                v-model="adminInfo.roleType"
+                placeholder="role"
+              /> </el-form-item
+          ></el-col>
         </el-row>
+
+        <el-form-item
+          label-width="120px"
+          label="创建时间:"
+          class="postInfo-container-item"
+        >
+          <el-input
+            v-model="adminInfo.createTime"
+            class="data-cannot-be-change"
+            readonly
+            type="datetime"
+            format="yyyy-MM-dd HH:mm:ss"
+            placeholder="time"
+          />
+        </el-form-item>
 
         <el-row />
 
@@ -58,14 +81,10 @@
             autosize
             placeholder="Please enter the content"
           />
-          <span
-            v-show="contentShortLength"
-            class="word-counter"
-          >{{ contentShortLength }}个字符</span>
         </el-form-item>
 
         <el-row class="admin-info-post-controler" type="flex" justify="end">
-          <el-button v-loading="loading" type="primary">
+          <el-button v-loading="loading" type="primary" @click="info - changed">
             保存
           </el-button>
           <el-button v-loading="loading" type="primary" plain>
@@ -95,8 +114,7 @@ const defaultForm = {
   headImg: '', // 头像
   status: '', // 账户状态
   createTime: '', // 创建时间
-  updateId: '', // 最后一次资料更新时间
-  status: '' // 账户状态
+  updateId: '' // 最后一次资料更新时间
 }
 
 export default {
@@ -121,6 +139,16 @@ export default {
       }
     }
     return {
+      roleTypeOptions: [
+        {
+          value: 'CITY_ADMIN',
+          label: '市级管理员'
+        },
+        {
+          value: 'SCHOOL_ADMIN',
+          label: '校级管理员'
+        }
+      ],
       adminInfo: Object.assign({}, defaultForm),
       loading: false,
       rules: {
@@ -132,10 +160,6 @@ export default {
     }
   },
   computed: {
-    contentShortLength() {
-      // return this.adminInfo.content_short.length
-      return 1
-    }
     // 当前时间
     // displayTime: {
     //   // set and get is useful when the data
@@ -167,12 +191,10 @@ export default {
         console.log(response.data)
         this.adminInfo = response.data.data
         // `${XXX.xx}` 与 XXX['xx'] 用法相同
-        console.log(`${this.adminInfo.userId}`)
+        // console.log(`${this.adminInfo.userId}`)
 
-        // this.adminInfo.userId = `${this.adminInfo.id}`
-
-        this.adminInfo.title += `   Article Id:${this.adminInfo.id}`
-        this.adminInfo.content_short += `   Article Id:${this.adminInfo.id}`
+        // this.adminInfo.title += `   Article Id:${this.adminInfo.id}`
+        this.adminInfo.content_short = JSON.stringify(this.adminInfo)
 
         // // set tagsview title
         // this.setTagsViewTitle()
@@ -201,7 +223,7 @@ export default {
           this.loading = true
           this.$notify({
             title: '成功',
-            message: '发布文章成功',
+            message: '修改成功',
             type: 'success',
             duration: 2000
           })
@@ -238,13 +260,6 @@ export default {
 
   .createPost-main-container {
     padding: 40px 45px 20px 50px;
-  }
-
-  .word-counter {
-    color: #aaa;
-    position: absolute;
-    right: 10px;
-    top: 0px;
   }
 }
 

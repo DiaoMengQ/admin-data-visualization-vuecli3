@@ -19,11 +19,19 @@ import { Message } from 'element-ui'
 var Md54str = require('crypto-js/md5')
 
 const state = {
-  token: getToken(),
+  createTime: '',
+  updateTime: '',
   userid: '',
-  name: '',
+  username: '',
   avatar: process.env.VUE_APP_BASE_API + '/' + 'default.jpg',
-  roles: []
+  nickname: '',
+  parentId: -1,
+  roles: [],  // TODO: change roles array 2 role string
+  roleTypeLabel: '', // 角色类型对应名称标签
+  sex: -1,
+  status: '',
+  tel: -1,
+  token: getToken()
 }
 
 /**
@@ -169,9 +177,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       getManaRange().then(response => {
         const { data } = response.data
-        // console.log('it\'s action user/getUserManaRange: ', data)
         setUserManaRange(data)
-
         resolve()
       }).catch(error => {
         console.log('请求错误 ' + error)
@@ -183,7 +189,12 @@ const actions = {
 
   getClassList({ commit }, schoolInfo) {
     this.$message('in user modules')
-  }
+  },
+
+  // TODO: 判断用户角色类型标签
+  judgeUserRoleType({ commit }, roleType) { 
+    
+  },
 
 }
 
