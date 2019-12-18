@@ -108,9 +108,9 @@ export default {
   computed: {
     alertInfo: function() {
       // TODO: 判断用户角色及权限范围并显示对应界面
-      const roles = this.$store.state.user['roles']
-      if (roles.indexOf('SCHOOL_ADMIN') > -1) {
-        return roles
+      const roleType = this.$store.state.user['roleType']
+      if (roleType.indexOf('SCHOOL_ADMIN') > -1) {
+        return roleType
       } else {
         return '无权限'
       }

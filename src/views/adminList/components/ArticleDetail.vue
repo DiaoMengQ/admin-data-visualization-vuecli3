@@ -35,8 +35,7 @@
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
-              >
-              </el-option>
+              />
             </el-select>
 
             <el-form-item
@@ -47,8 +46,7 @@
               <el-input
                 v-model="adminInfo.roleType"
                 placeholder="role"
-              /> </el-form-item
-          ></el-col>
+              /> </el-form-item></el-col>
         </el-row>
 
         <el-form-item
@@ -108,7 +106,8 @@ const defaultForm = {
   parentId: -1, // 所属管理员ID
   userId: -1, // ID
   username: '', // 账户名（登录名）
-  roleType: '', // 身份级别
+  roleType: '', // 角色类型代号
+  roleTypeLabel: '', // 角色类型名称标签
   sex: 0, // 性别
   tel: 0, // 联系电话
   headImg: '', // 头像

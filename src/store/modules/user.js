@@ -4,9 +4,9 @@
  * * state 用户类成员变量
  *   - token 用户登录后保存的token
  *   - userid 用户ID
- *   - name 用户名
+ *   - username 用户名
  *   - avatar 用户头像
- *   - roles 用户角色（含多个）
+ *   - roleType 用户角色
  *
  * * Mutations （同步）改变成员变量的方法，以载荷形式分发
  * * Action （异步）改变成员变量的方法，以对象形式分发
@@ -26,7 +26,7 @@ const state = {
   avatar: process.env.VUE_APP_BASE_API + '/' + 'default.jpg',
   nickname: '',
   parentId: -1,
-  roles: [],  // TODO: change roles array 2 role string
+  roleType: '',
   roleTypeLabel: '', // 角色类型对应名称标签
   sex: -1,
   status: '',
@@ -52,8 +52,8 @@ const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
   },
-  SET_NAME: (state, name) => {
-    state.name = name
+  SET_NAME: (state, username) => {
+    state.username = username
   },
   SET_USERID: (state, userid) => {
     state.userid = userid
@@ -61,8 +61,8 @@ const mutations = {
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
   },
-  SET_ROLES: (state, roles) => {
-    state.roles = roles
+  SET_ROLES: (state, roleType) => {
+    state.roleType = roleType
   }
 }
 
@@ -141,7 +141,7 @@ const actions = {
         console.log(data['headImg'])
         if (data['headImg'] !== '') { commit('SET_AVATAR', process.env.VUE_APP_BASE_API + '' + data['headImg']) }
 
-        if (!state.roles || state.roles.length <= 0) {
+        if (!state.roleType || state.roleType.length <= 0) {
           reject('获取用户角色失败: 请重新登录!')
         }
         resolve(data)
@@ -155,7 +155,7 @@ const actions = {
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
       commit('SET_TOKEN', '')
-      commit('SET_ROLES', [])
+      commit('SET_ROLES', '')
       removeToken()
       resetRouter()
       resolve()
@@ -166,7 +166,7 @@ const actions = {
   resetToken({ commit }) {
     return new Promise(resolve => {
       commit('SET_TOKEN', '')
-      commit('SET_ROLES', [])
+      commit('SET_ROLES', '')
       removeToken()
       resolve()
     })
@@ -192,9 +192,9 @@ const actions = {
   },
 
   // TODO: 判断用户角色类型标签
-  judgeUserRoleType({ commit }, roleType) { 
-    
-  },
+  judgeUserRoleType({ commit }, roleType) {
+
+  }
 
 }
 

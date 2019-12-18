@@ -1,9 +1,8 @@
 <template>
   <div class="dashboard-container">
     <!-- 需要获取值的键（相当于ID） -->
-    <div class="dashboard-text">当前用户:  {{ name }}</div>
-    <!-- v-for 中(value,index) in Array -->
-    <div class="dashboard-text">用户身份:  <span v-for="(role,index) in roles" :key="index">{{ role }}</span></div>
+    <div class="dashboard-text">当前用户:  {{ username }}</div>
+    <div class="dashboard-text">用户身份:  <span>{{ roleType }}</span></div>
   </div>
 </template>
 
@@ -27,10 +26,10 @@ export default {
      * 如果所映射的计算属性名称与 state 的子节点名称相同时，还可以更加简化，给 mapGetters 传一个字符串数组：
      */
     ...mapGetters([
-      // 映射 this.name 为 store.state.name
+      // 映射 this.username 为 store.state.username
       // 使用对象展开运算符将此对象混入到外部对象中
-      'name',
-      'roles'
+      'username',
+      'roleType'
     ])
   }
 }
