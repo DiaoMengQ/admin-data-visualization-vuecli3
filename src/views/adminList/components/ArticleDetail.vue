@@ -68,16 +68,15 @@
             <el-form-item label-width="100px" label="性别:" class="postInfo-container-item">
               <!-- el-option 中的 value 会与 el-select 中的 v-model 进行绑定 -->
               <el-select
-                v-model="adminInfo.sexItem"
-                filterable
+                v-model="adminInfo.sexLabel"
                 placeholder="性别"
-                @change="getGender"
+                @change="enderChanged"
               >
                 <el-option
                   v-for="gender in genderOptions"
-                  :key="gender.key"
-                  :label="gender.label"
-                  :value="gender"
+                  :key="gender.genderKey"
+                  :label="gender.genderLabel"
+                  :value="gender.genderLabel"
                 />
               </el-select>
             </el-form-item>
@@ -90,10 +89,10 @@
             >
               <el-select v-model="adminInfo.roleTypeLabel" placeholder="权限级别">
                 <el-option
-                  v-for="(item,itemkey) in roleTypeOptions"
-                  :key="itemkey"
-                  :label="item.label"
-                  :value="item.value"
+                  v-for="role in roleTypeOptions"
+                  :key="role.roleKey"
+                  :label="role.roleLabel"
+                  :value="role.roleLabel"
                 />
               </el-select>
               <!-- <el-input v-model="adminInfo.roleTypeLabel" placeholder="role" /> -->
@@ -156,8 +155,6 @@ import { getUserInfo } from '@/api/user'
 // 此处仅作为结构展示
 // 因为在把对象赋值到 adminInfo 时，会覆盖此处初始化的属性
 const defaultForm = {
-  content_short: '', // 附加信息
-  // image_uri: '',
   // display_time: null,
 
   nickname: '', // 昵称
@@ -166,10 +163,8 @@ const defaultForm = {
   username: '', // 账户名（登录名）
   roleType: '', // 角色类型代号
   roleTypeLabel: '', // 角色类型名称标签
-  sexItem: {
-    sex: 0, // 性别ID
-    sexLabel: '' // 性别标签
-  },
+  sex: 0, // 性别ID
+  sexLabel: '', // 性别标签
   tel: 0, // 联系电话
   headImg: '', // 头像
   status: '', // 账户状态
@@ -212,38 +207,36 @@ export default {
       ],
       genderOptions: [
         {
-          key: 1,
-          label: '男'
+          genderKey: 1,
+          genderLabel: '男'
         },
         {
-          key: 0,
-          label: '女'
+          genderKey: 0,
+          genderLabel: '女'
         }
       ],
       roleTypeOptions: [
         {
-          value: 'CITY_ADMIN',
-          label: '市级管理员'
+          roleKey: 'CITY_ADMIN',
+          roleLabel: '市级管理员'
         },
         {
-          value: 'SCHOOL_ADMIN',
-          label: '校级管理员'
+          roleKey: 'SCHOOL_ADMIN',
+          roleLabel: '校级管理员'
         }
       ],
       adminInfo: Object.assign({}, defaultForm),
       loading: false,
       rules: {
-        image_uri: [{ validator: validateRequire }],
-        content_short: [{ validator: validateRequire }]
       },
       tempRoute: {}
     }
   },
   computed: {
-    // // 用户信息
-    sexItem() {
-      return this.adminInfo.sexItem
-    },
+    // 用户信息
+    // sexLabel() {
+    //   return this.adminInfo.sexLabel
+    // },
     // 当前时间
     displayTime: {
       // set and get is useful when the data
@@ -259,13 +252,16 @@ export default {
     }
   },
   watch: {
-    sexItem(newValue,oldValue) {
-      console.log(
-        '旧： ' + JSON.stringify(oldValue),
-        '\n新： ' +JSON.stringify(newValue) 
-      )
-    },
-    deep:true
+    // sexLabel() {
+    //   console.log(this.adminInfo.sexLabel)
+    // },
+    // sexItem(newValue, oldValue) {
+    //   console.log(
+    //     '旧： ' + oldValue,
+    //     '\n新： ' + newValue
+    //   )
+    // },
+    deep: true
   },
   created() {
     if (this.isEdit) {
@@ -278,21 +274,22 @@ export default {
     this.tempRoute = Object.assign({}, this.$route)
   },
   methods: {
-    // 获取选中的性别
-    getGender(val) {
-      console.log(val)
-      // this.adminInfo.sexLabel = val
+    // 选中性别改变后工作
+    genderChanged(val) {
+      // 必须用 this.$forceUpdate() 重新 render！否则select所选值在界面上不改变
+      this.$forceUpdate()
       // console.log(this.adminInfo.sexLabel)
-      // switch (val) {
-      //   case 1:
-      //     this.adminInfo.sex = 1
-      //     break
-      //   case 0:
-      //     this.adminInfo.sex = 0
-      //     break
-      //   default:
-      //     break
-      // }
+      switch (this.adminInfo.sexLabel) {
+        case '男':
+          this.adminInfo.sex = 1
+          break
+        case '女':
+          this.adminInfo.sex = 0
+          break
+        default:
+          break
+      }
+      // console.log(this.adminInfo.sex)
     },
 
     // 获取管理员信息数据
@@ -301,25 +298,19 @@ export default {
       getUserInfo({ userId: id })
         .then(response => {
           this.adminInfo = response.data.data
-
-          this.adminInfo.sexItem = { sex: response.data.data['sex'], sexLabel: '' }
-          // console.log(JSON.stringify(this.adminInfo.sexItem))
-          // console.log('性别ID\t'+JSON.stringify(this.adminInfo.sexItem['sex']))
-
-          this.adminInfo.content_short = JSON.stringify(this.adminInfo) // just for test
-          // `${XXX.xx}` 与 XXX['xx'] 用法相同
+          // // `${XXX.xx}` 与 XXX['xx'] 用法相同
           // console.log(`${this.adminInfo.userId}`)
 
-          // switch (this.adminInfo.sexItem['sex']) {
-          //   case 1:
-          //     this.adminInfo.sexLabel = '男'
-          //     break
-          //   case 0:
-          //     this.adminInfo.sexLabel = '女'
-          //     break
-          //   default:
-          //     break
-          // }
+          switch (this.adminInfo.sex) {
+            case 1:
+              this.adminInfo.sexLabel = '男'
+              break
+            case 0:
+              this.adminInfo.sexLabel = '女'
+              break
+            default:
+              break
+          }
 
           switch (this.adminInfo.status) {
             case 'blocked':
