@@ -292,6 +292,24 @@ export default {
       // console.log(this.adminInfo.sex)
     },
 
+    // 选中账户状态改变后工作
+    statuChanged(val) {
+      // 必须用 this.$forceUpdate() 重新 render！否则select所选值在界面上不改变
+      this.$forceUpdate()
+      // console.log(this.adminInfo.sexLabel)
+      switch (this.adminInfo.sexLabel) {
+        case '男':
+          this.adminInfo.sex = 1
+          break
+        case '女':
+          this.adminInfo.sex = 0
+          break
+        default:
+          break
+      }
+      // console.log(this.adminInfo.sex)
+    },
+
     // 获取管理员信息数据
     fetchData(id) {
       console.log(id)
