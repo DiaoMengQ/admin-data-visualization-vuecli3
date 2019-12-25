@@ -1,8 +1,8 @@
 {
-  "name": "vuecli4.0-admin-data-visualization",
+  "name": "admin-data-visualization-vuecli3",
   "version": "4.2.1",
   "description": "Data manage and data visualization base on Vue",
-  "author": "Diaomengqi <diaomeowqi@qq.com>",
+  "author": "Diaomengqi <dmq1212@qq.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -22,7 +22,7 @@
     "axios": "0.18.1",
     "crypto-js": "^3.1.9-1",
     "echarts": "^4.5.0",
-    "element-ui": "2.7.2",
+    "element-ui": "^2.13.0",
     "js-cookie": "^2.2.1",
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",

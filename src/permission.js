@@ -1,6 +1,6 @@
 /**
  * 权限控制管理
- * @author 刁梦齐 <diaomeowqi@qq.com>
+ * @author 刁梦齐 <dmq1212@qq.com>
  * @version 0.0.1
  */
 
