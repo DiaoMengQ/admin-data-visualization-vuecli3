@@ -110,8 +110,8 @@ const actions = {
           commit('SET_ROLES', data['roleType'])
           commit('SET_NAME', data['nickname'])
           commit('SET_USERID', data['userId'])
-          commit('SET_AVATAR', data['headImg'])
-          // commit('SET_AVATAR', 'http://172.20.13.20/default.jpg')
+          // commit('SET_AVATAR', data['headImg'])
+          commit('SET_AVATAR', 'http://172.20.13.20/default.jpg')
 
           resolve()// 注意不能漏掉这句，这是告诉调用该方法的方法此异步方法已完成
         }).catch(error => {
@@ -138,8 +138,11 @@ const actions = {
         commit('SET_ROLES', data['roleType'])
         commit('SET_NAME', data['nickname'])
         commit('SET_USERID', data['userId'])
-        console.log(data['headImg'])
-        if (data['headImg'] !== '') { commit('SET_AVATAR', process.env.VUE_APP_BASE_API + '' + data['headImg']) }
+        // console.log(data['headImg'])
+        // if (data['headImg'] !== '') {
+        //   commit('SET_AVATAR', process.env.VUE_APP_BASE_API + '' + data['headImg'])
+        // }
+        commit('SET_AVATAR', 'http://172.20.13.20/default.jpg')
 
         if (!state.roleType || state.roleType.length <= 0) {
           reject('获取用户角色失败: 请重新登录!')

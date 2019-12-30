@@ -13,32 +13,31 @@
         <!-- row 内元素横向排列 -->
         <el-row>
           <!-- 用户信息操作区域 -->
-          <!-- 注意！el-col 中的组件无法获取鼠标的焦点 -->
           <el-col id="admin-info" :xs="24" :sm="16">
-            <el-col :xs="24" :lg="12" :xl="8" class="postInfo-container">
-              <el-form-item label-width="100px" label="管理员ID:" class="postInfo-container-item">
-                <el-input
-                  v-model="adminInfo.userId"
-                  readonly
-                  class="data-cannot-be-change"
-                  remote
-                  placeholder="name"
-                />
-              </el-form-item>
-            </el-col>
-
-            <el-col :xs="24" :lg="12" :xl="8" class="postInfo-container">
-              <el-form-item label-width="100px" label="管理员姓名:" class="postInfo-container-item">
-                <el-input
-                  v-model="adminInfo.username"
-                  readonly
-                  class="data-cannot-be-change"
-                  remote
-                  placeholder="name"
-                />
-              </el-form-item>
-            </el-col>
+            <!-- 不可编辑区域 -->
             <el-row>
+              <el-col :xs="24" :lg="12" :xl="8" class="postInfo-container">
+                <el-form-item label-width="100px" label="管理员ID:" class="postInfo-container-item">
+                  <el-input
+                    v-model="adminInfo.userId"
+                    readonly
+                    class="data-cannot-be-change"
+                    remote
+                  />
+                </el-form-item>
+              </el-col>
+
+              <el-col :xs="24" :lg="12" :xl="8" class="postInfo-container">
+                <el-form-item label-width="100px" label="账户名:" class="postInfo-container-item">
+                  <el-input
+                    v-model="adminInfo.username"
+                    readonly
+                    class="data-cannot-be-change"
+                    remote
+                  />
+                </el-form-item>
+              </el-col>
+
               <el-col :xs="24" :lg="12" :xl="8">
                 <el-form-item label-width="100px" label="创建时间:" class="postInfo-container-item">
                   <el-input
@@ -47,10 +46,10 @@
                     readonly
                     type="datetime"
                     format="yyyy-MM-dd HH:mm:ss"
-                    placeholder="time"
                   />
                 </el-form-item>
               </el-col>
+
               <el-col :xs="24" :lg="12" :xl="8">
                 <el-form-item label-width="100px" label="更新时间:" class="postInfo-container-item">
                   <el-input
@@ -59,61 +58,85 @@
                     readonly
                     type="datetime"
                     format="yyyy-MM-dd HH:mm:ss"
-                    placeholder="time"
+                  />
+                </el-form-item>
+              </el-col>
+
+              <el-col :xs="24" :lg="12" :xl="8">
+                <el-form-item label-width="100px" label="创建者ID:" class="postInfo-container-item">
+                  <el-input
+                    v-model="adminInfo.parentId"
+                    class="data-cannot-be-change"
+                    readonly
+                    type="text"
+                    format="yyyy-MM-dd HH:mm:ss"
                   />
                 </el-form-item>
               </el-col>
             </el-row>
+            <!-- 可编辑区域 -->
+            <el-row>
+              <!-- row 中的组件必须包在 el-col 中，否则会导致 input 和 select 无法获取焦点 -->
+              <el-col :xs="24" :lg="12" :xl="8">
+                <el-form-item label-width="100px" label="昵称:" class="postInfo-container-item">
+                  <el-input
+                    v-model="adminInfo.nickname"
+                    style="width:200px"
+                    type="text"
+                    placeholder="请输入昵称"
+                  />
+                </el-form-item>
+              </el-col>
 
-            <el-form-item label-width="100px" label="性别:" class="postInfo-container-item">
-              <!-- el-option 中的 value 会与 el-select 中的 v-model 进行绑定 -->
-              <el-select
-                v-model="adminInfo.sexLabel"
-                placeholder="性别"
-                @change="enderChanged"
-              >
-                <el-option
-                  v-for="gender in genderOptions"
-                  :key="gender.genderKey"
-                  :label="gender.genderLabel"
-                  :value="gender.genderLabel"
-                />
-              </el-select>
-            </el-form-item>
+              <el-col :xs="24" :lg="12" :xl="8">
+                <el-form-item label-width="100px" label="联系方式:" class="postInfo-container-item">
+                  <el-input v-model="adminInfo.tel" style="width:200px" type="tel" placeholder="请输入联系方式"/>
+                </el-form-item>
+              </el-col>
 
-            <el-form-item
-              :span="12"
-              label-width="100px"
-              label="权限级别:"
-              class="postInfo-container-item"
-            >
-              <el-select v-model="adminInfo.roleTypeLabel" placeholder="权限级别">
-                <el-option
-                  v-for="role in roleTypeOptions"
-                  :key="role.roleKey"
-                  :label="role.roleLabel"
-                  :value="role.roleLabel"
-                />
-              </el-select>
-              <!-- <el-input v-model="adminInfo.roleTypeLabel" placeholder="role" /> -->
-            </el-form-item>
+              <el-col :xs="24" :lg="12" :xl="8">
+                <el-form-item label-width="100px" label="性别:" class="postInfo-container-item">
+                  <!-- el-option 中的 value 会与 el-select 中的 v-model 进行绑定 -->
+                  <el-select v-model="adminInfo.sexLabel" placeholder="性别" @change="genderChanged">
+                    <el-option
+                      v-for="gender in genderOptions"
+                      :key="gender.genderKey"
+                      :label="gender.genderLabel"
+                      :value="gender.genderLabel"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-col>
 
-            <el-form-item
-              :span="12"
-              label-width="100px"
-              label="账户状态:"
-              class="postInfo-container-item"
-            >
-              <el-select v-model="adminInfo.statusLabel" placeholder="状态">
-                <el-option
-                  v-for="item in statusOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </el-form-item>
+              <el-col :xs="24" :lg="12" :xl="8">
+                <el-form-item label-width="100px" label="权限级别:" class="postInfo-container-item">
+                  <el-select v-model="adminInfo.roleTypeLabel" placeholder="权限级别" @change="roleTypeChanged">
+                    <el-option
+                      v-for="role in roleTypeOptions"
+                      :key="role.roleKey"
+                      :label="role.roleLabel"
+                      :value="role.roleLabel"
+                    />
+                  </el-select>
+                  <!-- <el-input v-model="adminInfo.roleTypeLabel" placeholder="role" /> -->
+                </el-form-item>
+              </el-col>
+
+              <el-col :xs="24" :lg="12" :xl="8">
+                <el-form-item :span="12" label-width="100px" label="账户状态:" class="postInfo-container-item">
+                  <el-select v-model="adminInfo.statuLabel" placeholder="状态" @change="statuChanged">
+                    <el-option
+                      v-for="statu in statuOptions"
+                      :key="statu.statuKey"
+                      :label="statu.statuLabel"
+                      :value="statu.statuLabel"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </el-col>
+
           <!-- 用户头像操作区域 -->
           <el-col id="admin-avatar" :xs="24" :sm="6">
             <div class="avatar-img">
@@ -127,17 +150,6 @@
             <el-button v-loading="loading" size="medium" type="primary">选择头像</el-button>
           </el-col>
         </el-row>
-
-        <el-form-item style="margin-bottom: 40px;" label-width="100px" label="描述:">
-          <el-input
-            v-model="adminInfo.content_short"
-            :rows="1"
-            type="textarea"
-            class="article-textarea"
-            autosize
-            placeholder="Please enter the content"
-          />
-        </el-form-item>
 
         <el-row class="admin-info-post-controler" type="flex" justify="end">
           <!-- <el-button v-loading="loading" type="primary" @click="Changed2Save">保存</el-button> -->
@@ -168,13 +180,13 @@ const defaultForm = {
   tel: 0, // 联系电话
   headImg: '', // 头像
   status: '', // 账户状态
-  statusLabel: '', // 账户状态标签
+  statuLabel: '', // 账户状态标签
   createTime: '', // 创建时间
   updateId: '' // 最后一次资料更新时间
 }
 
 export default {
-  name: 'ArticleDetail',
+  name: 'ArticleDetail', 
   // components: {},
   props: {
     isEdit: {
@@ -195,14 +207,14 @@ export default {
       }
     }
     return {
-      statusOptions: [
+      statuOptions: [
         {
-          value: 'blocked',
-          label: '已冻结'
+          statuKey: 'blocked',
+          statuLabel: '已冻结'
         },
         {
-          value: '',
-          label: '正常使用'
+          statuKey: '',
+          statuLabel: '正常使用'
         }
       ],
       genderOptions: [
@@ -227,16 +239,11 @@ export default {
       ],
       adminInfo: Object.assign({}, defaultForm),
       loading: false,
-      rules: {
-      },
+      rules: {},
       tempRoute: {}
     }
   },
   computed: {
-    // 用户信息
-    // sexLabel() {
-    //   return this.adminInfo.sexLabel
-    // },
     // 当前时间
     displayTime: {
       // set and get is useful when the data
@@ -251,18 +258,6 @@ export default {
       }
     }
   },
-  watch: {
-    // sexLabel() {
-    //   console.log(this.adminInfo.sexLabel)
-    // },
-    // sexItem(newValue, oldValue) {
-    //   console.log(
-    //     '旧： ' + oldValue,
-    //     '\n新： ' + newValue
-    //   )
-    // },
-    deep: true
-  },
   created() {
     if (this.isEdit) {
       const id = this.$route.params && this.$route.params.id
@@ -274,7 +269,7 @@ export default {
     this.tempRoute = Object.assign({}, this.$route)
   },
   methods: {
-    // 选中性别改变后工作
+    // 选中性别改变后设定信息
     genderChanged(val) {
       // 必须用 this.$forceUpdate() 重新 render！否则select所选值在界面上不改变
       this.$forceUpdate()
@@ -289,25 +284,41 @@ export default {
         default:
           break
       }
-      // console.log(this.adminInfo.sex)
+      // console.log(this.adminInfo)
     },
 
-    // 选中账户状态改变后工作
+    // 选中账户状态改变后设定信息
     statuChanged(val) {
-      // 必须用 this.$forceUpdate() 重新 render！否则select所选值在界面上不改变
       this.$forceUpdate()
-      // console.log(this.adminInfo.sexLabel)
-      switch (this.adminInfo.sexLabel) {
-        case '男':
-          this.adminInfo.sex = 1
+      switch (this.adminInfo.statuLabel) {
+        case 'blocked':
+          this.adminInfo.statu = '已冻结'
           break
-        case '女':
-          this.adminInfo.sex = 0
+        case '':
+          this.adminInfo.statuLabel = '正常使用'
           break
         default:
           break
       }
-      // console.log(this.adminInfo.sex)
+      console.log(this.adminInfo.status)
+      console.log(this.adminInfo.statuLabel)
+    },
+
+    // 选中账户角色类型改变后设定信息
+    roleTypeChanged(val) {
+      this.$forceUpdate()
+      switch (this.adminInfo.roleTypeLabel) {
+        case 'CITY_ADMIN':
+          this.adminInfo.roleType = '市级管理员'
+          break
+        case 'SCHOOL_ADMIN':
+          this.adminInfo.roleTypeLabel = '校级管理员'
+          break
+        default:
+          break
+      }
+      console.log(this.adminInfo.roleType)
+      console.log(this.adminInfo.roleTypeLabel)
     },
 
     // 获取管理员信息数据
@@ -332,7 +343,10 @@ export default {
 
           switch (this.adminInfo.status) {
             case 'blocked':
-              this.adminInfo.statusLabel = '已冻结'
+              this.adminInfo.statuLabel = '已冻结'
+              break
+            case '':
+              this.adminInfo.statuLabel = '正常使用'
               break
             default:
               '正常使用'
@@ -366,7 +380,7 @@ export default {
             type: 'success',
             duration: 2000
           })
-          this.adminInfo.status = 'published'
+          this.adminInfo.statu = 'published'
           this.loading = false
         } else {
           console.log('error submit!!')
@@ -404,16 +418,6 @@ export default {
 
   .createPost-main-container {
     padding: 40px 45px 20px 50px;
-  }
-}
-
-.article-textarea /deep/ {
-  textarea {
-    padding-right: 40px;
-    resize: none;
-    border: none;
-    border-radius: 0px;
-    border-bottom: 1px solid #bfcbd9;
   }
 }
 </style>
