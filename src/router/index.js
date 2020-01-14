@@ -65,11 +65,35 @@ export const constantRoutes = [
   {
     path: '/qcpj',
     component: Layout,
+    meta: {
+      title: '七彩评价',
+      icon: 'tree'
+    },
+    redirect: '/qcpj/groupProfile',
     children: [{
-      path: 'index',
-      name: 'qcpj',
-      component: () => import('@/views/qcpj/index'),
-      meta: { title: '七彩评价', icon: 'tree' }
+      path: 'groupProfile',
+      component: () => import('@/views/qcpj/groupProfile/index'), // Parent router-view
+      name: 'GroupProfile',
+      meta: { title: '群体画像' },
+      children: [{
+        path: 'teaEvaAvg',
+        meta: { title: '班级评价积分平均值' },
+        component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/index'),
+        children: [{
+          path: 'bar',
+          meta: { title: '柱状图' },
+          component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/BarChart')
+        }, {
+          path: 'radar',
+          meta: { title: '雷达图' },
+          component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/RadarChart')
+        }, {
+          path: 'line',
+          meta: { title: '折线图' },
+          component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/LineChart')
+        }]
+      }]
+
     }]
   },
 
@@ -172,7 +196,15 @@ export const constantRoutes = [
       name: 'adminList',
       component: () => import('@/views/adminList/index'),
       meta: { title: '人员管理', icon: 'tree' }
-    }]
+    },
+    {
+      path: 'edit/:id(\\d+)',
+      component: () => import('@/views/adminList/edit'),
+      name: 'EditArticle',
+      meta: { title: '账户信息编辑', noCache: true },
+      hidden: true
+    }
+    ]
   },
 
   {

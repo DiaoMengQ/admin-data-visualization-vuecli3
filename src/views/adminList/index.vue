@@ -53,11 +53,16 @@
         align="center"
       >
         <template slot-scope="scope">
-          <el-button type="primary" plain @click="updateAdminAccount(scope.row['userId'])">
+          <router-link :to="'/adminList/edit/'+scope.row['userId']">
+            <el-button type="primary" plain size="small" icon="el-icon-edit">
+              编辑
+            </el-button>
+          </router-link>
+          <!-- <el-button type="primary" plain @click="updateAdminAccount(scope.row['userId'])">
             修改
-          </el-button>
-          <el-button type="danger" plain @click="deleteAdminAccount(scope.row['userId'])">
-            删除
+          </el-button> -->
+          <el-button type="danger" plain @click="frozenAdminAccount(scope.row['userId'])">
+            冻结
           </el-button>
         </template>
       </el-table-column>
@@ -99,26 +104,12 @@ export default {
       listLoading: true
     }
   },
-  // 计算属性
-  computed: {
-    alertInfo: function() {
-      // TODO: 判断用户角色及权限范围并显示对应界面
-      const roles = this.$store.state.user['roles']
-      if (roles.indexOf('SCHOOL_ADMIN') > -1) {
-        return roles
-      } else {
-        return '无权限'
-      }
-    }
-  },
   mounted() {
     // 获取自身管理级别下管理员列表
-    // console.log(this.$store.state.user['userid'])
     getAdminList({ parentId: this.$store.state.user['userid'] })
       .then(response => {
         this.adminList = response.data
         this.adminList.adminID = response.data['userId']
-        // console.log('index.vue/getAdminList: ', response.data)
       })
       .catch(error => {
         console.log('请求错误 ' + error)
@@ -129,7 +120,7 @@ export default {
   },
 
   methods: {
-    deleteAdminAccount(adminID) {
+    frozenAdminAccount(adminID) {
       console.log(adminID)
     },
     updateAdminAccount(adminID) {
