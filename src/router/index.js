@@ -127,7 +127,15 @@ export const constantRoutes = [
       {
         path: 'gthx',
         component: () => import('@/components/LJH/gthx'),
-        meta: { title: '个体画像' }
+        meta: {
+          title: '个体画像',
+          keepAlive: true
+        }
+      },
+      {
+        path: 'moreStudent',
+        component: () => import('@/components/LJH/moreStudent'),
+        name: 'MoreStudent'
       }
     ]
   },
