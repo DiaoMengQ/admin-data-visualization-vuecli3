@@ -12,6 +12,7 @@ import { getToken, getUserID } from '@/utils/auth'
 
 import Cookies from 'js-cookie'
 import { type } from 'os'
+import { parse } from 'querystring'
 
 const TokenKey = 'user-token'
 
@@ -73,6 +74,15 @@ service.interceptors.response.use(
         type: 'error',
         duration: 5 * 1000
       })
+
+      // 400: 参数错误
+      if (res.code === 400) {
+        Message({
+          message: '请检查输入的参数',
+          type: 'error',
+          duration: 3 * 1000
+        })
+      }
 
       // 500: 服务器错误
       if (res.code === 500) {

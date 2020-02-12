@@ -28,6 +28,41 @@
               </el-col>
 
               <el-col :xs="24" :lg="12" :xl="8" class="postInfo-container">
+                <el-form-item label-width="100px" label="权限级别:" class="postInfo-container-item">
+                  <el-input
+                    v-model="adminInfo.roleTypeLabel"
+                    readonly
+                    class="data-cannot-be-change"
+                    remote
+                  />
+                </el-form-item>
+              </el-col>
+              <!-- 目前未开放更换权级功能，此处代码以及相关变量为暂存备用
+              <el-col :xs="24" :lg="12" :xl="8">
+                <el-form-item label-width="100px" label="权限级别:" class="postInfo-container-item">
+                  <el-select v-model="adminInfo.roleTypeLabel" placeholder="权限级别" @change="roleTypeChanged">
+                    <el-option
+                      v-for="role in roleTypeOptions"
+                      :key="role.roleKey"
+                      :label="role.roleLabel"
+                      :value="role.roleLabel"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-col> -->
+
+              <el-col :xs="24" :lg="12" :xl="8" class="postInfo-container">
+                <el-form-item label-width="100px" label="账户状态:" class="postInfo-container-item">
+                  <el-input
+                    v-model="adminInfo.statuLabel"
+                    readonly
+                    class="data-cannot-be-change"
+                    remote
+                  />
+                </el-form-item>
+              </el-col>
+
+              <el-col :xs="24" :lg="12" :xl="8" class="postInfo-container">
                 <el-form-item label-width="100px" label="账户名:" class="postInfo-container-item">
                   <el-input
                     v-model="adminInfo.username"
@@ -90,7 +125,7 @@
 
               <el-col :xs="24" :lg="12" :xl="8">
                 <el-form-item label-width="100px" label="联系方式:" class="postInfo-container-item">
-                  <el-input v-model="adminInfo.tel" style="width:200px" type="tel" placeholder="请输入联系方式"/>
+                  <el-input v-model="adminInfo.tel" style="width:200px" type="tel" placeholder="请输入联系方式" />
                 </el-form-item>
               </el-col>
 
@@ -103,33 +138,6 @@
                       :key="gender.genderKey"
                       :label="gender.genderLabel"
                       :value="gender.genderLabel"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-
-              <el-col :xs="24" :lg="12" :xl="8">
-                <el-form-item label-width="100px" label="权限级别:" class="postInfo-container-item">
-                  <el-select v-model="adminInfo.roleTypeLabel" placeholder="权限级别" @change="roleTypeChanged">
-                    <el-option
-                      v-for="role in roleTypeOptions"
-                      :key="role.roleKey"
-                      :label="role.roleLabel"
-                      :value="role.roleLabel"
-                    />
-                  </el-select>
-                  <!-- <el-input v-model="adminInfo.roleTypeLabel" placeholder="role" /> -->
-                </el-form-item>
-              </el-col>
-
-              <el-col :xs="24" :lg="12" :xl="8">
-                <el-form-item :span="12" label-width="100px" label="账户状态:" class="postInfo-container-item">
-                  <el-select v-model="adminInfo.statuLabel" placeholder="状态" @change="statuChanged">
-                    <el-option
-                      v-for="statu in statuOptions"
-                      :key="statu.statuKey"
-                      :label="statu.statuLabel"
-                      :value="statu.statuLabel"
                     />
                   </el-select>
                 </el-form-item>
@@ -147,13 +155,12 @@
                 src="https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png?imageView2/1/w/80/h/80"
               />
             </div>
-            <el-button v-loading="loading" size="medium" type="primary">选择头像</el-button>
+            <el-button v-loading="loading" size="medium" type="primary">上传头像</el-button>
           </el-col>
         </el-row>
 
         <el-row class="admin-info-post-controler" type="flex" justify="end">
-          <!-- <el-button v-loading="loading" type="primary" @click="Changed2Save">保存</el-button> -->
-          <el-button v-loading="loading" type="primary">保存</el-button>
+          <el-button v-loading="loading" type="primary" @click="UpdateAdminInfo">保存</el-button>
           <el-button v-loading="loading" type="primary" plain>取消</el-button>
         </el-row>
       </div>
@@ -162,7 +169,7 @@
 </template>
 
 <script>
-import { getUserInfo } from '@/api/user'
+import { getUserInfo, updateAdminInfo } from '@/api/user'
 
 // 此处仅作为结构展示
 // 因为在把对象赋值到 adminInfo 时，会覆盖此处初始化的属性
@@ -186,7 +193,7 @@ const defaultForm = {
 }
 
 export default {
-  name: 'ArticleDetail', 
+  name: 'ArticleDetail',
   // components: {},
   props: {
     isEdit: {
@@ -195,6 +202,7 @@ export default {
     }
   },
   data() {
+    // eslint-disable-next-line no-unused-vars
     const validateRequire = (rule, value, callback) => {
       if (value === '') {
         this.$message({
@@ -369,18 +377,33 @@ export default {
         })
     },
 
-    submitForm() {
-      console.log(this.adminInfo)
+    // 上传更改后的用户信息
+    UpdateAdminInfo() {
       this.$refs.adminInfo.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$notify({
-            title: '成功',
-            message: '修改成功',
-            type: 'success',
-            duration: 2000
+          const adminInfo2update = {
+            userId: this.adminInfo.userId,
+            nickname: this.adminInfo.nickname,
+            tel: this.adminInfo.tel,
+            sex: this.adminInfo.sex
+          }
+
+          updateAdminInfo(adminInfo2update).then(response => {
+            const data = response['data']
+            console.log(data)
+            this.$notify({
+              title: '成功',
+              message: '修改成功',
+              type: 'success',
+              duration: 2000
+            })
+            // console.log(this.adminInfo)
+          }).catch(error => {
+            console.log('信息上传失败')
+            console.log(error)
           })
-          this.adminInfo.statu = 'published'
+
           this.loading = false
         } else {
           console.log('error submit!!')

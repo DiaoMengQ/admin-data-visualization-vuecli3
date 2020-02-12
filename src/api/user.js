@@ -12,6 +12,10 @@ import request from '@/utils/request'
  * @param {username,password} data
  * @returns
  */
+/*  注意此处传入的参数名称 data
+    要和 request 中 axios 实例中
+    transformRequest属性的方法接收的参数名(此处为data)一致
+ */
 export function req4login(data) {
   return request({
     url: '/user/login',
@@ -64,7 +68,7 @@ export function getAdminList(para) {
 }
 
 /**
- * 删除管理员账户
+ * 冻结管理员账户
  *
  * @export
  * @param {userid} adminId
@@ -78,11 +82,17 @@ export function deleteAdminAccount(adminId) {
   })
 }
 
-// 修改管理员账户信息
-export function updateAdminInfo(adminData) {
+/**
+ * 修改管理员账户信息
+ *
+ * @export
+ * @param {userId,nickname,tel,sex} data
+ * @returns
+ */
+export function updateAdminInfo(data) {
   return request({
-    url: '/user/batchUpdateUserInfo',
-    method: 'POST',
-    adminData
+    url: '/user/updateUserInfo',
+    method: 'post',
+    data
   })
 }
