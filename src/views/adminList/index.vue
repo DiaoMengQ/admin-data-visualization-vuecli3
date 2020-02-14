@@ -6,7 +6,7 @@
 
     <el-table
       v-loading="listLoading"
-      :data="list"
+      :data="adminList"
       element-loading-text="Loading"
       border
       fit
@@ -58,9 +58,6 @@
               编辑
             </el-button>
           </router-link>
-          <!-- <el-button type="primary" plain @click="updateAdminAccount(scope.row['userId'])">
-            修改
-          </el-button> -->
           <el-button type="danger" plain @click="frozenAdminAccount(scope.row['userId'])">
             冻结
           </el-button>
@@ -85,35 +82,15 @@
 </template>
 
 <script>
-import { getAdminList, getUserInfo } from '@/api/user'
+import { getAdminList } from '@/api/user'
 
 export default {
   data() {
     return {
-      adminList: {
-        adminID: '',
-        adminName: '',
-        nickName: '',
-        roleType: '',
-        tel: '',
-        sex: '',
-        parentId: '',
-        creatorID: ''
-      },
+      adminList: [],
       list: null,
       listLoading: true
     }
-  },
-  mounted() {
-    // 获取自身管理级别下管理员列表
-    getAdminList({ parentId: this.$store.state.user['userid'] })
-      .then(response => {
-        this.adminList = response.data
-        this.adminList.adminID = response.data['userId']
-      })
-      .catch(error => {
-        console.log('请求错误 ' + error)
-      })
   },
   created() {
     this.fetchData()
@@ -123,21 +100,17 @@ export default {
     frozenAdminAccount(adminID) {
       console.log(adminID)
     },
-    updateAdminAccount(adminID) {
-      // console.log(adminID)
-
-      getUserInfo({ 'userId': adminID }).then(response => {
-        this.$router.push(``, adminID)
-        console.log(response.data)
-      })
-    },
+    // 拉取数据
     fetchData() {
-      this.listLoading = true
-      getAdminList({ parentId: this.$store.state.user['userid'] }).then(response => {
-        // console.log('index.vue/getAdminList: ', response.data.data)
-        this.list = response.data.data
-        this.listLoading = false
-      })
+      // 获取自身管理级别下管理员列表
+      getAdminList({ parentId: this.$store.state.user['userid'] })
+        .then(response => {
+          this.adminList = response.data.data
+          this.listLoading = false
+        })
+        .catch(error => {
+          console.log('请求错误 ' + error)
+        })
     }
   }
 }
