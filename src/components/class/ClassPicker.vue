@@ -10,7 +10,7 @@
   </div>
 </template>
 <script>
-import { getClassInfo } from '@/api/school'
+import { getClassInfo } from '@/api/qcpj'
 export default {
   name: 'ClassPicker',
   model: {
@@ -74,7 +74,7 @@ export default {
       }).then(res => {
         self.classes = res.data.data
         // 如果班级不为空就帮用户选第一个
-        self.classes.length && (self.classValue = self.classes[0].classId) 
+        self.classes.length && (self.classValue = self.classes[0].classId)
       })
     }
   }

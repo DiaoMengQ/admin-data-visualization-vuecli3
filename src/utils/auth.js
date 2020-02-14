@@ -38,5 +38,3 @@ export function setUserManaRange(permInfo) {
 export function getUserManaRange() {
   return localStorage.getItem(userManaRangeKey)
 }
-
-// 

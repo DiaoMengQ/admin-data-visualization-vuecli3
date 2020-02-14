@@ -60,8 +60,6 @@ export const constantRoutes = [
 
   // *七彩评价相关
   // 页面加载时默认获取市级管理员管辖区域，提供选择学校功能
-  // TODO: 选择学校后同步展示可选年级和班级
-  // TODO: 选择学校后异步展示学生列表
   {
     path: '/qcpj',
     component: Layout,
@@ -70,31 +68,45 @@ export const constantRoutes = [
       icon: 'tree'
     },
     redirect: '/qcpj/groupProfile',
-    children: [{
-      path: 'groupProfile',
-      component: () => import('@/views/qcpj/groupProfile/index'), // Parent router-view
-      name: 'GroupProfile',
-      meta: { title: '群体画像' },
-      children: [{
-        path: 'teaEvaAvg',
-        meta: { title: '班级评价积分平均值' },
-        component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/index'),
+    children: [
+      {
+        path: 'groupProfile',
+        component: () => import('@/views/qcpj/groupProfile/index'), // Parent router-view
+        name: 'GroupProfile',
+        meta: { title: '群体画像' },
         children: [{
-          path: 'bar',
-          meta: { title: '柱状图' },
-          component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/BarChart')
-        }, {
-          path: 'radar',
-          meta: { title: '雷达图' },
-          component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/RadarChart')
-        }, {
-          path: 'line',
-          meta: { title: '折线图' },
-          component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/LineChart')
+          path: 'teaEvaAvg',
+          meta: { title: '班级评价积分平均值' },
+          component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/index'),
+          children: [{
+            path: 'bar',
+            meta: { title: '柱状图' },
+            component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/BarChart')
+          }, {
+            path: 'radar',
+            meta: { title: '雷达图' },
+            component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/RadarChart')
+          }, {
+            path: 'line',
+            meta: { title: '折线图' },
+            component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/LineChart')
+          }]
         }]
-      }]
-
-    }]
+      },
+      {
+        path: 'clusterAnalysis',
+        component: () => import('@/views/qcpj/clusterAnalysis/index'),
+        name: 'ClusterAnalysis',
+        meta: { title: '科目成绩聚类分析' }
+      },
+      {
+        path: 'clusterAnalysis/schoolSearch/:schoolId(\\d+)',
+        component: () => import('@/views/qcpj/clusterAnalysis/schoolSearch'),
+        name: 'schoolSearch',
+        meta: { title: '班级信息检索', noCache: true },
+        hidden: true
+      }
+    ]
   },
 
   // *阅读海洋相关
@@ -207,6 +219,7 @@ export const constantRoutes = [
     ]
   },
 
+  // *备用连接
   {
     path: 'external-link',
     component: Layout,

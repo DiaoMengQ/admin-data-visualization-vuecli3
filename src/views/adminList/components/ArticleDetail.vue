@@ -268,7 +268,9 @@ export default {
   },
   created() {
     if (this.isEdit) {
+      // 接收传入的ID
       const id = this.$route.params && this.$route.params.id
+      // console.log(id)
       this.fetchData(id)
     }
 
@@ -331,7 +333,7 @@ export default {
 
     // 获取管理员信息数据
     fetchData(id) {
-      console.log(id)
+      // console.log(id)
       getUserInfo({ userId: id })
         .then(response => {
           this.adminInfo = response.data.data
