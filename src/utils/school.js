@@ -21,3 +21,9 @@ export function getSchoolId() {
 export function getSchoolName() {
   return localStorage.getItem(SchoolName)
 }
+
+// remove: schoolid & schoolname
+export function removeSchoolVal(schoolInfo) {
+  localStorage.setItem(SchoolId, '')
+  localStorage.setItem(SchoolName, '')
+}

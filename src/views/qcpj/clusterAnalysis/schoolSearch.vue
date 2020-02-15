@@ -23,7 +23,6 @@
       <!-- 学生班级 -->
       班级：
       <!-- <el-select
-        id="Class"
         v-model="stucla"
         name="class"
         clearable
@@ -63,11 +62,10 @@
 </template>
 
 <script>
-/* eslint-disable no-unused-vars */
 import echarts from 'echarts'
 import 'echarts/theme/macarons'
 import { getClassinGrade } from '@/api/qcpj'
-import { getSchoolId, getSchoolName } from '@/utils/school'
+import { getSchoolId, getSchoolName, removeSchoolVal } from '@/utils/school'
 
 export default {
   data() {
@@ -82,7 +80,9 @@ export default {
         { gradeId: 4, gradeName: '四年级' },
         { gradeId: 5, gradeName: '五年级' },
         { gradeId: 6, gradeName: '六年级' }
-      ]
+      ],
+      classId: '',
+      classList: []
     }
   },
   computed: {
@@ -93,20 +93,26 @@ export default {
     gradeId: {
       immediate: true,
       handler(val, old) {
-        console.log('新选中值: ', val, '旧值: ', old)
+        // console.log('新选中值: ', val, '旧值: ', old)
       }
     }
   },
   created() {
     this.schoolId = this.$route.params && this.$route.params.schoolId
     if (this.schoolId === getSchoolId()) {
-      this.schoolName = getSchoolName()
+      if (getSchoolName() && getSchoolName() !== '') {
+        this.schoolName = getSchoolName()
+      } else {
+        console.log('储存所选学校信息出错')
+        removeSchoolVal()
+      }
     }
   },
   mounted() {
   },
   destroyed() {
-    console.log('已销毁')
+    console.log('已销毁学校信息储存')
+    removeSchoolVal()
   },
   methods: {
     // 获取班级信息
