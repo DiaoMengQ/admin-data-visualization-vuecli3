@@ -15,7 +15,7 @@ import Layout from '@/layout'
  *                                如果不始终设置Show，则当项具有多个子路由时，
  *                                它将成为嵌套模式，否则不显示根菜单
  * redirect: noRedirect           如果设置为no redirect，则breadcrumb中不会重定向
- * name:'router-name'             该名称用于 <keep-alive> (must set!!!)
+ * name:'router-name'             该名称用于 <keep-alive> (必须设置!)
  * meta : {
     roles: ['admin','editor']    控制页面角色（可以设置多个角色）
     title: 'title'               侧边栏和面包屑中显示的名称（推荐集）
@@ -103,7 +103,7 @@ export const constantRoutes = [
         path: 'clusterAnalysis/schoolSearch/:schoolId(\\d+)',
         component: () => import('@/views/qcpj/clusterAnalysis/schoolSearch'),
         name: 'schoolSearch',
-        meta: { title: '班级信息检索', noCache: true },
+        meta: { title: '科目成绩聚类分析 - 班级信息检索', noCache: true },
         hidden: true
       }
     ]

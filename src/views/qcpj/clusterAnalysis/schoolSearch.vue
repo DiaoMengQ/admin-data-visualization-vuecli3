@@ -1,30 +1,28 @@
 <template>
   <div id="app">
-    <el-tag>{{ schoolId }}</el-tag>
+    <el-tag>当前所选学校: {{ schoolId }}  {{ schoolName }}</el-tag>
 
     <p>
       <!-- 学生年级 -->
       年级：
       <el-select
-        id="Grade"
-        v-model="stugrade"
+        v-model="gradeId"
         name="grade"
         clearable
         placeholder="请选择年级"
         style="width:150px"
-        @change="GradeChange(stugrade)"
       >
         <el-option
-          v-for="(item,istugrade) in 6"
-          :key="istugrade"
-          :value="item"
-          :label="item+'年级'"
+          v-for="grade in gradeList"
+          :key="grade.gradeId"
+          :value="grade.gradeId"
+          :label="grade.gradeName"
         />
       </el-select>
 
       <!-- 学生班级 -->
       班级：
-      <el-select
+      <!-- <el-select
         id="Class"
         v-model="stucla"
         name="class"
@@ -39,11 +37,11 @@
           :value="claId.classId"
           :label="claId.className"
         />
-      </el-select>
+      </el-select> -->
 
       <!-- 班级学生人数 -->
       班级学生：
-      <el-select
+      <!-- <el-select
         id="Student"
         v-model="stunum"
         name="student"
@@ -58,22 +56,33 @@
           :value="stu.studentId"
           :label="stu.name"
         />
-      </el-select></p>
+      </el-select> -->
+    </p>
 
   </div>
 </template>
 
 <script>
 /* eslint-disable no-unused-vars */
-
 import echarts from 'echarts'
 import 'echarts/theme/macarons'
-import { getClassinGrade, getStuinClass, getStuSemester } from '@/api/qcpj'
+import { getClassinGrade } from '@/api/qcpj'
+import { getSchoolId, getSchoolName } from '@/utils/school'
 
 export default {
   data() {
     return {
-      schoolId: -1
+      schoolId: -1,
+      schoolName: '',
+      gradeId: 1,
+      gradeList: [
+        { gradeId: 1, gradeName: '一年级' },
+        { gradeId: 2, gradeName: '二年级' },
+        { gradeId: 3, gradeName: '三年级' },
+        { gradeId: 4, gradeName: '四年级' },
+        { gradeId: 5, gradeName: '五年级' },
+        { gradeId: 6, gradeName: '六年级' }
+      ]
     }
   },
   computed: {
@@ -81,14 +90,37 @@ export default {
 
   },
   watch: {
+    gradeId: {
+      immediate: true,
+      handler(val, old) {
+        console.log('新选中值: ', val, '旧值: ', old)
+      }
+    }
   },
   created() {
-    const id = this.$route.params && this.$route.params.schoolId
-    console.log(id)
+    this.schoolId = this.$route.params && this.$route.params.schoolId
+    if (this.schoolId === getSchoolId()) {
+      this.schoolName = getSchoolName()
+    }
   },
   mounted() {
   },
+  destroyed() {
+    console.log('已销毁')
+  },
   methods: {
+    // 获取班级信息
+    // async getClassInfo(chosenSch) {
+    //   const reqClassData = {
+    //     startGradeId: this.startGrade,
+    //     endGradeId: this.endGrade,
+    //     schoolId: chosenSch['schoolId']
+    //   }
+    //   var classList = await getClassinGrade(reqClassData)
+    //   console.log(classList)
+
+    //   this.classList = classList
+    // }
   }
 }
 </script>

@@ -46,11 +46,6 @@ const store = new Vuex.Store({
     setStu(state, stu) {
       state.Stu = stu
     }
-    // // 存学校id
-    // set_schoolId (state, schoolId) {
-    //   state.schoolId = schoolId
-    //   localStorage.schoolId = schoolId
-    // }
   },
   actions: {
     commitGrade: ({ commit }, Grade) => commit('setGrade', Grade)

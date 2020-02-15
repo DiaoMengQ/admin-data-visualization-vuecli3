@@ -43,7 +43,7 @@
       <el-table-column min-width="300px" label="学校名称">
         <template slot-scope="scope">
           <router-link :to="'/qcpj/clusterAnalysis/schoolSearch/'+scope.row['schoolId']" class="link-type">
-            <span>{{ scope.row['schoolName'] }}</span>
+            <span @click="saveSchoolInfo(scope.row['schoolId'],scope.row['schoolName'])">{{ scope.row['schoolName'] }}</span>
           </router-link>
         </template>
       </el-table-column>
@@ -69,14 +69,14 @@
 <script>
 // eslint-disable-next-line no-unused-vars
 import { str2obj } from '@/utils/multiple'
-
-import { getAreaInfo, getSchoolInfo, getClassInfo } from '@/api/qcpj'
+import { setSchoolVal } from '@/utils/school'
+import { getAreaInfo, getSchoolInfo } from '@/api/qcpj'
 
 export default {
   data() {
     return {
       ifShowCityList: false, // 是否显示城市列表
-      ifShowSchoolList: true, // 是否显示学校列表
+      ifShowSchoolList: false, // 是否显示学校列表
       listLoading: false, // 是否正在加载学校列表
 
       // 测试值
@@ -152,9 +152,12 @@ export default {
       handler(val, old) {
         // console.log('值已改变')
         // console.log('新选中值: ', val, '旧值: ', old)
-        console.log('省ID: ', this.provinceId)
+        // console.log('省ID: ', this.provinceId)
         if (this.provinceId && this.provinceId !== old) {
-          this.ifShowCityList = true
+          this.ifShowCityList = true // 城市选项复位
+          this.schoolList = [] // 学校列表复位
+          this.ifShowSchoolList = false // 隐藏学校列表
+
           getAreaInfo({ province_id: this.provinceId }).then(response => {
             console.log(response.data['data'])
             this.cityList = response.data['data']
@@ -167,11 +170,16 @@ export default {
     areaCode: {
       immediate: true,
       handler(val, old) {
-        console.log('市ID: ', this.areaCode)
+        // console.log('市ID: ', this.areaCode)
         if (this.areaCode && this.areaCode !== old) {
+          this.ifShowSchoolList = true
+          this.listLoading = true
           getSchoolInfo({ areaCode: this.areaCode }).then(response => {
             // console.log(response.data.data)
             this.schoolList = response.data.data
+            this.listLoading = false
+          }).catch(error => {
+            console.log('请求错误 ' + error)
           })
         }
       }
@@ -210,24 +218,15 @@ export default {
     changeStoreForm() {
       this.changeStoreVisible = false
     },
-
-    // 获取班级信息
-    async getClassInfo(chosenSch) {
-      const reqClassData = {
-        startGradeId: this.startGrade,
-        endGradeId: this.endGrade,
-        schoolId: chosenSch['schoolId']
-      }
-      var classList = await getClassInfo(reqClassData)
-      console.log(classList)
-
-      this.classList = classList
-    },
+    // 取消弹框
     onCancel() {
       this.$message({
         message: 'cancel!',
         type: 'warning'
       })
+    },
+    saveSchoolInfo(id, name) {
+      setSchoolVal({ schoolId: id, schoolName: name })
     }
   }
 }

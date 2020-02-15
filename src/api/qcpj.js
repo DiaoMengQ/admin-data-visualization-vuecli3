@@ -40,21 +40,6 @@ export function getAreaInfo(para) {
 }
 
 /**
- * 请求学校对应年级的班级信息
- *
- * @export
- * @param {schoolId,startGradeId,endGradeId} data
- * @returns
- */
-export function getClassInfo(para) {
-  return request({
-    url: '/qcpj/common/getQcpjClasses',
-    method: 'GET',
-    params: para
-  })
-}
-
-/**
  * 登录,从个人信息中获取七彩评价管辖学校列表
  *
  * @export
@@ -84,7 +69,13 @@ export function getClassTeaEvaAvg(data) {
   })
 }
 
-// 获取该年级中的所有班级
+/**
+ * 请求学校对应年级的班级信息
+ *
+ * @export
+ * @param {schoolId,startGradeId,endGradeId} data
+ * @returns
+ */
 export function getClassinGrade(para) {
   return request({
     url: '/qcpj/common/getQcpjClasses',
