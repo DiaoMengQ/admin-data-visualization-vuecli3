@@ -8,6 +8,20 @@
 import request from '@/utils/request'
 
 /**
+ * 根据 {学校ID} 请求学校信息
+ *
+ * @export
+ * @param {schoolId} para
+ * @returns
+ */
+export function getSchoolSubjects(para) {
+  return request({
+    url: '/qcpj/subject/getSchoolSubjects/' + para,
+    method: 'GET'
+  })
+}
+
+/**
  * 根据 {省份和城市 ID 号} 或 {区域代码} 或 {学校ID} 请求学校信息
  *
  * @export
@@ -43,7 +57,7 @@ export function getAreaInfo(para) {
  * 登录,从个人信息中获取七彩评价管辖学校列表
  *
  * @export
- * @param {areaCode,cityId,provinceId,schoolId} data
+ * @param {} data
  * @returns
  */
 export function getSchoolList(data) {

@@ -97,7 +97,7 @@ export const constantRoutes = [
         path: 'clusterAnalysis',
         component: () => import('@/views/qcpj/clusterAnalysis/index'),
         name: 'ClusterAnalysis',
-        meta: { title: '科目成绩聚类分析' }
+        meta: { title: '创建聚类分析任务' }
       },
       {
         path: 'clusterAnalysis/schoolSearch/:schoolId(\\d+)',
@@ -106,6 +106,32 @@ export const constantRoutes = [
         meta: { title: '科目成绩聚类分析 - 班级信息检索', noCache: true },
         hidden: true
       }
+      // {
+      //   path: 'clusterAnalysis',
+      //   name: 'ClusterAnalysis',
+      //   meta: { title: '科目成绩聚类分析' },
+      //   children: [
+      //     {
+      //       path: 'createTask',
+      //       component: () => import('@/views/qcpj/clusterAnalysis/index'),
+      //       name: 'createTask',
+      //       meta: { title: '备选' }
+      //     },
+      //     {
+      //       path: 'taskList',
+      //       component: () => import('@/views/qcpj/clusterAnalysis/taskList'),
+      //       name: 'taskList',
+      //       meta: { title: '任务列表' }
+      //     },
+      //     {
+      //       path: 'clusterAnalysis/schoolSearch/:schoolId(\\d+)',
+      //       component: () => import('@/views/qcpj/clusterAnalysis/schoolSearch'),
+      //       name: 'schoolSearch',
+      //       meta: { title: '聚类分析 - 班级信息检索', noCache: true },
+      //       hidden: true
+      //     }
+      //   ]
+      // }
     ]
   },
 

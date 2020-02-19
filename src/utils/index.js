@@ -5,7 +5,29 @@
  */
 
 /**
+ * 课程JSON数据转对象
+ *
+ * @export
+ * @param {*} SubjectsJson
+ */
+export function json2Obj(SubjectsJson) {
+  const subjects = []
+  // 创建JSON数组
+  for (var key in SubjectsJson) {
+    // console.log(key)
+    // console.log(SubjectsJson[key])
+    var tempSubj = {}
+    tempSubj['subjectId'] = SubjectsJson[key]
+    tempSubj['subjectLabel'] = key
+    subjects.push(tempSubj)
+  }
+  // console.log(subjects)
+  return subjects
+}
+
+/**
  * 解析时间为字符串
+ *
  * @param {(Object|string|number)} time
  * @param {string} cFormat
  * @returns {string}
@@ -49,6 +71,8 @@ export function parseTime(time, cFormat) {
 }
 
 /**
+ * 格式化时间
+ *
  * @param {number} time
  * @param {string} option
  * @returns {string}
@@ -92,6 +116,8 @@ export function formatTime(time, option) {
 }
 
 /**
+ * 解析链接为对象
+ *
  * @param {string} url
  * @returns {Object}
  */

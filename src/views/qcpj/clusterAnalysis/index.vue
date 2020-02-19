@@ -126,10 +126,7 @@ export default {
       areaCode: null,
       cityList: [],
       schoolId: undefined,
-      schoolList: [],
-      startGrade: 1,
-      endGrade: 6,
-      classList: []
+      schoolList: []
     }
   },
   // 计算属性
@@ -159,7 +156,6 @@ export default {
           this.ifShowSchoolList = false // 隐藏学校列表
 
           getAreaInfo({ province_id: this.provinceId }).then(response => {
-            console.log(response.data['data'])
             this.cityList = response.data['data']
           })
         }
