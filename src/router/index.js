@@ -105,7 +105,7 @@ export const constantRoutes = [
             path: 'taskList',
             component: () => import('@/views/qcpj/clusterAnalysis/taskList'),
             name: 'taskList',
-            meta: { title: '聚类分析任务列表' }
+            meta: { title: '任务列表' }
           },
           {
             path: 'taskDetail/:taskId(\\d+)',
@@ -118,7 +118,7 @@ export const constantRoutes = [
             path: 'createTask',
             component: () => import('@/views/qcpj/clusterAnalysis/taskCreate/index'),
             name: 'createTask',
-            meta: { title: '创建聚类分析任务' }
+            meta: { title: '创建任务' }
           },
           {
             path: 'createTask/info/:schoolId(\\d+)',
