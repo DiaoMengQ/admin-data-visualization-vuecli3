@@ -8,7 +8,22 @@
 import request from '@/utils/request'
 
 /**
- * 根据 {学校ID} 请求学校信息
+ * 创建七彩评价科目K-Means聚类分析任务
+ *
+ * @export
+ * @param {classId,k,subjects,taskName,week,remarks} data
+ * @returns
+ */
+export function createSubjectCluster(data) {
+  return request({
+    url: '/qcpj/subject/createSubjectCluster',
+    method: 'POST',
+    data
+  })
+}
+
+/**
+ * 根据 {学校ID} 请求学校课程
  *
  * @export
  * @param {schoolId} para

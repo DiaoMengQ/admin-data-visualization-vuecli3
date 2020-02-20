@@ -1,26 +1,30 @@
 <template>
   <div id="app-container">
-    <el-tag style="margin:0 0 3em 0">当前所选学校: {{ schoolId }}  {{ schoolName }}</el-tag>
+    <el-row type="flex" class="row-bg" justify="space-around">
+      <el-tag style="margin:0 0 3em 0">当前所选学校: {{ schoolId }}  {{ schoolName }}</el-tag>
+    </el-row>
 
     <el-form
       ref="taskInfo"
+      v-loading="loading"
       label-position="left"
       :model="taskInfo"
       class="form-container"
     >
       <div class="createPost-main-container">
         <!-- row 内元素横向排列 -->
-        <el-row>
+        <el-row type="flex" class="row-bg" justify="space-around">
           <el-col :xs="24" :sm="16">
             <!-- row 中的组件必须包在 el-col 中，否则会导致 input 和 select 无法获取焦点 -->
             <el-row>
               <!-- 聚类分析科目选择 -->
-              <el-col :xs="24" :lg="12" :xl="8">
+              <el-col :xs="24" :lg="24" :xl="24">
                 <el-form-item label-width="150px" label="科目:" class="postInfo-container-item">
                   <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">全选</el-checkbox>
                   <div style="margin: 15px 0;" />
                   <el-checkbox-group v-model="checkedSubjects" @change="handleCheckedSubjectsChange">
-                    <el-checkbox v-for="subj in subjects" :key="subj.subjectId" :label="subj.subjectLabel">{{ subj.subjectLabel }}</el-checkbox>
+                    <!-- 此处的 :label 为传入 checkedSubjects 数组的数据 -->
+                    <el-checkbox v-for="subj in subjects" :key="subj.subjectId" :label="subj">{{ subj.subjectLabel }}</el-checkbox>
                   </el-checkbox-group>
                 </el-form-item>
               </el-col>
@@ -29,6 +33,18 @@
               <el-col :xs="24" :lg="24" :xl="24">
                 <el-form-item label-width="150px" label="任务名称:" class="postInfo-container-item">
                   <el-input v-model="taskInfo.taskName" type="text" placeholder="请输入任务名称" />
+                </el-form-item>
+              </el-col>
+
+              <!-- 任务备注信息 -->
+              <el-col :xs="24" :lg="24" :xl="24">
+                <el-form-item label-width="150px" label="备注信息:" class="postInfo-container-item">
+                  <el-input
+                    v-model="taskInfo.remarks"
+                    type="textarea"
+                    :autosize="{ minRows: 2, maxRows: 4}"
+                    placeholder="请输入备注信息"
+                  />
                 </el-form-item>
               </el-col>
 
@@ -72,6 +88,7 @@
                 </el-form-item>
               </el-col>
 
+              <!-- 聚类样本数 -->
               <el-col :xs="24" :lg="12" :xl="8">
                 <el-form-item label-width="150px" label="聚类样本数(k):" class="postInfo-container-item">
                   <el-select v-model="taskInfo.k" placeholder="请选择聚类样本数">
@@ -102,10 +119,10 @@
           </el-col>
         </el-row>
 
-        <!-- <el-row class="admin-info-post-controler" type="flex" justify="end">
-          <el-button v-loading="loading" type="primary" @click="UpdateTaskInfo">提交</el-button>
-          <el-button v-loading="loading" type="primary" plain>取消</el-button>
-        </el-row> -->
+        <el-row class="admin-info-post-controler" type="flex" justify="end">
+          <el-button type="primary" @click="UpdateTaskInfo">提交</el-button>
+          <el-button type="primary" plain>取消</el-button>
+        </el-row>
       </div>
     </el-form>
   </div>
@@ -114,8 +131,7 @@
 <script>
 import echarts from 'echarts'
 import 'echarts/theme/macarons'
-import { getClassinGrade, getSchoolSubjects } from '@/api/qcpj'
-import { getSchoolId, getSchoolName, removeSchoolVal } from '@/utils/school'
+import { getClassinGrade, getSchoolSubjects, getSchoolInfo, createSubjectCluster } from '@/api/qcpj'
 import { json2Obj } from '@/utils/index'
 
 const GradeL = [
@@ -165,27 +181,30 @@ export default {
       // isIndeterminate 解释: https://element.eleme.cn/#/zh-CN/component/checkbox
       isIndeterminate: false, // 全选项的非全选标识
 
+      loading: false, // 提交行为动态加载标识符
+
       schoolId: -1, // 学校ID
       schoolName: '', // 学校名称
       gradeId: '', // 所选年级代号
       gradeList: GradeL, // 年级可选项
       classList: [], // 班级可选项
-      weekList: WeekL,
-      kList: KL,
+      weekList: WeekL, // 周列表
+      kList: KL, // 可选聚类样本个数
       taskInfo: {
         k: '',
         classId: '',
         week: '',
         taskName: '',
-        subject: []
+        subjects: [],
+        remarks: ''
       }
     }
   },
   computed: {
-    // 将获取到该年级的所有班级放在computed中、做计算属性、当vuex的值发生改变会对应改变
-
+    // 将获取到该年级的所有班级放在computed中,做计算属性,当vuex的值发生改变会对应改变
   },
   watch: {
+    // 监视年级选择行为
     gradeId: {
       immediate: true,
       handler(val, old) {
@@ -196,7 +215,7 @@ export default {
           schoolId: this.schoolId
         }
         getClassinGrade(classReqPara).then(response => {
-          console.log(response.data.data)
+          // console.log(response.data.data)
           this.classList = response.data.data
         })
       }
@@ -204,35 +223,45 @@ export default {
   },
   created() {
     this.schoolId = this.$route.params && this.$route.params.schoolId
-    if (this.schoolId === getSchoolId()) {
-      if (getSchoolName() && getSchoolName() !== '') {
-        this.schoolName = getSchoolName()
-      } else {
-        console.log('储存所选学校信息出错')
-        removeSchoolVal()
-      }
-    }
   },
   mounted() {
+    // 请求学校信息(根据路径中的学校ID请求学校名称)
+    getSchoolInfo({ schoolId: this.schoolId }).then(response => {
+      this.schoolName = response.data.data[0].schoolName
+    })
     // 请求七彩评价课程
     getSchoolSubjects(this.schoolId).then(response => {
       const subList = JSON.parse(response.data.data.subjects)
       subjectOptions = json2Obj(subList)
       this.subjects = subjectOptions
-      console.log(this.subjects)
     })
   },
   destroyed() {
-    // console.log('已销毁学校信息储存')
-    // removeSchoolVal()
+    console.log('当前页已销毁')
   },
   methods: {
     // 提交分析任务
     UpdateTaskInfo() {
+      this.loading = true
+
+      // 将所选科目转换为 ID Array
+      const checkedSubjectsId = []
+      // 参数：value数组中的当前项, index当前项的索引, array原始数组；
+      this.checkedSubjects.forEach((item) => {
+        checkedSubjectsId.push(item['subjectId'])
+      })
+      this.taskInfo.subjects = checkedSubjectsId
+      console.log(this.taskInfo)
+
+      createSubjectCluster(this.taskInfo).then(response => {
+        if (response.data.code === 200) { this.loading = false }
+      }).catch(error => {
+        console.log('创建任务失败')
+        console.log(error)
+      })
     },
 
     // 全选判断
-    // TODO: 全选判断未完成
     handleCheckAllChange(val) {
       this.checkedSubjects = val ? subjectOptions : []
       this.isIndeterminate = false
