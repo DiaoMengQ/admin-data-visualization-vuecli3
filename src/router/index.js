@@ -98,9 +98,22 @@ export const constantRoutes = [
         path: 'clusterAnalysis',
         name: 'ClusterAnalysis',
         component: () => import('@/views/qcpj/clusterAnalysis/index'),
-        redirect: '/qcpj/clusterAnalysis/createTask',
+        redirect: '/qcpj/clusterAnalysis/taskList',
         meta: { title: '科目成绩聚类分析' },
         children: [
+          {
+            path: 'taskList',
+            component: () => import('@/views/qcpj/clusterAnalysis/taskList'),
+            name: 'taskList',
+            meta: { title: '聚类分析任务列表' }
+          },
+          {
+            path: 'taskDetail/:taskId(\\d+)',
+            component: () => import('@/views/qcpj/clusterAnalysis/taskDetail'),
+            name: 'taskDetail',
+            meta: { title: '任务详情' },
+            hidden: true
+          },
           {
             path: 'createTask',
             component: () => import('@/views/qcpj/clusterAnalysis/taskCreate/index'),
@@ -113,14 +126,7 @@ export const constantRoutes = [
             name: 'createTaskInfo',
             meta: { title: '任务编辑', noCache: true },
             hidden: true
-          },
-          {
-            path: 'taskList',
-            component: () => import('@/views/qcpj/clusterAnalysis/taskList'),
-            name: 'taskList',
-            meta: { title: '任务列表' }
           }
-
         ]
       }
     ]

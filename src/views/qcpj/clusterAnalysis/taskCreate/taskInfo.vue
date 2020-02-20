@@ -129,8 +129,6 @@
 </template>
 
 <script>
-import echarts from 'echarts'
-import 'echarts/theme/macarons'
 import { getClassinGrade, getSchoolSubjects, getSchoolInfo, createSubjectCluster } from '@/api/qcpj'
 import { json2Obj } from '@/utils/index'
 
