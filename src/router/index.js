@@ -23,6 +23,7 @@ import Layout from '@/layout'
     breadcrumb: false            如果设置为false，则该项将隐藏在breadcrumb中（默认为true）
     activeMenu: '/example/list'  如果设置路径，侧边栏将突出显示您设置的路径
   }
+ * children: 以“/”开头的嵌套路径会被当作根路径，所以子路由上不用加“/”;在生成路由时，主路由上的path会被自动添加到子路由之前，所以子路由上的path不用在重新声明主路由上的path
  */
 
 /**
@@ -67,7 +68,7 @@ export const constantRoutes = [
       title: '七彩评价',
       icon: 'tree'
     },
-    redirect: '/qcpj/groupProfile',
+    redirect: '/qcpj/groupProfile', // 点击父级目录'七彩评价'的默认路径
     children: [
       {
         path: 'groupProfile',
@@ -95,43 +96,33 @@ export const constantRoutes = [
       },
       {
         path: 'clusterAnalysis',
-        component: () => import('@/views/qcpj/clusterAnalysis/index'),
         name: 'ClusterAnalysis',
-        meta: { title: '创建聚类分析任务' }
-      },
-      {
-        path: 'clusterAnalysis/schoolSearch/:schoolId(\\d+)',
-        component: () => import('@/views/qcpj/clusterAnalysis/schoolSearch'),
-        name: 'schoolSearch',
-        meta: { title: '科目成绩聚类分析 - 班级信息检索', noCache: true },
-        hidden: true
+        component: () => import('@/views/qcpj/clusterAnalysis/index'),
+        redirect: '/qcpj/clusterAnalysis/createTask',
+        meta: { title: '科目成绩聚类分析' },
+        children: [
+          {
+            path: 'createTask',
+            component: () => import('@/views/qcpj/clusterAnalysis/taskCreate/index'),
+            name: 'createTask',
+            meta: { title: '创建聚类分析任务' }
+          },
+          {
+            path: 'createTask/info/:schoolId(\\d+)',
+            component: () => import('@/views/qcpj/clusterAnalysis/taskCreate/taskInfo'),
+            name: 'createTaskInfo',
+            meta: { title: '任务编辑', noCache: true },
+            hidden: true
+          },
+          {
+            path: 'taskList',
+            component: () => import('@/views/qcpj/clusterAnalysis/taskList'),
+            name: 'taskList',
+            meta: { title: '任务列表' }
+          }
+
+        ]
       }
-      // {
-      //   path: 'clusterAnalysis',
-      //   name: 'ClusterAnalysis',
-      //   meta: { title: '科目成绩聚类分析' },
-      //   children: [
-      //     {
-      //       path: 'createTask',
-      //       component: () => import('@/views/qcpj/clusterAnalysis/index'),
-      //       name: 'createTask',
-      //       meta: { title: '备选' }
-      //     },
-      //     {
-      //       path: 'taskList',
-      //       component: () => import('@/views/qcpj/clusterAnalysis/taskList'),
-      //       name: 'taskList',
-      //       meta: { title: '任务列表' }
-      //     },
-      //     {
-      //       path: 'clusterAnalysis/schoolSearch/:schoolId(\\d+)',
-      //       component: () => import('@/views/qcpj/clusterAnalysis/schoolSearch'),
-      //       name: 'schoolSearch',
-      //       meta: { title: '聚类分析 - 班级信息检索', noCache: true },
-      //       hidden: true
-      //     }
-      //   ]
-      // }
     ]
   },
 

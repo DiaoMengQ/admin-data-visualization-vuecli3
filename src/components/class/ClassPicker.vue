@@ -10,7 +10,7 @@
   </div>
 </template>
 <script>
-import { getClassInfo } from '@/api/qcpj'
+import { getClassinGrade } from '@/api/qcpj'
 export default {
   name: 'ClassPicker',
   model: {
@@ -67,7 +67,7 @@ export default {
     // 获取班级列表
     getClassList() {
       const self = this
-      getClassInfo({
+      getClassinGrade({
         schoolId: 4404001,
         startGradeId: this.grades[0],
         endGradeId: this.grades[1]
