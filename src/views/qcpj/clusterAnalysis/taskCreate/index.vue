@@ -42,27 +42,11 @@
       <el-table-column min-width="300px" label="学校名称">
         <template slot-scope="scope">
           <router-link :to="'/qcpj/clusterAnalysis/createTask/info/'+scope.row['schoolId']" class="link-type">
-            <!-- <router-link :to="{ name:'taskInfoCreate', params: scope.row['schoolId'] }" class="link-type"> -->
             <span @click="saveSchoolInfo(scope.row['schoolId'],scope.row['schoolName'])">{{ scope.row['schoolName'] }}</span>
           </router-link>
         </template>
       </el-table-column>
     </el-table>
-
-    <!-- span 设定每个循环样式中的空白 -->
-    <!-- <el-col v-for="(value, key) in schoolList" :key="key" :span="8"> -->
-
-    <!-- <el-col
-      v-for="(school, schoolListkey) in schoolList"
-      :key="schoolListkey"
-      :span="8"
-    >
-      <div style="padding: 0px;">
-        <span>{{ school["schoolName"] }}</span>
-      </div>
-    </el-col>
-    -->
-
   </div>
 </template>
 
