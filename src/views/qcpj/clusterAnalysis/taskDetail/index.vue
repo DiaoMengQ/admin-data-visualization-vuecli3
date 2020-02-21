@@ -8,6 +8,8 @@
 <script>
 import echarts from 'echarts'
 import 'echarts/theme/macarons'
+import { getSubjectClusterDetail } from '@/api/qcpj'
+
 export default {
   data() {
     return {
@@ -18,7 +20,11 @@ export default {
     this.taskId = this.$route.params && this.$route.params.taskId
   },
   mounted() {
-
+    getSubjectClusterDetail(this.taskId).then((result) => {
+      console.log(result.data)
+    }).catch((err) => {
+      console.log(err)
+    })
   }
 }
 </script>

@@ -8,6 +8,20 @@
 import request from '@/utils/request'
 
 /**
+ * 获取七彩评价科目K-Means聚类分析任务详情
+ *
+ * @export
+ * @param {id} para
+ * @returns
+ */
+export function getSubjectClusterDetail(para) {
+  return request({
+    url: '/qcpj/subject/getSubjectClusterDetail/' + para,
+    method: 'GET'
+  })
+}
+
+/**
  * 获取七彩评价科目K-Means聚类分析任务列表
  *
  * @export

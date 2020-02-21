@@ -7,6 +7,7 @@
     <el-form
       ref="taskInfo"
       v-loading="loading"
+      :rules="taskInfoRules"
       label-position="left"
       :model="taskInfo"
       class="form-container"
@@ -17,80 +18,68 @@
           <el-col :xs="24" :sm="16">
             <!-- row 中的组件必须包在 el-col 中，否则会导致 input 和 select 无法获取焦点 -->
             <el-row>
+
+              <!-- 年级 -->
+              <el-col :xs="24" :lg="12" :xl="8">
+                <!-- 要想触发表单判断,此处 prop="B" 的 B 应与 v-model 中 A.B 的一致 -->
+                <el-form-item prop="gradeItem" label-width="150px" label="年级:" class="postInfo-container-item">
+                  <el-select
+                    v-model="taskInfo.gradeItem"
+                    value-key="gradeId"
+                    name="grade"
+                    clearable
+                    placeholder="请选择年级"
+                    style="width:200px"
+                    @change="gradeChange(taskInfo.gradeItem)"
+                  >
+                    <el-option
+                      v-for="grade in gradeList"
+                      :key="grade.gradeId"
+                      :label="grade.gradeName"
+                      :value="grade"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+
+              <!-- 班级 -->
+              <el-col :xs="24" :lg="12" :xl="8">
+                <el-form-item prop="classItem" label-width="150px" label="班级:" class="postInfo-container-item">
+                  <!-- 传一个对象需要添加 value-key 属性,其值为传出对象的其中一个属性 -->
+                  <el-select
+                    v-model="taskInfo.classItem"
+                    value-key="classId"
+                    name="class"
+                    clearable
+                    placeholder="请选择班级"
+                    style="width:200px"
+                    @change="classChange(taskInfo.classItem)"
+                  >
+                    <el-option
+                      v-for="tClass in classList"
+                      :key="tClass.classId"
+                      :label="tClass.className"
+                      :value="tClass"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+
               <!-- 聚类分析科目选择 -->
               <el-col :xs="24" :lg="24" :xl="24">
-                <el-form-item label-width="150px" label="科目:" class="postInfo-container-item">
+                <el-form-item prop="checkedSubjects" label-width="150px" label="科目:" class="postInfo-container-item">
                   <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">全选</el-checkbox>
                   <div style="margin: 15px 0;" />
-                  <el-checkbox-group v-model="checkedSubjects" @change="handleCheckedSubjectsChange">
-                    <!-- 此处的 :label 为传入 checkedSubjects 数组的数据 -->
+                  <el-checkbox-group v-model="taskInfo.checkedSubjects" @change="handleCheckedSubjectsChange(taskInfo.checkedSubjects)">
+                    <!-- 此处的 :label 为传入 taskInfo.checkedSubjects 数组的数据 -->
                     <el-checkbox v-for="subj in subjects" :key="subj.subjectId" :label="subj">{{ subj.subjectLabel }}</el-checkbox>
                   </el-checkbox-group>
                 </el-form-item>
               </el-col>
 
-              <!-- 任务名称 -->
-              <el-col :xs="24" :lg="24" :xl="24">
-                <el-form-item label-width="150px" label="任务名称:" class="postInfo-container-item">
-                  <el-input v-model="taskInfo.taskName" type="text" placeholder="请输入任务名称" />
-                </el-form-item>
-              </el-col>
-
-              <!-- 任务备注信息 -->
-              <el-col :xs="24" :lg="24" :xl="24">
-                <el-form-item label-width="150px" label="备注信息:" class="postInfo-container-item">
-                  <el-input
-                    v-model="taskInfo.remarks"
-                    type="textarea"
-                    :autosize="{ minRows: 2, maxRows: 4}"
-                    placeholder="请输入备注信息"
-                  />
-                </el-form-item>
-              </el-col>
-
-              <!-- 学生年级 -->
-              <el-col :xs="24" :lg="12" :xl="8">
-                <el-form-item label-width="150px" label="年级:" class="postInfo-container-item">
-                  <el-select
-                    v-model="gradeId"
-                    name="grade"
-                    clearable
-                    placeholder="请选择年级"
-                    style="width:150px"
-                  >
-                    <el-option
-                      v-for="grade in gradeList"
-                      :key="grade.gradeId"
-                      :value="grade.gradeId"
-                      :label="grade.gradeName"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-
-              <!-- 学生班级 -->
-              <el-col :xs="24" :lg="12" :xl="8">
-                <el-form-item label-width="150px" label="班级:" class="postInfo-container-item">
-                  <el-select
-                    v-model="taskInfo.classId"
-                    name="class"
-                    clearable
-                    placeholder="请选择班级"
-                    style="width:150px"
-                  >
-                    <el-option
-                      v-for="tClass in classList"
-                      :key="tClass.classId"
-                      :value="tClass.classId"
-                      :label="tClass.className"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-
               <!-- 聚类样本数 -->
               <el-col :xs="24" :lg="12" :xl="8">
-                <el-form-item label-width="150px" label="聚类样本数(k):" class="postInfo-container-item">
+                <el-form-item prop="k" label-width="150px" label="聚类样本数(k):" class="postInfo-container-item">
                   <el-select v-model="taskInfo.k" placeholder="请选择聚类样本数">
                     <el-option
                       v-for="k in kList"
@@ -102,8 +91,9 @@
                 </el-form-item>
               </el-col>
 
+              <!-- 周次 -->
               <el-col :xs="24" :lg="12" :xl="8">
-                <el-form-item label-width="150px" label="至第几周数据:" class="postInfo-container-item">
+                <el-form-item prop="week" label-width="150px" label="至第几周数据:" class="postInfo-container-item">
                   <!-- el-option 中的 value 会与 el-select 中的 v-model 进行绑定 -->
                   <el-select v-model="taskInfo.week" placeholder="请选择周次">
                     <el-option
@@ -115,13 +105,33 @@
                   </el-select>
                 </el-form-item>
               </el-col>
+
+              <!-- 任务名称 -->
+              <el-col :xs="24" :lg="24" :xl="24">
+                <el-form-item prop="taskName" label-width="150px" label="任务名称:" class="postInfo-container-item">
+                  <el-input v-model="taskInfo.taskName" type="text" placeholder="请输入任务名称" />
+                </el-form-item>
+              </el-col>
+
+              <!-- 任务备注信息 -->
+              <el-col :xs="24" :lg="24" :xl="24">
+                <el-form-item label-width="150px" label="备注信息:" class="postInfo-container-item">
+                  <el-input
+                    v-model="taskInfo.remarks"
+                    type="textarea"
+                    :autosize="{ minRows: 2, maxRows: 8}"
+                    placeholder="请输入备注信息"
+                  />
+                </el-form-item>
+              </el-col>
+
             </el-row>
           </el-col>
         </el-row>
 
         <el-row class="admin-info-post-controler" type="flex" justify="end">
-          <el-button type="primary" @click="UpdateTaskInfo">提交</el-button>
-          <el-button type="primary" plain>取消</el-button>
+          <el-button type="primary" plain>清空</el-button>
+          <el-button type="primary" @click="UpdateTaskInfo('taskInfo')">提交</el-button>
         </el-row>
       </div>
     </el-form>
@@ -131,6 +141,7 @@
 <script>
 import { getClassinGrade, getSchoolSubjects, getSchoolInfo, createSubjectCluster } from '@/api/qcpj'
 import { json2Obj } from '@/utils/index'
+import { MessageBox, Message } from 'element-ui'
 
 const GradeL = [
   { gradeId: 1, gradeName: '一年级' },
@@ -172,9 +183,9 @@ let subjectOptions = []
 export default {
   data() {
     return {
-      // 多选项
+      // 课程多选项
       checkAll: false, // 是否全选
-      checkedSubjects: [], // 已选选项
+      // checkedSubjects: [],
       subjects: subjectOptions, // 所有可选项
       // isIndeterminate 解释: https://element.eleme.cn/#/zh-CN/component/checkbox
       isIndeterminate: false, // 全选项的非全选标识
@@ -183,25 +194,82 @@ export default {
 
       schoolId: -1, // 学校ID
       schoolName: '', // 学校名称
+
       gradeId: '', // 所选年级代号
+      gradeLabel: '',
       gradeList: GradeL, // 年级可选项
+
       classList: [], // 班级可选项
+      classLabel: '',
+
       weekList: WeekL, // 周列表
+
       kList: KL, // 可选聚类样本个数
+
       taskInfo: {
-        k: '',
-        classId: '',
-        week: '',
-        taskName: '',
-        subjects: [],
-        remarks: ''
+        k: '', // 聚类样本个数
+        classId: '', // 所选班级ID
+        week: '', // 至第几周数据
+        taskName: '', // 聚类任务名称
+        subjects: '', // 所选科目
+        remarks: ',', // 备注
+        checkedSubjects: []
+      },
+      // 表单验证规则: https://element.eleme.cn/#/zh-CN/component/form
+      taskInfoRules: {
+        taskName: [{ required: true, message: '请输入任务名称', trigger: 'blur' }],
+        gradeItem: [{ required: true, message: '请选择班级相关信息', trigger: 'change' }],
+        classItem: [{ required: true, message: '请选择班级相关信息', trigger: 'change' }],
+        k: [{ required: true, message: '请选择聚类样本数', trigger: 'change' }],
+        checkedSubjects: [{ type: 'array', required: true, message: '请选择需要分析的课程', trigger: 'change' }],
+        week: [{ required: true, message: '请选择需要分析的时间范围', trigger: 'change' }]
+
       }
     }
   },
   computed: {
-    // 将获取到该年级的所有班级放在computed中,做计算属性,当vuex的值发生改变会对应改变
+    taskName: {
+      // getter
+      get: function() {
+        return this.schoolName + ' ' + this.gradeLabel + this.classLabel
+      }
+    },
+    remarks: {
+      get: function() {
+        const tempSubjLabel = []
+        let tempRemark = ''
+
+        if (this.taskInfo.checkedSubjects.length !== 0) {
+          this.taskInfo.checkedSubjects.forEach(element => {
+            tempSubjLabel.push(element.subjectLabel)
+          })
+          tempRemark = tempSubjLabel.toString()
+          console.log(tempRemark)
+        }
+
+        if (this.taskInfo.k !== '' && !isNaN(this.taskInfo.k)) {
+          tempRemark = tempRemark + '\n聚类样本数: ' + this.taskInfo.k
+        }
+        if (this.taskInfo.week !== '' && !isNaN(this.taskInfo.week)) {
+          tempRemark = tempRemark + '\n数据截止至第:' + this.taskInfo.week + '周'
+        }
+        return tempRemark
+      }
+    }
   },
   watch: {
+    taskName: {
+      immediate: true,
+      handler(val, old) {
+        this.taskInfo.taskName = val
+      }
+    },
+    remarks: {
+      immediate: true,
+      handler(val, old) {
+        this.taskInfo.remarks = val
+      }
+    },
     // 监视年级选择行为
     gradeId: {
       immediate: true,
@@ -213,7 +281,6 @@ export default {
           schoolId: this.schoolId
         }
         getClassinGrade(classReqPara).then(response => {
-          // console.log(response.data.data)
           this.classList = response.data.data
         })
       }
@@ -238,30 +305,68 @@ export default {
     console.log('当前页已销毁')
   },
   methods: {
+    // 年级选择变化
+    gradeChange(gra) {
+      this.gradeLabel = gra.gradeName
+      this.gradeId = gra.gradeId
+    },
+    // 班级选择变化
+    classChange(cla) {
+      this.classLabel = cla.className
+      this.taskInfo.classId = cla.classId
+    },
     // 提交分析任务
-    UpdateTaskInfo() {
-      this.loading = true
+    UpdateTaskInfo(taskInfo) {
+      // 表单验证
+      this.$refs[taskInfo].validate((valid) => {
+        if (valid) {
+          // this.loading = true
 
-      // 将所选科目转换为 ID Array
-      const checkedSubjectsId = []
-      // 参数：value数组中的当前项, index当前项的索引, array原始数组；
-      this.checkedSubjects.forEach((item) => {
-        checkedSubjectsId.push(item['subjectId'])
+          // 将所选科目转换为 ID Array
+          let checkedSubjectsId = []
+          // 参数：value数组中的当前项, index当前项的索引, array原始数组；
+          this.taskInfo.checkedSubjects.forEach((item) => {
+            checkedSubjectsId.push(item['subjectId'])
+          })
+          checkedSubjectsId = checkedSubjectsId.join(',')
+          this.taskInfo.subjects = '[' + checkedSubjectsId + ']'
+
+          delete this.taskInfo['checkedSubjects']
+          delete this.taskInfo['classItem']
+          delete this.taskInfo['gradeItem']
+
+          console.log('taskInfo', this.taskInfo)
+        } else {
+          console.log('error submit!!')
+          return false
+        }
       })
-      this.taskInfo.subjects = checkedSubjectsId
-      console.log(this.taskInfo)
 
       createSubjectCluster(this.taskInfo).then(response => {
-        if (response.data.code === 200) { this.loading = false }
+        if (response.data.code === 200) {
+          this.loading = false
+          MessageBox.confirm('任务创建完成，请稍后于任务列表查看！', '已完成', {
+            confirmButtonText: '完成',
+            cancelButtonText: '取消',
+            type: 'success'
+          }).then(() => {
+            this.$router.push('/qcpj/clusterAnalysis/taskList')
+          })
+        }
       }).catch(error => {
-        console.log('创建任务失败')
+        this.loading = false
+        Message({
+          message: '创建任务失败，请重试',
+          type: 'error',
+          duration: 5 * 1000
+        })
         console.log(error)
       })
     },
 
     // 全选判断
     handleCheckAllChange(val) {
-      this.checkedSubjects = val ? subjectOptions : []
+      this.taskInfo.checkedSubjects = val ? subjectOptions : []
       this.isIndeterminate = false
     },
     // 非全选与空选
