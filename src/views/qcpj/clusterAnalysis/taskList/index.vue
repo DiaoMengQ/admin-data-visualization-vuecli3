@@ -24,7 +24,7 @@
       </el-table-column>
 
       <!-- 点击文本跳转编辑 -->
-      <el-table-column prop="taskName" min-width="300px" label="任务名称">
+      <el-table-column prop="taskName" min-width="120px" label="任务名称">
         <template slot-scope="scope">
           <router-link :to="'/qcpj/clusterAnalysis/taskDetail/'+scope.row['id']" class="link-type">
             <span>{{ scope.row['taskName'] }}</span>
@@ -53,7 +53,8 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="备注" width="80">
+      <!-- 备注 -->
+      <el-table-column align="center" label="备注" width="210px">
         <template slot-scope="scope">
           <span>{{ scope.row['remarks'] }}</span>
         </template>
@@ -70,7 +71,7 @@ export default {
     return {
       searchFilter: '', // 搜索过滤器
       listLoading: false,
-      taskList: []
+      taskList: [] // 任务列表
     }
   },
   mounted() {
@@ -78,7 +79,6 @@ export default {
       this.taskList = result.data.data
       this.taskList.curStatusLabel = ''
       this.taskList.forEach(element => {
-        console.log(element.curStatus)
         switch (element.curStatus) {
           case 0:
             element.curStatusLabel = '准备中'

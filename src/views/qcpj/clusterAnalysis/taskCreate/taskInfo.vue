@@ -336,31 +336,31 @@ export default {
           delete this.taskInfo['gradeItem']
 
           console.log('taskInfo', this.taskInfo)
+
+          createSubjectCluster(this.taskInfo).then(response => {
+            if (response.data.code === 200) {
+              this.loading = false
+              MessageBox.confirm('任务创建完成，请稍后于任务列表查看！', '已完成', {
+                confirmButtonText: '完成',
+                cancelButtonText: '取消',
+                type: 'success'
+              }).then(() => {
+                this.$router.push('/qcpj/clusterAnalysis/taskList')
+              })
+            }
+          }).catch(error => {
+            this.loading = false
+            Message({
+              message: '创建任务失败，请重试',
+              type: 'error',
+              duration: 5 * 1000
+            })
+            console.log(error)
+          })
         } else {
           console.log('error submit!!')
           return false
         }
-      })
-
-      createSubjectCluster(this.taskInfo).then(response => {
-        if (response.data.code === 200) {
-          this.loading = false
-          MessageBox.confirm('任务创建完成，请稍后于任务列表查看！', '已完成', {
-            confirmButtonText: '完成',
-            cancelButtonText: '取消',
-            type: 'success'
-          }).then(() => {
-            this.$router.push('/qcpj/clusterAnalysis/taskList')
-          })
-        }
-      }).catch(error => {
-        this.loading = false
-        Message({
-          message: '创建任务失败，请重试',
-          type: 'error',
-          duration: 5 * 1000
-        })
-        console.log(error)
       })
     },
 

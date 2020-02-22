@@ -1,5 +1,5 @@
 /**
- * 工具集
+ * 表单验证规则
  * @author 刁梦齐 <dmq1212@qq.com>
  * @version 0.0.1
  */
@@ -21,14 +21,4 @@ export function isExternal(path) {
 export function validUsername(str) {
   // 这里写用户名判断规则
   return true
-}
-
-/**
- * 字符串转Json对象
- * @export
- * @param {*} str
- * @returns
- */
-export function str2obj(str) {
-  return JSON.parse(str)
 }

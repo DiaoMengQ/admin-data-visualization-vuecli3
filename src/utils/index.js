@@ -5,6 +5,40 @@
  */
 
 /**
+ * json数组的字符串转json数组
+ *
+ * @export
+ * @param {*} str
+ */
+export function str2json(str) {
+  str = '{' + str + '}'
+  return JSON.parse(str)
+}
+/**
+ * 字符转数字,用于map方法的批量转换
+ *
+ * @export
+ * @param {*} str
+ */
+export function str2num(str) {
+  return parseInt(str)
+}
+
+/**
+ * 聚类分析任务详情对 taskDetail.handleData 字符串数据的处理
+ * @export
+ * @param {*} hData
+ * @returns
+ */
+export function handleData2arr(hData) {
+  hData = hData.split(',')
+  for (let i = 0; i < hData.length; i++) {
+    hData[i] = parseInt(hData[i])
+  }
+  return hData
+}
+
+/**
  * 课程JSON数据转对象
  *
  * @export
