@@ -119,7 +119,7 @@ export default {
         ],
         series: [
           {
-            name: '女性',
+            name: '女性', // 应与 legend.data 的其中一项一致
             type: 'scatter',
             data: [[161.2, 51.6], [167.5, 59.0], [159.5, 49.2], [157.0, 63.0], [155.8, 53.6],
               [170.0, 59.0], [159.1, 47.6], [166.0, 69.8], [176.2, 66.8], [160.2, 75.2],
@@ -305,6 +305,7 @@ export default {
 
     // this.taskDetailInit()
     this.DataHandler()
+    this.chartOptionAssignment()
 
     // 绘制图表
     if (this.option && typeof this.option === 'object') {
@@ -312,7 +313,9 @@ export default {
     }
   },
   methods: {
+    // 获取任务详情数据
     taskDetailInit() {
+      // eslint-disable-next-line no-unused-vars
       const tID = 280357898402398208
       // getSubjectClusterDetail(tID).then((result) => {
       getSubjectClusterDetail(this.taskId).then((result) => {
@@ -359,6 +362,146 @@ export default {
       sl = sl.split('},{')
       sl = sl.map(str2json)
       this.taskDetail.studentList = sl
+    },
+    // 将数据赋给chart option
+    chartOptionAssignment() {
+      const tempTypes = [] // 聚类类型
+      const typePos = new Array(this.taskDetail.k) // 每种类型的学生在数组中的位置
+      const Series_sum = new Array(this.taskDetail.k)
+      const Series_stu = new Array(this.taskDetail.k)
+
+      // 数据初始化
+      for (let i = 0; i < this.taskDetail.k; i++) {
+        tempTypes.push(i.toString())
+        typePos[i] = []
+        Series_sum[i] = []
+        Series_stu[i] = []
+      }
+      // 类型定位
+      this.taskDetail.resultData.forEach(function(value, key) {
+        typePos[value].push(key)
+      })
+      // 根据定位给原始数据和学生列表分类
+      typePos.forEach((pos, posKey) => {
+        pos.forEach((value, key) => {
+          Series_sum[posKey].push(this.taskDetail.handleData[value])
+          Series_stu[posKey].push(this.taskDetail.studentList[value])
+        })
+      })
+      // console.log(Series_sum)
+      // console.log(Series_stu)
+
+      const Series0 = {
+        name: '0', // 应与 legend.data 的其中一项一致
+        type: 'scatter',
+        data: Series_sum[0],
+        markArea: {
+          silent: true,
+          itemStyle: {
+            color: 'transparent',
+            borderWidth: 1,
+            borderType: 'dashed'
+          },
+          data: [[{
+            name: 'Level 0 分布区间',
+            xAxis: 'min',
+            yAxis: 'min'
+          }, {
+            xAxis: 'max',
+            yAxis: 'max'
+          }]]
+        },
+        markPoint: {
+          data: [
+            { type: 'max', name: '最大值' },
+            { type: 'min', name: '最小值' }
+          ]
+        },
+        markLine: {
+          lineStyle: {
+            type: 'solid'
+          },
+          data: [
+            { type: 'average', name: '平均值' }
+          ]
+        }
+      }
+      const Series1 = {
+        name: '1', // 应与 legend.data 的其中一项一致
+        type: 'scatter',
+        data: Series_sum[1],
+        markArea: {
+          silent: true,
+          itemStyle: {
+            color: 'transparent',
+            borderWidth: 1,
+            borderType: 'dashed'
+          },
+          data: [[{
+            name: 'Level 0 分布区间',
+            xAxis: 'min',
+            yAxis: 'min'
+          }, {
+            xAxis: 'max',
+            yAxis: 'max'
+          }]]
+        },
+        markPoint: {
+          data: [
+            { type: 'max', name: '最大值' },
+            { type: 'min', name: '最小值' }
+          ]
+        },
+        markLine: {
+          lineStyle: {
+            type: 'solid'
+          },
+          data: [
+            { type: 'average', name: '平均值' }
+          ]
+        }
+      }
+      const Series2 = {
+        name: '2', // 应与 legend.data 的其中一项一致
+        type: 'scatter',
+        data: Series_sum[2],
+        markArea: {
+          silent: true,
+          itemStyle: {
+            color: 'transparent',
+            borderWidth: 1,
+            borderType: 'dashed'
+          },
+          data: [[{
+            name: 'Level 0 分布区间',
+            xAxis: 'min',
+            yAxis: 'min'
+          }, {
+            xAxis: 'max',
+            yAxis: 'max'
+          }]]
+        },
+        markPoint: {
+          data: [
+            { type: 'max', name: '最大值' },
+            { type: 'min', name: '最小值' }
+          ]
+        },
+        markLine: {
+          lineStyle: {
+            type: 'solid'
+          },
+          data: [
+            { type: 'average', name: '平均值' }
+          ]
+        }
+      }
+
+      this.option.legend.data = tempTypes
+      this.option.series = []
+      this.option.series.push(Series0)
+      this.option.series.push(Series1)
+      this.option.series.push(Series2)
     }
   }
 }
