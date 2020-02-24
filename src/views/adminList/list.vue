@@ -76,11 +76,11 @@
       >
         <template slot-scope="scope">
           <router-link :to="'/administration/adminEdit/'+scope.row['userId']">
-            <el-button type="primary" plain>
+            <el-button v-show="scope.row['isShowManaBtn']" type="primary" plain>
               编辑
             </el-button>
           </router-link>
-          <el-button type="danger" plain @click="frozenAdminAccount(scope.row['userId'])">
+          <el-button v-show="scope.row['isShowManaBtn']" type="danger" plain @click="frozenAdminAccount(scope.row['userId'])">
             冻结
           </el-button>
         </template>
@@ -108,6 +108,7 @@ export default {
   },
 
   methods: {
+    // 用户权限级别标签过滤器
     filterRoleTypeLabel(value, row) {
       return row.roleTypeLabel === value
     },
@@ -121,8 +122,17 @@ export default {
       getAdminList({ parentId: this.$store.state.user['userid'] })
         .then(response => {
           this.adminList = response.data.data
+          console.log(this.adminList)
           this.listLoading = false
+
+          // 判断是否允许现实操作按钮
           for (let i = 0; i < this.adminList.length; i++) {
+            if (this.adminList[i].status === 'blocked') {
+              this.adminList[i].isShowManaBtn = false
+            } else {
+              this.adminList[i].isShowManaBtn = true
+            }
+
             switch (this.adminList[i].roleType) {
               case 'SUPER_ADMIN':
                 this.adminList[i].roleTypeLabel = '最高权限'
@@ -138,7 +148,6 @@ export default {
                 break
             }
           }
-          console.log(this.adminList)
         })
         .catch(error => {
           console.log('请求错误 ' + error)

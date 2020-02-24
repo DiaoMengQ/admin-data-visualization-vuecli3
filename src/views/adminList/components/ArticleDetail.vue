@@ -172,6 +172,7 @@
 
 <script>
 import { getUserInfo, updateAdminInfo } from '@/api/user'
+import { Message } from 'element-ui'
 
 // 此处仅作为结构展示
 // 因为在把对象赋值到 adminInfo 时，会覆盖此处初始化的属性
@@ -312,8 +313,8 @@ export default {
         default:
           break
       }
-      console.log(this.adminInfo.status)
-      console.log(this.adminInfo.statuLabel)
+      // console.log(this.adminInfo.status)
+      // console.log(this.adminInfo.statuLabel)
     },
 
     // 选中账户角色类型改变后设定信息
@@ -329,8 +330,8 @@ export default {
         default:
           break
       }
-      console.log(this.adminInfo.roleType)
-      console.log(this.adminInfo.roleTypeLabel)
+      // console.log(this.adminInfo.roleType)
+      // console.log(this.adminInfo.roleTypeLabel)
     },
 
     // 获取管理员信息数据
@@ -383,37 +384,46 @@ export default {
 
     // 上传更改后的用户信息
     UpdateAdminInfo() {
-      this.$refs.adminInfo.validate(valid => {
-        if (valid) {
-          this.loading = true
-          const adminInfo2update = {
-            userId: this.adminInfo.userId,
-            nickname: this.adminInfo.nickname,
-            tel: this.adminInfo.tel,
-            sex: this.adminInfo.sex
-          }
+      // 判断账户是否冻结
+      if (this.adminInfo.status === 'blocked') {
+        Message({
+          message: '该账户已冻结, 无法修改信息!',
+          type: 'error',
+          duration: 3 * 1000
+        })
+      } else {
+        this.$refs.adminInfo.validate(valid => {
+          if (valid) {
+            this.loading = true
+            const adminInfo2update = {
+              userId: this.adminInfo.userId,
+              nickname: this.adminInfo.nickname,
+              tel: this.adminInfo.tel,
+              sex: this.adminInfo.sex
+            }
 
-          updateAdminInfo(adminInfo2update).then(response => {
-            const data = response['data']
-            console.log(data)
-            this.$notify({
-              title: '成功',
-              message: '修改成功',
-              type: 'success',
-              duration: 2000
+            updateAdminInfo(adminInfo2update).then(response => {
+              const data = response['data']
+              console.log(data)
+              this.$notify({
+                title: '成功',
+                message: '修改成功',
+                type: 'success',
+                duration: 2000
+              })
+              // console.log(this.adminInfo)
+            }).catch(error => {
+              console.log('信息上传失败')
+              console.log(error)
             })
-            // console.log(this.adminInfo)
-          }).catch(error => {
-            console.log('信息上传失败')
-            console.log(error)
-          })
 
-          this.loading = false
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
+            this.loading = false
+          } else {
+            console.log('error submit!!')
+            return false
+          }
+        })
+      }
     }
   }
 }
