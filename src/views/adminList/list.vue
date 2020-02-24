@@ -19,14 +19,24 @@
     >
       <el-table-column label="ID" align="center">
         <template slot-scope="scope">
-          {{ scope.row['userId'] }}
+          <router-link :to="'/administration/adminEdit/'+scope.row['userId']">
+            {{ scope.row['userId'] }}
+          </router-link>
         </template>
       </el-table-column>
 
       <el-table-column prop="username" label="登录名" align="center">
         <!-- {{ adminList.username }} -->
         <template slot-scope="scope">
-          {{ scope.row['username'] }}
+          <router-link :to="'/administration/adminEdit/'+scope.row['userId']">
+            {{ scope.row['username'] }}
+          </router-link>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="昵称" align="center">
+        <template slot-scope="scope">
+          {{ scope.row['nickname'] }}
         </template>
       </el-table-column>
 
@@ -36,16 +46,22 @@
         prop="roleTypeLabel"
         label="权限范围"
         align="center"
+        min-width="100px"
       >
         <template slot-scope="scope">
           <span>{{ scope.row['roleTypeLabel'] }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="创建者ID" align="center">
-        <!-- {{ adminList.creatorID }} -->
+      <el-table-column
+        :filters="[{ text: '已冻结', value: '已冻结' }, { text: '正常使用', value: '正常使用' }]"
+        :filter-method="filterStatueLabel"
+        prop="statusLabel"
+        label="账户状态"
+        align="center"
+      >
         <template slot-scope="scope">
-          {{ scope.row['parentId'] }}
+          {{ scope.row['statusLabel'] }}
         </template>
       </el-table-column>
 
@@ -76,8 +92,8 @@
       >
         <template slot-scope="scope">
           <router-link :to="'/administration/adminEdit/'+scope.row['userId']">
-            <el-button v-show="scope.row['isShowManaBtn']" type="primary" plain>
-              编辑
+            <el-button type="primary" plain>
+              查看
             </el-button>
           </router-link>
           <el-button v-show="scope.row['isShowManaBtn']" type="danger" plain @click="frozenAdminAccount(scope.row['userId'])">
@@ -108,7 +124,11 @@ export default {
   },
 
   methods: {
-    // 用户权限级别标签过滤器
+    // 表单账户状态标签过滤器
+    filterStatueLabel(value, row) {
+      return row.statusLabel === value
+    },
+    // 表单账户权限级别标签过滤器
     filterRoleTypeLabel(value, row) {
       return row.roleTypeLabel === value
     },
@@ -128,8 +148,10 @@ export default {
           // 判断是否允许现实操作按钮
           for (let i = 0; i < this.adminList.length; i++) {
             if (this.adminList[i].status === 'blocked') {
+              this.adminList[i].statusLabel = '已冻结'
               this.adminList[i].isShowManaBtn = false
             } else {
+              this.adminList[i].statusLabel = '正常使用'
               this.adminList[i].isShowManaBtn = true
             }
 

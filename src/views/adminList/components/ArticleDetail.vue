@@ -303,18 +303,11 @@ export default {
     // 选中账户状态改变后设定信息
     statuChanged(val) {
       this.$forceUpdate()
-      switch (this.adminInfo.statuLabel) {
-        case 'blocked':
-          this.adminInfo.statu = '已冻结'
-          break
-        case '':
-          this.adminInfo.statuLabel = '正常使用'
-          break
-        default:
-          break
+      if (this.adminInfo.statu === 'blocked') {
+        this.adminInfo.statuLabel = '已冻结'
+      } else {
+        this.adminInfo.statuLabel = '正常使用'
       }
-      // console.log(this.adminInfo.status)
-      // console.log(this.adminInfo.statuLabel)
     },
 
     // 选中账户角色类型改变后设定信息
@@ -354,16 +347,10 @@ export default {
               break
           }
 
-          switch (this.adminInfo.status) {
-            case 'blocked':
-              this.adminInfo.statuLabel = '已冻结'
-              break
-            case '':
-              this.adminInfo.statuLabel = '正常使用'
-              break
-            default:
-              '正常使用'
-              break
+          if (this.adminInfo.statu === 'blocked') {
+            this.adminInfo.statuLabel = '已冻结'
+          } else {
+            this.adminInfo.statuLabel = '正常使用'
           }
 
           switch (this.adminInfo.roleType) {
