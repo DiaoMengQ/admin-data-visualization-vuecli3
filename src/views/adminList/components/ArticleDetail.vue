@@ -1,7 +1,5 @@
 <template>
   <div class="createPost-container">
-    <!-- <input class="input-info" value="111"> -->
-
     <el-form
       ref="adminInfo"
       label-position="left"
@@ -148,12 +146,15 @@
           <!-- 用户头像操作区域 -->
           <el-col id="admin-avatar" :xs="24" :sm="6">
             <div class="avatar-img">
+              <!-- 若头像不显示,请使用 npm i element-ui -S 重新安装 -->
               <!-- <img src="https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png?imageView2/1/w/80/h/80"> -->
               <el-avatar
                 shape="square"
                 :size="100"
                 src="https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png?imageView2/1/w/80/h/80"
-              />
+              >
+                <img src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png">
+              </el-avatar>
             </div>
             <el-button v-loading="loading" size="medium" type="primary">上传头像</el-button>
           </el-col>
@@ -161,7 +162,9 @@
 
         <el-row class="admin-info-post-controler" type="flex" justify="end">
           <el-button v-loading="loading" type="primary" @click="UpdateAdminInfo">保存</el-button>
-          <el-button v-loading="loading" type="primary" plain>取消</el-button>
+          <router-link :to="'/administration/adminList'">
+            <el-button v-loading="loading" type="primary" plain>取消</el-button>
+          </router-link>
         </el-row>
       </div>
     </el-form>
@@ -274,8 +277,8 @@ export default {
       this.fetchData(id)
     }
 
-    // 为什么要在这里复制this.$route
-    // 因为如果您进入此页并快速切换标记，可能是在执行setTagsViewTitle函数时，this.$route不再指向当前页
+    // 在这里复制this.$route
+    // 当进入此页并快速切换标记，可能使在执行setTagsViewTitle函数时，this.$route不再指向当前页
     this.tempRoute = Object.assign({}, this.$route)
   },
   methods: {
@@ -338,7 +341,7 @@ export default {
         .then(response => {
           this.adminInfo = response.data.data
           // // `${XXX.xx}` 与 XXX['xx'] 用法相同
-          // console.log(`${this.adminInfo.userId}`)
+          console.log(this.adminInfo)
 
           switch (this.adminInfo.sex) {
             case 1:
@@ -420,6 +423,9 @@ export default {
 <style lang="scss" scoped>
 @import "~@/styles/mixin.scss";
 
+.el-button{
+  margin: 0 5px
+}
 #admin-avatar {
   // text-align: center;
   margin: 0 0 0 5em;

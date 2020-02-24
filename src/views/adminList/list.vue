@@ -1,119 +1,171 @@
+<!--
+* 平台管理人员列表及管理
+-->
 <template>
   <div class="app-container">
-    <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
-      <el-table-column align="center" label="管理员ID" width="80">
+
+    <el-input
+      v-model="searchFilter"
+      placeholder="输入账户登录名的任意关键字进行搜索"
+    />
+    <el-table
+      v-loading="listLoading"
+      :default-sort="{prop: 'time', order: 'descending'}"
+      element-loading-text="Loading"
+      border
+      fit
+      highlight-current-row
+      :data="adminList.filter(data => !searchFilter || data.username.toLowerCase().includes(searchFilter.toLowerCase()))"
+    >
+      <el-table-column label="ID" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.id }}</span>
+          {{ scope.row['userId'] }}
         </template>
       </el-table-column>
 
-      <el-table-column width="180px" align="center" label="创建日期">
+      <el-table-column prop="username" label="登录名" align="center">
+        <!-- {{ adminList.username }} -->
         <template slot-scope="scope">
-          <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          {{ scope.row['username'] }}
         </template>
       </el-table-column>
 
-      <el-table-column width="120px" align="center" label="创建者ID">
+      <el-table-column
+        :filters="[{ text: '最高权限', value: '最高权限' }, { text: '校级', value: '校级' }, { text: '市级', value: '市级' }]"
+        :filter-method="filterRoleTypeLabel"
+        prop="roleTypeLabel"
+        label="权限范围"
+        align="center"
+      >
         <template slot-scope="scope">
-          <span>{{ scope.row.author }}</span>
+          <span>{{ scope.row['roleTypeLabel'] }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column width="100px" label="管理权级" align="center">
+      <el-table-column label="创建者ID" align="center">
+        <!-- {{ adminList.creatorID }} -->
         <template slot-scope="scope">
-          <svg-icon v-for="n in +scope.row.importance" :key="n" icon-class="star" class="meta-item__icon" />
+          {{ scope.row['parentId'] }}
         </template>
       </el-table-column>
 
-      <el-table-column class-name="status-col" label="账户状态" width="110">
-        <template slot-scope="{row}">
-          <el-tag :type="row.status | statusFilter">
-            {{ row.status }}
-          </el-tag>
-        </template>
-      </el-table-column>
-
-      <!-- 点击文本跳转编辑 -->
-      <el-table-column min-width="300px" label="其他">
-        <template slot-scope="{row}">
-          <router-link :to="'/adminList/edit/'+row.id" class="link-type">
-            <span>{{ row.title }}</span>
-          </router-link>
-        </template>
-      </el-table-column>
-
-      <!-- 点击按钮调转编辑 -->
-      <el-table-column align="center" label="相关操作" width="120">
+      <el-table-column label="联系方式" align="center">
+        <!-- {{ adminList.creatorID }} -->
         <template slot-scope="scope">
+          {{ scope.row['tel'] }}
+        </template>
+      </el-table-column>
 
-          <!-- 使用 router-link 组件来导航. -->
-          <!-- 通过传入 `to` 属性指定链接. -->
-          <!-- <router-link> 默认会被渲染成一个 `<a>` 标签 -->
-          <router-link :to="'/adminList/edit/'+scope.row.id">
-            <el-button type="primary" size="small" icon="el-icon-edit">
+      <el-table-column
+        label="创建时间"
+        align="center"
+        width="130"
+        prop="time"
+        sortable
+      >
+        <template slot-scope="scope">
+          <i class="el-icon-time" />
+          <span>{{ scope.row['createTime'] }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        class-name="status-col"
+        label="管理操作"
+        align="center"
+        min-width="120px"
+      >
+        <template slot-scope="scope">
+          <router-link :to="'/administration/adminEdit/'+scope.row['userId']">
+            <el-button type="primary" plain>
               编辑
             </el-button>
           </router-link>
-
+          <el-button type="danger" plain @click="frozenAdminAccount(scope.row['userId'])">
+            冻结
+          </el-button>
         </template>
       </el-table-column>
+
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
   </div>
 </template>
 
 <script>
-import { fetchList } from '@/api/article'
-import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
+import { getAdminList } from '@/api/user'
 
 export default {
-  name: 'ArticleList',
-  components: { Pagination },
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    }
-  },
   data() {
     return {
+      adminList: [],
       list: null,
-      total: 0,
       listLoading: true,
-      listQuery: {
-        page: 1,
-        limit: 20
-      }
+      searchFilter: '' // 搜索过滤器
     }
   },
   created() {
-    this.getList()
+    this.fetchData()
   },
+
   methods: {
-    getList() {
-      this.listLoading = true
-      fetchList(this.listQuery).then(response => {
-        this.list = response.data.items
-        this.total = response.data.total
-        this.listLoading = false
-      })
+    filterRoleTypeLabel(value, row) {
+      return row.roleTypeLabel === value
+    },
+    // 冻结管理员账户
+    frozenAdminAccount(adminID) {
+      console.log(adminID)
+    },
+    // 拉取数据
+    fetchData() {
+      // 获取自身管理级别下管理员列表
+      getAdminList({ parentId: this.$store.state.user['userid'] })
+        .then(response => {
+          this.adminList = response.data.data
+          this.listLoading = false
+          for (let i = 0; i < this.adminList.length; i++) {
+            switch (this.adminList[i].roleType) {
+              case 'SUPER_ADMIN':
+                this.adminList[i].roleTypeLabel = '最高权限'
+                break
+              case 'SCHOOL_ADMIN':
+                this.adminList[i].roleTypeLabel = '校级'
+                break
+              case 'CITY_ADMIN':
+                this.adminList[i].roleTypeLabel = '市级'
+                break
+
+              default:
+                break
+            }
+          }
+          console.log(this.adminList)
+        })
+        .catch(error => {
+          console.log('请求错误 ' + error)
+        })
     }
   }
 }
 </script>
 
 <style scoped>
-.edit-input {
-  padding-right: 100px;
+.button {
+  padding: 0;
+  float: right;
 }
-.cancel-btn {
-  position: absolute;
-  right: 15px;
-  top: 10px;
+
+.image {
+  width: 100%;
+  display: block;
+}
+
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+
+.clearfix:after {
+  clear: both;
 }
 </style>

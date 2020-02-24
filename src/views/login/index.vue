@@ -155,7 +155,8 @@ export default {
 /* input 背景 光标变色 */
 $bg: #283443;
 $light_gray: #fff;
-$cursor: #fff;
+$input_color:#1f243b;
+$cursor: #1f243b;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
   .login-container .el-input input {
@@ -176,9 +177,10 @@ $cursor: #fff;
       -webkit-appearance: none;
       border-radius: 0px;
       padding: 12px 5px 12px 15px;
-      color: $light_gray;
+      color: $input_color;
       height: 47px;
       caret-color: $cursor;
+      font-size: 1.2em;
 
       &:-webkit-autofill {
         box-shadow: 0 0 0px 1000px $bg inset !important;
@@ -197,9 +199,9 @@ $cursor: #fff;
 </style>
 
 <style lang="scss" scoped>
-$bg: #e4e4e4;
+$bg: #fbfbfb;
 $dark_gray: #889aa4;
-$light_gray: #eee;
+$light_gray: #2f3c53;
 
 .login-container {
   min-height: 100%;

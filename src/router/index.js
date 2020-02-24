@@ -224,18 +224,26 @@ export const constantRoutes = [
 
   // *人员管理
   {
-    path: '/adminList',
+    path: '/administration',
     component: Layout,
+    meta: { title: '人员管理', icon: 'tree' },
+    redirect: '/administration/adminList',
     children: [{
-      path: 'index',
+      path: 'adminList',
       name: 'adminList',
-      component: () => import('@/views/adminList/index'),
-      meta: { title: '人员管理', icon: 'tree' }
+      component: () => import('@/views/adminList/list'),
+      meta: { title: '账户列表' }
     },
     {
-      path: 'edit/:id(\\d+)',
+      path: 'adminCreate',
+      name: 'adminCreate',
+      component: () => import('@/views/adminList/create'),
+      meta: { title: '添加账户', noCache: true }
+    },
+    {
+      path: 'adminEdit/:id(\\d+)',
+      name: 'adminEdit',
       component: () => import('@/views/adminList/edit'),
-      name: 'EditArticle',
       meta: { title: '账户信息编辑', noCache: true },
       hidden: true
     }
