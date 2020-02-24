@@ -2,7 +2,7 @@
   <div class="dashboard-container">
     <!-- 需要获取值的键（相当于ID） -->
     <div class="dashboard-text">当前用户:  {{ username }}</div>
-    <div class="dashboard-text">用户身份:  <span>{{ roleType }}</span></div>
+    <div class="dashboard-text">用户身份:  {{ roleType }} {{ roleTypeLabel }}管理员</div>
   </div>
 </template>
 
@@ -29,7 +29,8 @@ export default {
       // 映射 this.username 为 store.state.username
       // 使用对象展开运算符将此对象混入到外部对象中
       'username',
-      'roleType'
+      'roleType',
+      'roleTypeLabel'
     ])
   }
 }

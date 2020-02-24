@@ -63,6 +63,9 @@ const mutations = {
   },
   SET_ROLES: (state, roleType) => {
     state.roleType = roleType
+  },
+  SET_ROLESLABEL: (state, roleTypeLabel) => {
+    state.roleTypeLabel = roleTypeLabel
   }
 }
 
@@ -113,6 +116,21 @@ const actions = {
           // commit('SET_AVATAR', data['headImg'])
           commit('SET_AVATAR', 'http://172.20.13.20/default.jpg')
 
+          switch (data.roleType) {
+            case 'SUPER_ADMIN':
+              commit('SET_ROLESLABEL', '最高权限')
+              break
+            case 'SCHOOL_ADMIN':
+              commit('SET_ROLESLABEL', '校级')
+              break
+            case 'CITY_ADMIN':
+              commit('SET_ROLESLABEL', '市级')
+              break
+
+            default:
+              break
+          }
+
           resolve()// 注意不能漏掉这句，这是告诉调用该方法的方法此异步方法已完成
         }).catch(error => {
           console.log('请求错误 ' + error)
@@ -121,7 +139,7 @@ const actions = {
     })
   },
 
-  // 获取用户信息
+  // 获取用户信息(除登录行为外获取信息)
   getUserInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       getUserInfo({ userId: getUserID() }).then(response => {
@@ -141,6 +159,21 @@ const actions = {
         if (data['headImg'] !== '') {
           // commit('SET_AVATAR', process.env.VUE_APP_HEADIMG_API + data['headImg'])
           commit('SET_AVATAR', 'http://172.20.13.20/default.jpg')
+        }
+
+        switch (data.roleType) {
+          case 'SUPER_ADMIN':
+            commit('SET_ROLESLABEL', '最高权限')
+            break
+          case 'SCHOOL_ADMIN':
+            commit('SET_ROLESLABEL', '校级')
+            break
+          case 'CITY_ADMIN':
+            commit('SET_ROLESLABEL', '市级')
+            break
+
+          default:
+            break
         }
 
         if (!state.roleType || state.roleType.length <= 0) {
