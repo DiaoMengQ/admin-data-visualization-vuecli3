@@ -147,7 +147,6 @@
           <el-col id="admin-avatar" :xs="24" :sm="6">
             <div class="avatar-img">
               <!-- 若头像不显示,请使用 npm i element-ui -S 重新安装 -->
-              <!-- <img src="https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png?imageView2/1/w/80/h/80"> -->
               <el-avatar
                 shape="square"
                 :size="100"

@@ -138,11 +138,10 @@ const actions = {
         commit('SET_ROLES', data['roleType'])
         commit('SET_NAME', data['nickname'])
         commit('SET_USERID', data['userId'])
-        // console.log(data['headImg'])
-        // if (data['headImg'] !== '') {
-        //   commit('SET_AVATAR', process.env.VUE_APP_BASE_API + '' + data['headImg'])
-        // }
-        commit('SET_AVATAR', 'http://172.20.13.20/default.jpg')
+        if (data['headImg'] !== '') {
+          // commit('SET_AVATAR', process.env.VUE_APP_HEADIMG_API + data['headImg'])
+          commit('SET_AVATAR', 'http://172.20.13.20/default.jpg')
+        }
 
         if (!state.roleType || state.roleType.length <= 0) {
           reject('获取用户角色失败: 请重新登录!')
