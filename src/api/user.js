@@ -96,3 +96,16 @@ export function updateAdminInfo(data) {
     data
   })
 }
+
+/**
+ * 刷新token
+ *
+ * @export
+ * @returns
+ */
+export function updateToken() {
+  return request({
+    url: '/user/updateToken',
+    method: 'post'
+  })
+}

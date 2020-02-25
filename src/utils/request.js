@@ -93,7 +93,7 @@ service.interceptors.response.use(
         })
       }
       // 508: 非法token; 512: 账号在其他端登入; 514: Token expired;
-      if (res.code === 508 || res.code === 512 || res.code === 514 || res.code === 401) {
+      if (res.code === 508 || res.code === 512 || res.code === 514) {
         // 跳转 重新登录
         MessageBox.confirm('您已注销，您可以取消以停留在此页，或重新登录', '确定', {
           confirmButtonText: '重新登录',
