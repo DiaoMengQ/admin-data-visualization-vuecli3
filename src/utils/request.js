@@ -52,7 +52,7 @@ service.interceptors.request.use(
   },
   // 请求错误
   error => {
-    // console.log(error) // for debug
+    console.log('service.interceptors.request: ', error) // for debug
     return Promise.reject(error)
   }
 )
@@ -116,7 +116,7 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log('请求时' + error) // for debug
+    console.log('service.interceptors.response: ', error) // for debug
     Message({
       message: error,
       type: 'error',

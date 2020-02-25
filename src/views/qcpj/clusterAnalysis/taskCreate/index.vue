@@ -8,7 +8,7 @@
       <el-col :xs="24" :lg="12" :xl="8">省份:
         <!-- TODO: 校级管理员|选中按键后发送网络请求，获取班级信息 -->
         <!-- TODO: 省份下拉框，获取下拉框的值并进行数据请求 -->
-        <el-select v-model="provinceId" placeholder="请选择">
+        <el-select v-model="provinceId" :disabled="ifProvinceChangeDisabled" placeholder="请选择">
           <el-option
             v-for="province in provinceList"
             :key="province.provinceId"
@@ -19,7 +19,7 @@
       </el-col>
 
       <el-col v-if="ifShowCityList" :xs="24" :lg="12" :xl="8">市:
-        <el-select v-model="areaCode" placeholder="请选择">
+        <el-select v-model="areaCode" :disabled="ifCityChangeDisabled" placeholder="请选择">
           <el-option
             v-for="city in cityList"
             :key="city.areaCode"
@@ -55,10 +55,13 @@
 import { str2obj } from '@/utils/multiple'
 import { setSchoolVal } from '@/utils/school'
 import { getAreaInfo, getSchoolInfo } from '@/api/qcpj'
+import { getUserManaRange } from '@/utils/auth'
 
 export default {
   data() {
     return {
+      ifProvinceChangeDisabled: true, // 是否允许切换省份,默认不允许
+      ifCityChangeDisabled: true, // 是否允许切换城市,默认不允许
       ifShowCityList: false, // 是否显示城市列表
       ifShowSchoolList: false, // 是否显示学校列表
       listLoading: false, // 是否正在加载学校列表
@@ -131,41 +134,123 @@ export default {
     provinceId: {
       immediate: true,
       handler(val, old) {
-        // console.log('值已改变')
-        // console.log('新选中值: ', val, '旧值: ', old)
-        // console.log('省ID: ', this.provinceId)
-        if (this.provinceId && this.provinceId !== old) {
-          this.ifShowCityList = true // 城市选项复位
-          this.schoolList = [] // 学校列表复位
-          this.ifShowSchoolList = false // 隐藏学校列表
+        switch (this.$store.state.user['roleType']) {
+          case 'SUPER_ADMIN':
+            // console.log('值已改变')
+            // console.log('新选中值: ', val, '旧值: ', old)
+            // console.log('省ID: ', this.provinceId)
+            if (this.provinceId && this.provinceId !== old) {
+              this.ifShowCityList = true // 城市选项复位
+              this.schoolList = [] // 学校列表复位
+              this.ifShowSchoolList = false // 隐藏学校列表
 
-          getAreaInfo({ province_id: this.provinceId }).then(response => {
-            this.cityList = response.data['data']
-          })
+              getAreaInfo({ province_id: this.provinceId }).then(response => {
+                this.cityList = response.data['data']
+                console.log(this.cityList)
+              })
+            }
+            this.areaCode = null
+            break
+          case 'CITY_ADMIN':
+            break
+          case 'SCHOOL_ADMIN':
+            break
+          default:
+            break
         }
-        this.areaCode = null
       }
     },
     // 所选市改变
     areaCode: {
       immediate: true,
       handler(val, old) {
-        // console.log('市ID: ', this.areaCode)
-        if (this.areaCode && this.areaCode !== old) {
-          this.ifShowSchoolList = true
-          this.listLoading = true
-          getSchoolInfo({ areaCode: this.areaCode }).then(response => {
-            // console.log(response.data.data)
-            this.schoolList = response.data.data
-            this.listLoading = false
-          }).catch(error => {
-            console.log('请求错误 ' + error)
-          })
+        switch (this.$store.state.user['roleType']) {
+          case 'SCHOOL_ADMIN':
+            break
+          default:
+            if (this.areaCode && this.areaCode !== old) {
+              this.ifShowSchoolList = true
+              this.listLoading = true
+              getSchoolInfo({ areaCode: this.areaCode }).then(response => {
+                // console.log(response.data.data)
+                this.schoolList = response.data.data
+                this.listLoading = false
+              }).catch(error => {
+                console.log('请求错误 ' + error)
+              })
+            }
+            break
         }
       }
     }
   },
   mounted() {
+    const manaRange = getUserManaRange(this.$store.state.user['roleType'])
+    console.log(manaRange)
+    switch (this.$store.state.user['roleType']) {
+      case 'SUPER_ADMIN':
+        break
+      case 'CITY_ADMIN':
+        this.ifProvinceChangeDisabled = true
+        this.ifShowCityList = true
+        this.ifCityChangeDisabled = true
+        this.ifShowSchoolList = false
+
+        this.provinceList = []
+        this.cityList = []
+        getAreaInfo({ province_id: manaRange[0].provinceId, city_id: manaRange[0].cityid }).then((result) => {
+          const areaInfo = result.data.data[0]
+          if (areaInfo) {
+            const provinceItem = { provinceId: areaInfo.provinceId, provinceName: areaInfo.provinceName }
+            this.provinceList.push(provinceItem)
+            this.provinceId = areaInfo.provinceId
+
+            this.cityList.push(areaInfo)
+            this.areaCode = areaInfo.areaCode
+          }
+        }).catch((err) => {
+          console.log(err)
+        })
+        break
+      case 'SCHOOL_ADMIN':
+        this.ifProvinceChangeDisabled = true
+        this.ifShowCityList = true
+        this.ifCityChangeDisabled = true
+        this.ifShowSchoolList = true
+
+        this.provinceList = []
+        this.cityList = []
+        getAreaInfo({ province_id: manaRange[0].provinceId, city_id: manaRange[0].cityid }).then((result) => {
+          const areaInfo = result.data.data[0]
+          if (areaInfo) {
+            const provinceItem = { provinceId: areaInfo.provinceId, provinceName: areaInfo.provinceName }
+            this.provinceList.push(provinceItem)
+            this.provinceId = areaInfo.provinceId
+
+            this.cityList.push(areaInfo)
+            this.areaCode = areaInfo.areaCode
+          }
+        }).catch((err) => {
+          console.log(err)
+        })
+
+        this.schoolList = manaRange
+        break
+      default:
+        break
+    }
+
+    // getManaRange().then((result) => {
+    //   if (result.data.data === 'all') {
+    //     this.ifProvinceChangeDisabled = false
+    //   } else {
+    //     this.ifProvinceChangeDisabled = true
+    //   }
+    //   console.log(result.data.data)
+    // }).catch((err) => {
+    //   console.log(err)
+    // })
+
     // if (getUserID()) {
     //   // this.$message({
     //   //   message: 'userId: ' + getUserID(),type: 'info',duration: 3 * 1000})

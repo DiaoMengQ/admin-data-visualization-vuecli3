@@ -30,11 +30,33 @@ export function getUserID() {
 }
 
 // setter: 用户权限
-export function setUserManaRange(permInfo) {
-  localStorage.setItem(userManaRangeKey, JSON.stringify(permInfo)) // obj自动存为obj的值的类型字符串，故需手动转为字符串，防止取数据时出错
+export function setUserManaRange(roleType, permDetail) {
+  switch (roleType) {
+    case 'SUPER_ADMIN':
+      localStorage.setItem(userManaRangeKey, permDetail)
+      break
+    default:
+      localStorage.setItem(userManaRangeKey, JSON.stringify(permDetail))
+      break
+  }
 }
 
 // getter: 用户权限
-export function getUserManaRange() {
-  return localStorage.getItem(userManaRangeKey)
+export function getUserManaRange(roleType) {
+  const manaRange = localStorage.getItem(userManaRangeKey)
+  let manaRangeList = []
+  switch (roleType) {
+    case 'SUPER_ADMIN':
+      manaRangeList.push(manaRange)
+      break
+    case 'CITY_ADMIN':
+      manaRangeList = JSON.parse(manaRange)
+      break
+    case 'SCHOOL_ADMIN':
+      manaRangeList = JSON.parse(manaRange)
+      break
+    default:
+      break
+  }
+  return manaRangeList
 }

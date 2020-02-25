@@ -3,11 +3,18 @@
     <!-- 需要获取值的键（相当于ID） -->
     <div class="dashboard-text">当前用户:  {{ username }}</div>
     <div class="dashboard-text">用户身份:  {{ roleType }} {{ roleTypeLabel }}管理员</div>
+    <div class="dashboard-text">管辖范围:
+      <span
+        v-for="(manaRangeItem,key) in manaRangeLabelList"
+        :key="key"
+      > {{ manaRangeItem }}
+      </span></div>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import { getUserManaRange } from '@/utils/auth'
 
 // default中只能设定一个模块
 export default {
@@ -20,6 +27,12 @@ export default {
    * 主要作用是把数据存储到内存中，减少不必要的请求
    * 还可以利用computed给子组件的data赋值
    */
+  data() {
+    return {
+      manaRange: '',
+      manaRangeLabelList: []
+    }
+  },
   computed: {
     /**
      * 可以直接把需要用到的状态全部存放在 mapGetters 里面进行统一管理，而且还可以取别名，做额外的操作等等。
@@ -32,6 +45,30 @@ export default {
       'roleType',
       'roleTypeLabel'
     ])
+  },
+  mounted() {
+    this.manaRange = getUserManaRange(this.roleType)
+    let manaRangeLabelItem = ''
+    switch (this.roleType) {
+      case 'SUPER_ADMIN':
+        manaRangeLabelItem = '无限制'
+        this.manaRangeLabelList.push(manaRangeLabelItem)
+        break
+      case 'CITY_ADMIN':
+        for (let i = 0; i < this.manaRange.length; i++) {
+          manaRangeLabelItem = this.manaRange[i].provinceName + this.manaRange[i].cityName
+          this.manaRangeLabelList.push(manaRangeLabelItem)
+        }
+        break
+      case 'SCHOOL_ADMIN':
+        for (let i = 0; i < this.manaRange.length; i++) {
+          manaRangeLabelItem = this.manaRange[i].schoolName
+          this.manaRangeLabelList.push(manaRangeLabelItem)
+        }
+        break
+      default:
+        break
+    }
   }
 }
 </script>

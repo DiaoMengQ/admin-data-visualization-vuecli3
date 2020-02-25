@@ -133,7 +133,6 @@ export default {
           this.$store.dispatch('user/login', this.loginForm) // 触发命名为login的Action
             .then(() => {
               // 当前路由路径
-              // console.log(this.$route.path)
               this.$router.push({ path: this.redirect || '/' }) // 登录成功之后重定向到主页
               this.loading = false
             })

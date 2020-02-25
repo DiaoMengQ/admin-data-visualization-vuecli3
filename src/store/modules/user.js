@@ -131,6 +131,15 @@ const actions = {
               break
           }
 
+          const tRoleType = data['roleType']
+          // 获取用户权限
+          getManaRange().then(response => {
+            const { data } = response.data
+            setUserManaRange(tRoleType, data)
+          }).catch(error => {
+            console.log('req4login: ', '用户权限请求错误 ' + error)
+          })
+
           resolve()// 注意不能漏掉这句，这是告诉调用该方法的方法此异步方法已完成
         }).catch(error => {
           console.log('请求错误 ' + error)
@@ -176,6 +185,15 @@ const actions = {
             break
         }
 
+        const tRoleType = data['roleType']
+        // 获取用户权限
+        getManaRange().then(response => {
+          const { data } = response.data
+          setUserManaRange(tRoleType, data)
+        }).catch(error => {
+          console.log('getUserInfo: ', '用户权限请求错误 ' + error)
+        })
+
         if (!state.roleType || state.roleType.length <= 0) {
           reject('获取用户角色失败: 请重新登录!')
         }
@@ -205,30 +223,6 @@ const actions = {
       removeToken()
       resolve()
     })
-  },
-
-  // 获取用户权限
-  getUserManaRange({ commit }) {
-    return new Promise((resolve, reject) => {
-      getManaRange().then(response => {
-        const { data } = response.data
-        setUserManaRange(data)
-        resolve()
-      }).catch(error => {
-        console.log('请求错误 ' + error)
-        reject(error)
-      })
-    }
-    )
-  },
-
-  getClassList({ commit }, schoolInfo) {
-    this.$message('in user modules')
-  },
-
-  // TODO: 判断用户角色类型标签
-  judgeUserRoleType({ commit }, roleType) {
-
   }
 
 }
