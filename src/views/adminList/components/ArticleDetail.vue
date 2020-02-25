@@ -35,19 +35,6 @@
                   />
                 </el-form-item>
               </el-col>
-              <!-- 目前未开放更换权级功能，此处代码以及相关变量为暂存备用
-              <el-col :xs="24" :lg="12" :xl="8">
-                <el-form-item label-width="100px" label="权限级别:" class="postInfo-container-item">
-                  <el-select v-model="adminInfo.roleTypeLabel" placeholder="权限级别" @change="roleTypeChanged">
-                    <el-option
-                      v-for="role in roleTypeOptions"
-                      :key="role.roleKey"
-                      :label="role.roleLabel"
-                      :value="role.roleLabel"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col> -->
 
               <el-col :xs="24" :lg="12" :xl="8" class="postInfo-container">
                 <el-form-item label-width="100px" label="账户状态:" class="postInfo-container-item">
@@ -286,7 +273,6 @@ export default {
     genderChanged(val) {
       // 必须用 this.$forceUpdate() 重新 render！否则select所选值在界面上不改变
       this.$forceUpdate()
-      // console.log(this.adminInfo.sexLabel)
       switch (this.adminInfo.sexLabel) {
         case '男':
           this.adminInfo.sex = 1
@@ -297,7 +283,6 @@ export default {
         default:
           break
       }
-      // console.log(this.adminInfo)
     },
 
     // 选中账户状态改变后设定信息
@@ -310,31 +295,13 @@ export default {
       }
     },
 
-    // 选中账户角色类型改变后设定信息
-    roleTypeChanged(val) {
-      this.$forceUpdate()
-      switch (this.adminInfo.roleTypeLabel) {
-        case 'CITY_ADMIN':
-          this.adminInfo.roleType = '市级管理员'
-          break
-        case 'SCHOOL_ADMIN':
-          this.adminInfo.roleTypeLabel = '校级管理员'
-          break
-        default:
-          break
-      }
-      // console.log(this.adminInfo.roleType)
-      // console.log(this.adminInfo.roleTypeLabel)
-    },
-
     // 获取管理员信息数据
     fetchData(id) {
-      // console.log(id)
       getUserInfo({ userId: id })
         .then(response => {
           this.adminInfo = response.data.data
           // // `${XXX.xx}` 与 XXX['xx'] 用法相同
-          console.log(this.adminInfo)
+          // console.log(this.adminInfo)
 
           switch (this.adminInfo.sex) {
             case 1:
@@ -398,10 +365,8 @@ export default {
                 type: 'success',
                 duration: 2000
               })
-              // console.log(this.adminInfo)
             }).catch(error => {
-              console.log('信息上传失败')
-              console.log(error)
+              console.log('信息上传失败', error)
             })
 
             this.loading = false

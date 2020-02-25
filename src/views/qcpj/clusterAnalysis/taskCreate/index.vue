@@ -189,6 +189,8 @@ export default {
     console.log(manaRange)
     switch (this.$store.state.user['roleType']) {
       case 'SUPER_ADMIN':
+        this.ifProvinceChangeDisabled = false
+        this.ifCityChangeDisabled = false
         break
       case 'CITY_ADMIN':
         this.ifProvinceChangeDisabled = true
@@ -239,39 +241,6 @@ export default {
       default:
         break
     }
-
-    // getManaRange().then((result) => {
-    //   if (result.data.data === 'all') {
-    //     this.ifProvinceChangeDisabled = false
-    //   } else {
-    //     this.ifProvinceChangeDisabled = true
-    //   }
-    //   console.log(result.data.data)
-    // }).catch((err) => {
-    //   console.log(err)
-    // })
-
-    // if (getUserID()) {
-    //   // this.$message({
-    //   //   message: 'userId: ' + getUserID(),type: 'info',duration: 3 * 1000})
-    //   // 调用action方法，通常是异步操作
-    //   this.$store.dispatch('user/getUserManaRange').then(() => {
-    //     var schoolarr = getUserManaRange() // from cookie
-    //     if (schoolarr) {
-    //       schoolarr = schoolarr.replace('},{', '}|{')
-    //       schoolarr = schoolarr.replace('[{', '{')
-    //       schoolarr = schoolarr.replace('}]', '}')
-    //       schoolarr = schoolarr.split('|')
-    //       // 若使用foreach，调用方法后是不会改变原数组的值
-    //       // schoolarr.forEach(element => { str2obj(element) })
-    //       // 故使用map迭代器对每一个元素调用方法
-    //       schoolarr = schoolarr.map(str2obj)
-    //       // console.log('index.vue: ', schoolarr[0])
-    //       this.schoolList = schoolarr
-    //     }
-    //     console.log(this.alertInfo)
-    //   })
-    // }
   },
   methods: {
     // 弹框取消改变

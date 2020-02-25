@@ -11,7 +11,7 @@
  * * Mutations （同步）改变成员变量的方法，以载荷形式分发
  * * Action （异步）改变成员变量的方法，以对象形式分发
  */
-import { req4login, getUserInfo, getManaRange } from '@/api/user'
+import { req4login, getUserInfo, getManaRange, updateToken } from '@/api/user'
 import { getUserID, getToken, setUserInfo, removeToken, setUserManaRange } from '@/utils/auth'
 import { resetRouter } from '@/router'
 import { Message } from 'element-ui'
@@ -212,6 +212,18 @@ const actions = {
       removeToken()
       resetRouter()
       resolve()
+    })
+  },
+
+  // 刷新token
+  updateToken({ commit, state }) {
+    return new Promise((resolve, reject) => {
+      updateToken().then(response => {
+        commit('SET_TOKEN', response.headers['access_token'])
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
     })
   },
 

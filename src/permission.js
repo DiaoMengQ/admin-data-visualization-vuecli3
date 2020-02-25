@@ -9,7 +9,7 @@ import store from './store'
 import { Message } from 'element-ui'
 import NProgress from 'nprogress' // 进度条
 import 'nprogress/nprogress.css' // 进度条样式
-import { getToken, updateToken } from '@/utils/auth' // 从localStorage中拿取token
+import { getToken } from '@/utils/auth' // 从localStorage中拿取token
 import getPageTitle from '@/utils/get-page-title'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
@@ -37,20 +37,18 @@ router.beforeEach(async(to, from, next) => {
         next()
       } else {
         try {
+          // 刷新token
+          await store.dispatch('user/updateToken')
           // 同步获取用户信息
           await store.dispatch('user/getUserInfo')
           next()
         } catch (error) {
-          updateToken().then((result) => {
-            console.log(result)
-          }).catch((err) => {
-            console.log('permission.js' + err)
-            // 如果获取错误,则删除token,进入登录页面重新登录
-            store.dispatch('user/resetToken')
-            Message.error(err || 'token获取失败')
-            next(`/login?redirect=${to.path}`)
-            NProgress.done()
-          })
+          console.log('permission.js' + error)
+          // 如果获取错误,则删除token,进入登录页面重新登录
+          store.dispatch('user/resetToken')
+          Message.error(error || 'token获取失败')
+          next(`/login?redirect=${to.path}`)
+          NProgress.done()
         }
       }
     }
