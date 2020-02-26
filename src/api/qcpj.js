@@ -66,7 +66,7 @@ export function getSchoolSubjects(para) {
 }
 
 /**
- * 根据 {省份和城市 ID 号} 或 {区域代码} 或 {学校ID} 请求学校信息
+ * 根据 {省份和城市 ID 号} 或 {区域代码} 或 {学校ID} 请求七彩评价学校信息
  *
  * @export
  * @param {areaCode,city_id,province_id,schoolId} para

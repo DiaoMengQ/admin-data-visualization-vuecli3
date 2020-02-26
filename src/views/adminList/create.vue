@@ -52,36 +52,68 @@
             </el-col>
 
             <el-col :xs="20" :lg="20" :xl="20">
-              <!-- 学校列表 -->
+              <!-- 七彩评价学校列表 -->
               <el-table
                 v-if="ifShowSchoolList"
                 v-loading="listLoading"
-                :data="schoolList"
+                max-height="350"
+                :data="QCPJschoolList"
                 border
                 fit
                 highlight-current-row
-                style="width: 100%"
-                @selection-change="handleSchoolSelectionChange"
+                @selection-change="handleQCPJSchChange"
               >
                 <el-table-column
                   type="selection"
                   width="35px"
                 />
+
+                <el-table-column min-width="300px" label="七彩评价学校列表">
+                  <template slot-scope="scope">
+                    <span>{{ scope.row['schoolName'] }}</span>
+                  </template>
+                </el-table-column>
+
                 <el-table-column align="center" label="学校ID" width="80">
                   <template slot-scope="scope">
                     <span>{{ scope.row['schoolId'] }}</span>
                   </template>
                 </el-table-column>
 
-                <!-- 点击文本跳转编辑 -->
-                <el-table-column min-width="300px" label="七彩评价学校名称">
+              </el-table>
+
+              <!-- 阅读海洋学校列表 -->
+              <el-table
+                v-if="ifShowSchoolList"
+                v-loading="listLoading"
+                max-height="350"
+                :data="YDHYschoolList"
+                border
+                fit
+                highlight-current-row
+                @selection-change="handleYDHYSchChange"
+              >
+                <el-table-column
+                  type="selection"
+                  width="35px"
+                />
+
+                <el-table-column min-width="300px" label="阅读海洋学校列表">
                   <template slot-scope="scope">
                     <span>{{ scope.row['schoolName'] }}</span>
                   </template>
                 </el-table-column>
+
+                <el-table-column align="center" label="学校ID" width="80">
+                  <template slot-scope="scope">
+                    <span>{{ scope.row['schoolId'] }}</span>
+                  </template>
+                </el-table-column>
+
               </el-table>
             </el-col>
 
+            <!-- 性别 -->
             <el-col :xs="24" :lg="12" :xl="8">
               <el-form-item label-width="150px" label="性别:" class="postInfo-container-item">
                 <!-- el-option 中的 value 会与 el-select 中的 v-model 进行绑定 -->
@@ -96,6 +128,7 @@
               </el-form-item>
             </el-col>
 
+            <!-- 账户名 -->
             <el-col :xs="24" :lg="12" :xl="8" class="postInfo-container">
               <el-form-item label-width="150px" label="账户名（用于登录）:" class="postInfo-container-item">
                 <el-input
@@ -107,6 +140,7 @@
               </el-form-item>
             </el-col>
 
+            <!-- 昵称 -->
             <!-- row 中的组件必须包在 el-col 中，否则会导致 input 和 select 无法获取焦点 -->
             <el-col :xs="24" :lg="12" :xl="8">
               <el-form-item label-width="150px" label="昵称:" class="postInfo-container-item">
@@ -119,6 +153,7 @@
               </el-form-item>
             </el-col>
 
+            <!-- 联系方式 -->
             <el-col :xs="24" :lg="12" :xl="8">
               <el-form-item label-width="150px" label="联系方式:" class="postInfo-container-item">
                 <el-input v-model="adminInfo.tel" style="max-width:200px" type="tel" placeholder="请输入联系方式" />
@@ -127,7 +162,7 @@
 
           </el-col>
 
-          <!-- 用户头像操作区域 -->
+          <!-- 用户头像 -->
           <el-col id="admin-avatar" :xs="24" :sm="6">
             <div class="avatar-img">
               <!-- 若头像不显示,请使用 npm i element-ui -S 重新安装 -->
@@ -157,6 +192,7 @@
 <script>
 import { updateAdminInfo } from '@/api/user'
 import { getAreaInfo, getSchoolInfo } from '@/api/qcpj'
+import { getYDHYSchoolInfo } from '@/api/ydhy'
 import { MessageBox } from 'element-ui'
 
 // 此处仅作为结构展示
@@ -237,8 +273,10 @@ export default {
       areaCode: null,
       cityList: [],
       schoolId: undefined,
-      schoolList: [],
-      schoolSelectedLish: []
+      QCPJschoolList: [],
+      QCPJSchSelectedList: [],
+      YDHYschoolList: [],
+      YDHYSchSelectedList: []
     }
   },
   computed: {
@@ -262,7 +300,7 @@ export default {
           default:
             if (this.provinceId && this.provinceId !== old) {
               this.ifShowCityList = true // 城市选项复位
-              this.schoolList = [] // 学校列表复位
+              this.QCPJschoolList = [] // 学校列表复位
               this.ifShowSchoolList = false // 隐藏学校列表
 
               getAreaInfo({ province_id: this.provinceId }).then(response => {
@@ -289,10 +327,18 @@ export default {
                   this.ifShowSchoolList = true
                   this.listLoading = true
                   getSchoolInfo({ areaCode: this.areaCode }).then(response => {
-                    this.schoolList = response.data.data
+                    this.QCPJschoolList = response.data.data
                     this.listLoading = false
                   }).catch(error => {
-                    console.log('请求错误 ' + error)
+                    console.log('七彩评价学校列表请求错误 ' + error)
+                  })
+
+                  getYDHYSchoolInfo({ areaCode: this.areaCode }).then(response => {
+                    this.YDHYschoolList = response.data.data
+                    console.log(this.YDHYschoolList)
+                    this.listLoading = false
+                  }).catch(error => {
+                    console.log('阅读海洋学校列表请求错误 ' + error)
                   })
                 }
                 break
@@ -308,10 +354,16 @@ export default {
               this.ifShowSchoolList = true
               this.listLoading = true
               getSchoolInfo({ areaCode: this.areaCode }).then(response => {
-                this.schoolList = response.data.data
+                this.QCPJschoolList = response.data.data
                 this.listLoading = false
               }).catch(error => {
-                console.log('请求错误 ' + error)
+                console.log('七彩评价学校列表请求错误 ' + error)
+              })
+              getYDHYSchoolInfo({ areaCode: this.areaCode }).then(response => {
+                this.YDHYschoolList = response.data.data
+                this.listLoading = false
+              }).catch(error => {
+                console.log('阅读海洋学校列表请求错误 ' + error)
               })
             }
             break
@@ -352,9 +404,13 @@ export default {
 
   },
   methods: {
-    handleSchoolSelectionChange(val) {
+    handleYDHYSchChange(val) {
       console.log(val)
-      this.schoolSelectedLish = val
+      this.YDHYSchSelectedList = val
+    },
+    handleQCPJSchChange(val) {
+      console.log(val)
+      this.QCPJSchSelectedList = val
     },
     // 选中性别改变后设定信息
     genderChanged(val) {
@@ -401,37 +457,31 @@ export default {
 
     // 提交用户信息
     UpdateAdminInfo() {
-      this.$refs.adminInfo.validate(valid => {
-        if (valid) {
-          this.loading = true
-          const adminInfo2update = {
-            userId: this.adminInfo.userId,
-            nickname: this.adminInfo.nickname,
-            tel: this.adminInfo.tel,
-            sex: this.adminInfo.sex
-          }
+      this.loading = true
+      const adminInfo2update = {
+        userId: this.adminInfo.userId,
+        nickname: this.adminInfo.nickname,
+        tel: this.adminInfo.tel,
+        sex: this.adminInfo.sex
+      }
+      console.log(adminInfo2update)
 
-          updateAdminInfo(adminInfo2update).then(response => {
-            const data = response['data']
-            console.log(data)
-            this.$notify({
-              title: '成功',
-              message: '修改成功',
-              type: 'success',
-              duration: 2000
-            })
-            // console.log(this.adminInfo)
-          }).catch(error => {
-            console.log('信息上传失败')
-            console.log(error)
-          })
+      // updateAdminInfo(adminInfo2update).then(response => {
+      //   const data = response['data']
+      //   console.log(data)
+      //   this.$notify({
+      //     title: '成功',
+      //     message: '修改成功',
+      //     type: 'success',
+      //     duration: 2000
+      //   })
+      //   // console.log(this.adminInfo)
+      // }).catch(error => {
+      //   console.log('信息上传失败')
+      //   console.log(error)
+      // })
 
-          this.loading = false
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
+      this.loading = false
     }
   }
 }
