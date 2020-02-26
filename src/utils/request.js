@@ -84,6 +84,16 @@ service.interceptors.response.use(
         })
       }
 
+      // 401: token过期
+      if (res.code === 401) {
+        Message({
+          message: 'Token已过期,正在为您重新登录',
+          type: 'error',
+          duration: 3 * 1000
+        })
+        store.dispatch('user/updateToken')
+      }
+
       // 500: 服务器错误
       if (res.code === 500) {
         Message({
@@ -111,7 +121,6 @@ service.interceptors.response.use(
        * 如果要获取headers or status等http状态信息
        * 则返回 response
        */
-      // console.log(response)
       return response
     }
   },
@@ -122,6 +131,8 @@ service.interceptors.response.use(
       type: 'error',
       duration: 3 * 1000
     })
+    store.dispatch('user/updateToken')
+    location.reload()
     return Promise.reject(error)
   }
 )

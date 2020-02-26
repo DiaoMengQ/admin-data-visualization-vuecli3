@@ -38,7 +38,7 @@ router.beforeEach(async(to, from, next) => {
       } else {
         try {
           // 刷新token
-          await store.dispatch('user/updateToken')
+          // await store.dispatch('user/updateToken')
           // 同步获取用户信息
           await store.dispatch('user/getUserInfo')
           next()

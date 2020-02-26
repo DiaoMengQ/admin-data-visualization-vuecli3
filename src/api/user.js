@@ -6,6 +6,39 @@
 import request from '@/utils/request'
 
 /**
+ * 管理范围授权
+ *
+ * @export
+ * @param {manaRange,userId} data
+ */
+export function addAuth(data) {
+  data = data.toString()
+  console.log(data)
+  // return request({
+  //   url: '/auth/addAuth',
+  //   method: 'post',
+  //   data
+  // })
+}
+
+/**
+ * 添加管理用户
+ *
+ * @export
+ * @param {user} data
+ * @returns
+ */
+export function addUser(data) {
+  data = JSON.stringify(data)
+  console.log(data)
+  // return request({
+  //   url: '/user/addUser',
+  //   method: 'post',
+  //   data
+  // })
+}
+
+/**
  * 登录，返回个人信息
  *
  * @export
