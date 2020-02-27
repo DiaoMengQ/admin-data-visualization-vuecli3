@@ -132,7 +132,7 @@ service.interceptors.response.use(
       duration: 3 * 1000
     })
     store.dispatch('user/updateToken')
-    location.reload()
+    // location.reload()
     return Promise.reject(error)
   }
 )

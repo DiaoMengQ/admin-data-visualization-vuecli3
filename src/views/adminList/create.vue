@@ -555,12 +555,23 @@ export default {
           console.log(adminInfo2update)
           // updateAdminInfo(adminInfo2update)
 
+          switch (this.adminInfo.roleType) {
+            case 'SCHOOL_ADMIN':
+              const schoolList = []
+              for (let i = 0; i < this.QCPJschoolList.length; i++) {
+                // console.log(this.QCPJschoolList)
+              }
+
+              break
+            case 'CITY_ADMIN':
+              break
+          }
           // updateAdminInfo(adminInfo2update).then(response => {
           //   const data = response['data']
           //   console.log(data)
           //   this.$notify({
           //     title: '成功',
-          //     message: '修改成功',
+          //     message: '创建成功',
           //     type: 'success',
           //     duration: 2000
           //   })
