@@ -44,7 +44,7 @@
         :filters="[{ text: '最高权限', value: '最高权限' }, { text: '校级', value: '校级' }, { text: '市级', value: '市级' }]"
         :filter-method="filterRoleTypeLabel"
         prop="roleTypeLabel"
-        label="权限范围"
+        label="账户类型"
         align="center"
         min-width="100px"
       >
@@ -59,6 +59,7 @@
         prop="statusLabel"
         label="账户状态"
         align="center"
+        min-width="100px"
       >
         <template slot-scope="scope">
           {{ scope.row['statusLabel'] }}
@@ -142,7 +143,6 @@ export default {
       getAdminList({ parentId: this.$store.state.user['userid'] })
         .then(response => {
           this.adminList = response.data.data
-          console.log(this.adminList)
           this.listLoading = false
 
           // 判断是否允许现实操作按钮

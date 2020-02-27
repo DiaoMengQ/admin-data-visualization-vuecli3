@@ -131,8 +131,6 @@ service.interceptors.response.use(
       type: 'error',
       duration: 3 * 1000
     })
-    store.dispatch('user/updateToken')
-    // location.reload()
     return Promise.reject(error)
   }
 )
