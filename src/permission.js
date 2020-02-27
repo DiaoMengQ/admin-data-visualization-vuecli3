@@ -43,10 +43,11 @@ router.beforeEach(async(to, from, next) => {
           await store.dispatch('user/getUserInfo')
           next()
         } catch (error) {
-          console.log('permission.js' + error)
+          console.log('permission.js ' + error)
           // 如果获取错误,则删除token,进入登录页面重新登录
           store.dispatch('user/resetToken')
-          Message.error(error || 'token获取失败')
+          // Message.error(error || 'token获取失败')
+          Message.error('token已过期,请重新登录')
           next(`/login?redirect=${to.path}`)
           NProgress.done()
         }

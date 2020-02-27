@@ -55,7 +55,7 @@ export const constantRoutes = [
       path: 'home', // url显示的路径
       name: 'home', // 用于路由间的调用
       component: () => import('@/views/home/index'),
-      meta: { title: '首页', icon: 'dashboard' }
+      meta: { title: '首页', icon: 'home' }
     }]
   },
 
@@ -64,10 +64,7 @@ export const constantRoutes = [
   {
     path: '/qcpj',
     component: Layout,
-    meta: {
-      title: '七彩评价',
-      icon: 'tree'
-    },
+    meta: { title: '七彩评价', icon: 'qcpj' },
     redirect: '/qcpj/groupProfile', // 点击父级目录'七彩评价'的默认路径
     children: [
       {
@@ -99,13 +96,13 @@ export const constantRoutes = [
         name: 'ClusterAnalysis',
         component: () => import('@/views/qcpj/clusterAnalysis/index'),
         redirect: '/qcpj/clusterAnalysis/taskList',
-        meta: { title: '科目成绩聚类分析' },
+        meta: { title: '科目成绩聚类分析', icon: 'cluster' },
         children: [
           {
             path: 'taskList',
             component: () => import('@/views/qcpj/clusterAnalysis/taskList'),
             name: 'taskList',
-            meta: { title: '任务列表' }
+            meta: { title: '任务列表', icon: 'list' }
           },
           {
             path: 'taskDetail/:taskId(\\d+)',
@@ -118,7 +115,7 @@ export const constantRoutes = [
             path: 'createTask',
             component: () => import('@/views/qcpj/clusterAnalysis/taskCreate/index'),
             name: 'createTask',
-            meta: { title: '创建任务' }
+            meta: { title: '创建任务', icon: 'create-item' }
           },
           {
             path: 'createTask/info/:schoolId(\\d+)',
@@ -138,10 +135,7 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/ydhy/menu1',
     name: 'ydhy',
-    meta: {
-      title: '阅读海洋',
-      icon: 'nested'
-    },
+    meta: { title: '阅读海洋', icon: 'ydhy' },
     children: [
       {
         path: 'menu1',
@@ -199,25 +193,25 @@ export const constantRoutes = [
     ]
   },
 
-  // *图表
+  // 系统相关数据
   {
-    path: '/example',
+    path: '/systemData',
     component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: '系统相关数据', icon: 'example' },
+    redirect: '/systemData/table',
+    name: 'systemData',
+    meta: { title: '系统相关数据', icon: 'histogram' },
     children: [
       {
         path: 'table',
         name: 'Table',
         component: () => import('@/views/table/index'),
-        meta: { title: '系统访问设备统计', icon: 'table' }
+        meta: { title: '系统访问设备统计', icon: 'devices' }
       },
       {
         path: 'tree',
         name: 'Tree',
         component: () => import('@/views/tree/index'),
-        meta: { title: '用户访问区域分布', icon: 'tree' }
+        meta: { title: '用户访问区域分布', icon: 'international' }
       }
     ]
   },
@@ -226,19 +220,19 @@ export const constantRoutes = [
   {
     path: '/administration',
     component: Layout,
-    meta: { title: '人员管理', icon: 'tree' },
+    meta: { title: '人员管理', icon: 'member' },
     redirect: '/administration/adminList',
     children: [{
       path: 'adminList',
       name: 'adminList',
       component: () => import('@/views/adminList/list'),
-      meta: { title: '账户列表' }
+      meta: { title: '账户列表', icon: 'tree' }
     },
     {
       path: 'adminCreate',
       name: 'adminCreate',
       component: () => import('@/views/adminList/create'),
-      meta: { title: '添加账户', noCache: true }
+      meta: { title: '添加账户', icon: 'cteate-member', noCache: true }
     },
     {
       path: 'adminEdit/:id(\\d+)',
