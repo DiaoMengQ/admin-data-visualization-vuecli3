@@ -27,7 +27,7 @@ export function getAreaInfo(para) {
  * 七彩评价获取区域统计信息
  *
  * @export
- * @param {*} para
+ * @param {date} para //若 data 为空则默认为全部
  * @returns
  */
 export function QCPJcityDistribution(para) {
@@ -42,12 +42,27 @@ export function QCPJcityDistribution(para) {
  * 阅读海洋获取区域统计信息
  *
  * @export
- * @param {*} para
+ * @param {date} para //若 data 为空则默认为全部
  * @returns
  */
 export function YDHYcityDistribution(para) {
   return request({
     url: '/ro/log/cityDistribution',
+    method: 'GET',
+    params: para
+  })
+}
+
+/**
+ * 七彩评价获取访问设备统计信息
+ *
+ * @export
+ * @param {date} para //若 data 为空则默认为全部
+ * @returns
+ */
+export function QCPJequipmentCount(para) {
+  return request({
+    url: '/qcpj/log/equipmentCount',
     method: 'GET',
     params: para
   })

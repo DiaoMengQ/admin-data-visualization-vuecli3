@@ -1,253 +1,110 @@
 <template>
   <div id="app-container">
-    <div v-if="ifShowMap" id="mapContainer" style="width:100%; height:650px">
-      <baidu-map
-        ak="vgU1xLIOGzk8yPQkqW5xT8PylCwXfliW"
-        class="bm-view"
-        @ready="drawChinaMap"
-      />
+    <div style="margin:20px;text-align: center;">
+      <el-button-group>
+        <el-button type="primary" :plain="QCPJplain" @click="getQCPJdevicesData">七彩评价</el-button>
+        <el-button type="primary" disabled :plain="YDHYplain" @click="getYDHYdevicesData">阅读海洋</el-button>
+      </el-button-group>
     </div>
+    <div id="chart-main" style="width:100%; height:650px" />
   </div>
 </template>
 
 <script>
 import echarts from 'echarts'
-import 'echarts/extension/bmap/bmap'
-
-import BaiduMap from 'vue-baidu-map/components/map/Map.vue'
-
+import 'echarts/theme/macarons'
 // 引入提示框和标题组件
 require('echarts/lib/component/tooltip')
 require('echarts/lib/component/title')
 
+import { QCPJequipmentCount } from '@/api/system'
+
 export default {
-  components: { BaiduMap },
   data() {
     return {
-      ifShowMap: false,
-      geoCoordMap: {
-        '莱芜': [117.67, 36.19],
-        '常德': [111.69, 29.05],
-        '保定': [115.48, 38.85],
-        '湘潭': [112.91, 27.87],
-        '金华': [119.64, 29.12],
-        '岳阳': [113.09, 29.37],
-        '长沙': [113, 28.21],
-        '衢州': [118.88, 28.97],
-        '廊坊': [116.7, 39.53],
-        '菏泽': [115.480656, 35.23375],
-        '合肥': [117.27, 31.86],
-        '武汉': [114.31, 30.52],
-        '大庆': [125.03, 46.58]
-      },
-      data: [
-        { name: '莱芜', value: 148 },
-        { name: '常德', value: 152 },
-        { name: '保定', value: 153 },
-        { name: '湘潭', value: 154 },
-        { name: '金华', value: 157 },
-        { name: '岳阳', value: 169 },
-        { name: '长沙', value: 175 },
-        { name: '衢州', value: 177 },
-        { name: '廊坊', value: 193 },
-        { name: '菏泽', value: 194 },
-        { name: '合肥', value: 229 },
-        { name: '武汉', value: 273 },
-        { name: '大庆', value: 279 }
-      ],
-      mapChartOption: {
+      QCPJplain: false,
+      YDHYplain: true,
+      chartOption: {
         title: {
-          text: '全国主要城市空气质量 - 百度地图',
-          subtext: 'data from PM25.in',
-          sublink: 'http://www.pm25.in',
+          text: '访问设备数据统计',
+          subtext: '数据来源: 七彩评价',
           left: 'center'
         },
         tooltip: {
-          trigger: 'item'
+          trigger: 'item',
+          formatter: '{a} <br/>{b} : {c} ({d}%)'
         },
-        bmap: {
-          center: [104.114129, 37.550339],
-          zoom: 5,
-          roam: true,
-          mapStyle: {
-            styleJson: [{
-              'featureType': 'water',
-              'elementType': 'all',
-              'stylers': {
-                'color': '#d1d1d1'
+        legend: {
+          type: 'scroll',
+          orient: 'vertical',
+          right: 10,
+          top: 20,
+          bottom: 20,
+          data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎']
+        },
+        series: [
+          {
+            name: '访问来源',
+            type: 'pie',
+            radius: '55%',
+            center: ['50%', '60%'],
+            data: [
+              { value: 335, name: '直接访问' },
+              { value: 310, name: '邮件营销' },
+              { value: 234, name: '联盟广告' },
+              { value: 135, name: '视频广告' },
+              { value: 1548, name: '搜索引擎' }
+            ],
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
               }
-            }, {
-              'featureType': 'land',
-              'elementType': 'all',
-              'stylers': {
-                'color': '#f3f3f3'
-              }
-            }, {
-              'featureType': 'railway',
-              'elementType': 'all',
-              'stylers': {
-                'visibility': 'off'
-              }
-            }, {
-              'featureType': 'highway',
-              'elementType': 'all',
-              'stylers': {
-                'color': '#fdfdfd'
-              }
-            }, {
-              'featureType': 'highway',
-              'elementType': 'labels',
-              'stylers': {
-                'visibility': 'off'
-              }
-            }, {
-              'featureType': 'arterial',
-              'elementType': 'geometry',
-              'stylers': {
-                'color': '#fefefe'
-              }
-            }, {
-              'featureType': 'arterial',
-              'elementType': 'geometry.fill',
-              'stylers': {
-                'color': '#fefefe'
-              }
-            }, {
-              'featureType': 'poi',
-              'elementType': 'all',
-              'stylers': {
-                'visibility': 'off'
-              }
-            }, {
-              'featureType': 'green',
-              'elementType': 'all',
-              'stylers': {
-                'visibility': 'off'
-              }
-            }, {
-              'featureType': 'subway',
-              'elementType': 'all',
-              'stylers': {
-                'visibility': 'off'
-              }
-            }, {
-              'featureType': 'manmade',
-              'elementType': 'all',
-              'stylers': {
-                'color': '#d1d1d1'
-              }
-            }, {
-              'featureType': 'local',
-              'elementType': 'all',
-              'stylers': {
-                'color': '#d1d1d1'
-              }
-            }, {
-              'featureType': 'arterial',
-              'elementType': 'labels',
-              'stylers': {
-                'visibility': 'off'
-              }
-            }, {
-              'featureType': 'boundary',
-              'elementType': 'all',
-              'stylers': {
-                'color': '#fefefe'
-              }
-            }, {
-              'featureType': 'building',
-              'elementType': 'all',
-              'stylers': {
-                'color': '#d1d1d1'
-              }
-            }, {
-              'featureType': 'label',
-              'elementType': 'labels.text.fill',
-              'stylers': {
-                'color': '#999999'
-              }
-            }]
+            }
           }
-        }
+        ]
       }
     }
   },
   mounted() {
-    this.drawChinaMap()
+    this.getQCPJdevicesData()
   },
   methods: {
-    convertData(data) {
-      var res = []
-      for (var i = 0; i < data.length; i++) {
-        var geoCoord = this.geoCoordMap[data[i].name]
-        if (geoCoord) {
-          res.push({
-            name: data[i].name,
-            value: geoCoord.concat(data[i].value)
-          })
-        }
-      }
-      return res
-    },
-    // 此处调用了两次 drawChinaMap() 方法(加载了两次地图),地图才得以显示
-    // 我jio得应该是数据和地图请求顺序的问题
-    // 但是我不知道怎么改_(:з」∠)_
-    drawChinaMap() {
-      this.ifShowMap = true
-      var myChart = echarts.init(document.getElementById('mapContainer'))
-      this.mapChartOption.series = [
-        {
-          name: 'pm2.5',
-          type: 'scatter',
-          coordinateSystem: 'bmap',
-          data: this.convertData(this.data),
-          symbolSize: function(val) {
-            return val[2] / 10
-          },
-          label: {
-            formatter: '{b}',
-            position: 'right',
-            show: false
-          },
-          itemStyle: {
-            color: 'purple'
-          },
-          emphasis: {
-            label: {
-              show: true
-            }
-          }
-        },
-        {
-          name: 'Top 5',
-          type: 'effectScatter',
-          coordinateSystem: 'bmap',
-          data: this.convertData(this.data.sort(function(a, b) {
-            return b.value - a.value
-          }).slice(0, 6)),
-          symbolSize: function(val) {
-            return val[2] / 10
-          },
-          showEffectOn: 'render',
-          rippleEffect: {
-            brushType: 'stroke'
-          },
-          hoverAnimation: true,
-          label: {
-            formatter: '{b}',
-            position: 'right',
-            show: true
-          },
-          itemStyle: {
-            color: 'purple',
-            shadowBlur: 10,
-            shadowColor: '#333'
-          },
-          zlevel: 1
-        }
-      ]
+    // 获取阅读海洋地区访问统计数值(目前未提供接口,备用)
+    getYDHYdevicesData() {
+      this.drawChinaMap()
 
-      myChart.setOption(this.mapChartOption)
+      this.QCPJplain = true
+      this.YDHYplain = false
+    },
+    // 获取七彩评价地区访问统计数值
+    getQCPJdevicesData() {
+      QCPJequipmentCount().then((result) => {
+        const data = result.data.data
+        const devicesNameArr = []
+        const devicesDataArr = []
+
+        for (let i = 0; i < data.length; i++) {
+          const val = data[i].count
+          const name = data[i].equipment
+          devicesNameArr.push(name)
+          devicesDataArr.push({ value: val, name: name })
+        }
+        this.chartOption.legend.data = devicesNameArr
+        this.chartOption.series[0].data = devicesDataArr
+
+        this.drawChinaMap()
+        this.QCPJplain = false
+        this.YDHYplain = true
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
+    drawChinaMap() {
+      var myChart = echarts.init(document.getElementById('chart-main'), 'macarons')
+
+      myChart.setOption(this.chartOption)
     }
   }
 }
