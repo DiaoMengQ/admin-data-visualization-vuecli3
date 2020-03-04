@@ -54,7 +54,8 @@
 // eslint-disable-next-line no-unused-vars
 import { str2obj } from '@/utils/multiple'
 import { setSchoolVal } from '@/utils/school'
-import { getAreaInfo, getSchoolInfo } from '@/api/qcpj'
+import { getSchoolInfo } from '@/api/qcpj'
+import { getAreaInfo } from '@/api/system'
 import { getUserManaRange } from '@/utils/auth'
 
 export default {

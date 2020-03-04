@@ -197,21 +197,21 @@ export const constantRoutes = [
   {
     path: '/systemData',
     component: Layout,
-    redirect: '/systemData/table',
+    redirect: '/systemData/accessDevicesData',
     name: 'systemData',
     meta: { title: '系统相关数据', icon: 'histogram' },
     children: [
       {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
+        path: 'accessDevicesData',
+        name: 'AccessDevicesData',
+        component: () => import('@/views/systemData/accessDevicesData/index'),
         meta: { title: '系统访问设备统计', icon: 'devices' }
       },
       {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: '用户访问区域分布', icon: 'international' }
+        path: 'accessAreaData',
+        name: 'AccessAreaData',
+        component: () => import('@/views/systemData/accessAreaData'),
+        meta: { title: '用户访问区域统计', icon: 'international' }
       }
     ]
   },

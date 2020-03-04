@@ -223,7 +223,8 @@
 
 <script>
 import { updateAdminInfo } from '@/api/user'
-import { getAreaInfo, getSchoolInfo } from '@/api/qcpj'
+import { getSchoolInfo } from '@/api/qcpj'
+import { getAreaInfo } from '@/api/system'
 import { getYDHYSchoolInfo } from '@/api/ydhy'
 import { validatePassword } from '@/utils/validate'
 import { MessageBox } from 'element-ui'

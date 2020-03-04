@@ -81,23 +81,6 @@ export function getSchoolInfo(para) {
 }
 
 /**
- * 根据省份和城市 ID 号请求地区信息
- * 城市 ID 可选
- * 省份 ID 必填
- *
- * @export
- * @param {city_id,province_id} para
- * @returns
- */
-export function getAreaInfo(para) {
-  return request({
-    url: '/area/get',
-    method: 'GET',
-    params: para
-  })
-}
-
-/**
  * 登录,从个人信息中获取七彩评价管辖学校列表
  *
  * @export
