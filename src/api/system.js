@@ -67,3 +67,33 @@ export function QCPJequipmentCount(para) {
     params: para
   })
 }
+
+/**
+ * 七彩评价获取响应状态码统计信息
+ *
+ * @export
+ * @param {date} para //若 data 为空则默认为全部
+ * @returns
+ */
+export function QCPJresponseCodeCount(para) {
+  return request({
+    url: '/qcpj/log/codeCount',
+    method: 'GET',
+    params: para
+  })
+}
+
+/**
+ * 阅读海洋获取响应状态码统计信息
+ *
+ * @export
+ * @param {date} para //若 data 为空则默认为全部
+ * @returns
+ */
+export function YDHYresponseCodeCount(para) {
+  return request({
+    url: '/ro/log/codeCount',
+    method: 'GET',
+    params: para
+  })
+}

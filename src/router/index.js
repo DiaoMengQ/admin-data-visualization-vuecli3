@@ -212,6 +212,12 @@ export const constantRoutes = [
         name: 'AccessAreaData',
         component: () => import('@/views/systemData/accessAreaData'),
         meta: { title: '用户访问区域统计', icon: 'international' }
+      },
+      {
+        path: 'responseCodeCount',
+        name: 'responseCodeCount',
+        component: () => import('@/views/systemData/responseCodeCount'),
+        meta: { title: '访问响应码统计', icon: 'warn' }
       }
     ]
   },
