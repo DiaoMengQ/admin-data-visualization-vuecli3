@@ -1,9 +1,5 @@
 <template>
   <div class="app-container">
-
-    <!-- <el-tag>任务ID: {{ taskId }} {{ taskDetail.taskName }}</el-tag> -->
-    <!-- <span>{{ taskDetail }}</span> -->
-
     <div id="chart-main" ref="chart" style="width:800px;height:600px;margin:0 auto;" />
 
   </div>
@@ -115,9 +111,9 @@ export default {
   },
   mounted: function() {
     // 基于准备好的dom，初始化echarts实例
-    var clusterChart = echarts.init(document.getElementById('chart-main'))
+    var clusterChart = echarts.init(document.getElementById('chart-main'), 'macarons')
 
-    // this.taskDetailInit()
+    // TODO: this.taskDetailInit()
     this.DataHandler()
     this.chartOptionAssignment()
 
