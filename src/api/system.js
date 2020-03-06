@@ -97,3 +97,18 @@ export function YDHYresponseCodeCount(para) {
     params: para
   })
 }
+
+/**
+ * 根据 {省份和城市 ID 号} 或 {区域代码} 或 {学校ID} 请求所有学校信息
+ *
+ * @export
+ * @param {areaCode,city_id,province_id,schoolId} para
+ * @returns
+ */
+export function getAllSchoolInfo(para) {
+  return request({
+    url: '/area/getSchoolInfo',
+    method: 'GET',
+    params: para
+  })
+}

@@ -12,13 +12,11 @@ import request from '@/utils/request'
  * @param {manaRange,userId} data
  */
 export function addAuth(data) {
-  data = data.toString()
-  console.log(data)
-  // return request({
-  //   url: '/auth/addAuth',
-  //   method: 'post',
-  //   data
-  // })
+  return request({
+    url: '/auth/addAuth',
+    method: 'post',
+    data
+  })
 }
 
 /**
@@ -29,13 +27,11 @@ export function addAuth(data) {
  * @returns
  */
 export function addUser(data) {
-  data = JSON.stringify(data)
-  console.log(data)
-  // return request({
-  //   url: '/user/addUser',
-  //   method: 'post',
-  //   data
-  // })
+  return request({
+    url: '/user/addUser',
+    method: 'post',
+    data
+  })
 }
 
 /**

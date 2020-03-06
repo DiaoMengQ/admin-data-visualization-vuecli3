@@ -38,6 +38,7 @@
               </el-form-item>
             </el-col>
 
+            <!-- 城市选择器 -->
             <el-col v-if="ifShowCityList" :xs="24" :lg="12" :xl="8">
               <el-form-item prop="areaCode" label-width="170px" label="市:" class="postInfo-container-item">
                 <el-select v-model="areaCode" placeholder="请选择">
@@ -50,25 +51,38 @@
                 </el-select>
               </el-form-item>
             </el-col>
+            <!-- 城市多选项 -->
+            <el-col v-if="ifShowCityTransfer" :xs="24">
+              <el-transfer
+                v-model="areaSelectedList"
+                :data="cityList"
+                :props="{
+                  key: 'areaCode',
+                  label: 'cityName'
+                }"
+                :titles="['可选城市', '已选城市']"
+              />
+            </el-col>
 
+            <!-- 学校列表 -->
             <el-col :xs="20" :lg="20" :xl="20">
-              <!-- 七彩评价学校列表 -->
+              <!-- 学校列表 -->
               <el-table
                 v-if="ifShowSchoolList"
                 v-loading="listLoading"
                 max-height="350"
-                :data="QCPJschoolList"
+                :data="schoolList"
                 border
                 fit
                 highlight-current-row
-                @selection-change="handleQCPJSchChange"
+                @selection-change="handleSchChange"
               >
                 <el-table-column
                   type="selection"
                   width="35px"
                 />
 
-                <el-table-column min-width="300px" label="七彩评价学校列表">
+                <el-table-column min-width="300px" label="学校列表">
                   <template slot-scope="scope">
                     <span>{{ scope.row['schoolName'] }}</span>
                   </template>
@@ -82,35 +96,6 @@
 
               </el-table>
 
-              <!-- 阅读海洋学校列表 -->
-              <el-table
-                v-if="ifShowSchoolList"
-                v-loading="listLoading"
-                max-height="350"
-                :data="YDHYschoolList"
-                border
-                fit
-                highlight-current-row
-                @selection-change="handleYDHYSchChange"
-              >
-                <el-table-column
-                  type="selection"
-                  width="35px"
-                />
-
-                <el-table-column min-width="300px" label="阅读海洋学校列表">
-                  <template slot-scope="scope">
-                    <span>{{ scope.row['schoolName'] }}</span>
-                  </template>
-                </el-table-column>
-
-                <el-table-column align="center" label="学校ID" width="80">
-                  <template slot-scope="scope">
-                    <span>{{ scope.row['schoolId'] }}</span>
-                  </template>
-                </el-table-column>
-
-              </el-table>
             </el-col>
 
             <!-- 账户名 -->
@@ -222,12 +207,10 @@
 </template>
 
 <script>
-import { updateAdminInfo } from '@/api/user'
-import { getSchoolInfo } from '@/api/qcpj'
-import { getAreaInfo } from '@/api/system'
-import { getYDHYSchoolInfo } from '@/api/ydhy'
+import { addAuth, addUser } from '@/api/user'
+import { getAreaInfo, getAllSchoolInfo } from '@/api/system'
 import { validatePassword } from '@/utils/validate'
-import { MessageBox } from 'element-ui'
+import { MessageBox, Message } from 'element-ui'
 
 // 此处仅作为结构展示
 // 因为在把对象赋值到 adminInfo 时，会覆盖此处初始化的属性
@@ -286,6 +269,7 @@ export default {
       }
     }
     return {
+      // 性别选项
       genderOptions: [
         {
           genderKey: 1,
@@ -296,9 +280,10 @@ export default {
           genderLabel: '女'
         }
       ],
-      roleTypeOptions: [],
+      roleTypeOptions: [], // 账户类型选项
       adminInfo: Object.assign({}, defaultForm),
       loading: false,
+      // 表单校验规则
       rules: {
         username: [{ required: true, message: '账户名不能为空', trigger: 'blur' },
           { min: 4, message: '账户名须大于 4 个字符', trigger: 'blur' }],
@@ -309,6 +294,7 @@ export default {
 
       ifShowProvinceList: false, // 是否显示省份列表,默认不显示
       ifShowCityList: false, // 是否显示城市列表,默认不显示
+      ifShowCityTransfer: false, // 是否显示城市穿梭框,默认不显示
       ifShowSchoolList: false, // 是否显示学校列表,默认不显示
       listLoading: false, // 是否正在加载学校列表
 
@@ -347,12 +333,11 @@ export default {
         { provinceId: 43, provinceName: '湖南' }
       ],
       areaCode: null,
+      areaSelectedList: [],
       cityList: [],
       schoolId: undefined,
-      QCPJschoolList: [],
-      QCPJSchSelectedList: [],
-      YDHYschoolList: [],
-      YDHYSchSelectedList: []
+      schoolList: [],
+      schSelectedList: []
     }
   },
   computed: {
@@ -375,16 +360,28 @@ export default {
             break
           default:
             if (this.provinceId && this.provinceId !== old) {
-              this.ifShowCityList = true // 城市选项复位
-              this.QCPJschoolList = []
-              this.YDHYschoolList = [] // 学校列表复位
+              this.schoolList = []
               this.ifShowSchoolList = false // 隐藏学校列表
+              this.areaCode = null
+              this.areaSelectedList = []
 
+              switch (this.adminInfo.roleType) {
+                case 'SCHOOL_ADMIN':
+                  this.ifShowCityTransfer = false
+                  this.ifShowCityList = true
+                  break
+                case 'CITY_ADMIN':
+                  this.ifShowCityTransfer = true
+                  this.ifShowCityList = false
+                  break
+                default:
+                  break
+              }
               getAreaInfo({ province_id: this.provinceId }).then(response => {
                 this.cityList = response.data['data']
               })
             }
-            this.areaCode = null
+
             break
         }
       }
@@ -403,23 +400,17 @@ export default {
                 if (this.areaCode && this.areaCode !== old) {
                   this.ifShowSchoolList = true
                   this.listLoading = true
-                  getSchoolInfo({ areaCode: this.areaCode }).then(response => {
-                    this.QCPJschoolList = response.data.data
+                  getAllSchoolInfo({ areaCode: this.areaCode }).then(response => {
+                    this.schoolList = response.data.data
                     this.listLoading = false
                   }).catch(error => {
-                    console.log('七彩评价学校列表请求错误 ' + error)
-                  })
-
-                  getYDHYSchoolInfo({ areaCode: this.areaCode }).then(response => {
-                    this.YDHYschoolList = response.data.data
-                    this.listLoading = false
-                  }).catch(error => {
-                    console.log('阅读海洋学校列表请求错误 ' + error)
+                    console.log('学校列表请求错误 ' + error)
                   })
                 }
                 break
               // 创建市级管理员
               case 'CITY_ADMIN':
+                console.log(this.areaCode)
                 break
               default:
                 break
@@ -429,17 +420,11 @@ export default {
             if (this.areaCode && this.areaCode !== old) {
               this.ifShowSchoolList = true
               this.listLoading = true
-              getSchoolInfo({ areaCode: this.areaCode }).then(response => {
-                this.QCPJschoolList = response.data.data
+              getAllSchoolInfo({ areaCode: this.areaCode }).then(response => {
+                this.schoolList = response.data.data
                 this.listLoading = false
               }).catch(error => {
-                console.log('七彩评价学校列表请求错误 ' + error)
-              })
-              getYDHYSchoolInfo({ areaCode: this.areaCode }).then(response => {
-                this.YDHYschoolList = response.data.data
-                this.listLoading = false
-              }).catch(error => {
-                console.log('阅读海洋学校列表请求错误 ' + error)
+                console.log('学校列表请求错误 ' + error)
               })
             }
             break
@@ -479,13 +464,8 @@ export default {
   created() {
   },
   methods: {
-    handleYDHYSchChange(val) {
-      console.log(val)
-      this.YDHYSchSelectedList = val
-    },
-    handleQCPJSchChange(val) {
-      console.log(val)
-      this.QCPJSchSelectedList = val
+    handleSchChange(val) {
+      this.schSelectedList = val
     },
     // 选中性别改变后设定信息
     genderChanged(val) {
@@ -501,14 +481,14 @@ export default {
         default:
           break
       }
-      // console.log(this.adminInfo.sex)
-      // console.log(this.adminInfo.sexLabel)
     },
 
     // 选中账户角色类型改变后设定信息
     roleTypeChanged(val) {
       this.$forceUpdate()
       this.adminInfo.roleType = val
+      this.ifShowCityTransfer = false
+      this.ifShowCityList = false
       switch (val) {
         case 'CITY_ADMIN':
           this.adminInfo.roleTypeLabel = '市级管理员'
@@ -532,55 +512,86 @@ export default {
 
     // 提交用户信息
     UpdateAdminInfo(adminInfo) {
-      console.log(this.adminInfo)
       this.$refs[adminInfo].validate(valid => {
         if (valid) {
           this.loading = true
-          const adminInfo2update = {
-            user: this.adminInfo.username,
+          const schools2upload = []
+          const city2upload = []
+          const adminInfo2upload = {
+            username: this.adminInfo.username,
             password: this.adminInfo.password,
             roleType: this.adminInfo.roleType
           }
           if (this.adminInfo.nickname !== null && this.adminInfo.nickname !== '') {
-            adminInfo2update.nickname = this.adminInfo.nickname
+            adminInfo2upload.nickname = this.adminInfo.nickname
           }
           if (this.adminInfo.tel !== null && this.adminInfo.tel !== '') {
-            adminInfo2update.tel = this.adminInfo.tel
+            adminInfo2upload.tel = this.adminInfo.tel
           }
           if (this.adminInfo.sex !== null && this.adminInfo.sex !== '') {
-            adminInfo2update.sex = this.adminInfo.sex
+            adminInfo2upload.sex = this.adminInfo.sex
           }
           if (this.adminInfo.email !== null && this.adminInfo.email !== '') {
-            adminInfo2update.email = this.adminInfo.email
+            adminInfo2upload.email = this.adminInfo.email
           }
-          console.log(adminInfo2update)
-          // updateAdminInfo(adminInfo2update)
+          console.log('待提交用户信息', adminInfo2upload)
 
           switch (this.adminInfo.roleType) {
             case 'SCHOOL_ADMIN':
-              const schoolList = []
-              for (let i = 0; i < this.QCPJschoolList.length; i++) {
-                // console.log(this.QCPJschoolList)
+              if (this.schSelectedList.length === 0) {
+                Message({
+                  message: '请选择所授权学校',
+                  type: 'error',
+                  duration: 3 * 1000
+                })
+                this.loading = false
+              } else {
+              // 提取学校列表里的学校ID
+                for (let i = 0; i < this.schSelectedList.length; i++) {
+                  schools2upload.push(this.schSelectedList[i].schoolId)
+                }
+                const sch2upload = '[' + schools2upload + ']'
+                addUser({ user: JSON.stringify(adminInfo2upload) }).then(response => {
+                  const data = response.data.data
+                  const userId = data.userId
+                  console.log('创建账户成功后返回信息', data)
+                  console.log(userId)
+
+                  addAuth({ manaRange: sch2upload, userId: userId }).then((result) => {
+                    MessageBox.confirm('创建账户完成', '完成', {
+                      confirmButtonText: '确定',
+                      type: 'success '
+                    }).then(() => {
+                      this.$router.push('/administration/adminList')
+                    })
+                  }).catch((err) => {
+                    MessageBox.confirm('已创建用户,授权失败,请稍后在账户列表重试', '失败', {
+                      confirmButtonText: '确定',
+                      type: 'error'
+                    }).then(() => {
+                      console.log(err)
+                      this.loading = false
+                      this.$router.push('/administration/adminList')
+                    })
+                  })
+                }).catch(error => {
+                  this.loading = false
+                  console.log('添加用户失败', error)
+                })
               }
 
               break
             case 'CITY_ADMIN':
+              console.log(this.areaSelectedList)
+              if (this.areaSelectedList.length === 0) {
+                Message({
+                  message: '请选择所授权城市',
+                  type: 'error',
+                  duration: 3 * 1000
+                })
+              }
               break
           }
-          // updateAdminInfo(adminInfo2update).then(response => {
-          //   const data = response['data']
-          //   console.log(data)
-          //   this.$notify({
-          //     title: '成功',
-          //     message: '创建成功',
-          //     type: 'success',
-          //     duration: 2000
-          //   })
-          //   // console.log(this.adminInfo)
-          // }).catch(error => {
-          //   console.log('信息上传失败')
-          //   console.log(error)
-          // })
 
           this.loading = false
         }
