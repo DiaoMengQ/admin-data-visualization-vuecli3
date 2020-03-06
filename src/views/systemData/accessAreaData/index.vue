@@ -1,10 +1,20 @@
 <template>
   <div id="app-container">
     <div style="margin:20px;text-align: center;">
-      <el-button-group>
-        <el-button type="primary" :plain="QCPJplain" @click="getQCPJcityData">七彩评价</el-button>
-        <el-button type="primary" :plain="YDHYplain" @click="getYDHYcityData">阅读海洋</el-button>
-      </el-button-group>
+      <div>
+        <el-date-picker
+          v-model="selectedDate"
+          align="right"
+          type="date"
+          placeholder="选择日期"
+          value-format="yyyy-MM-dd"
+          :picker-options="pickerOptions"
+        />
+        <el-button-group>
+          <el-button type="primary" :plain="QCPJplain" @click="getQCPJcityData">七彩评价</el-button>
+          <el-button type="primary" :plain="YDHYplain" @click="getYDHYcityData">阅读海洋</el-button>
+        </el-button-group>
+      </div>
     </div>
     <div v-if="ifShowMap" id="mapContainer">
       <baidu-map
@@ -32,36 +42,40 @@ export default {
   components: { BaiduMap },
   data() {
     return {
+      selectedDate: '',
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now()
+        },
+        shortcuts: [{
+          text: '今天',
+          onClick(picker) {
+            picker.$emit('pick', new Date())
+          }
+        }, {
+          text: '昨天',
+          onClick(picker) {
+            const date = new Date()
+            date.setTime(date.getTime() - 3600 * 1000 * 24)
+            picker.$emit('pick', date)
+          }
+        }, {
+          text: '一周前',
+          onClick(picker) {
+            const date = new Date()
+            date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
+            picker.$emit('pick', date)
+          }
+        }]
+      },
       ifShowMap: false,
       geoCoordMap: {
         '莱芜': [117.67, 36.19],
-        '常德': [111.69, 29.05],
-        '保定': [115.48, 38.85],
-        '湘潭': [112.91, 27.87],
-        '金华': [119.64, 29.12],
-        '岳阳': [113.09, 29.37],
-        '长沙': [113, 28.21],
-        '衢州': [118.88, 28.97],
-        '廊坊': [116.7, 39.53],
-        '菏泽': [115.480656, 35.23375],
-        '合肥': [117.27, 31.86],
-        '武汉': [114.31, 30.52],
-        '大庆': [125.03, 46.58]
+        '常德': [111.69, 29.05]
       },
       data: [
         { city: '莱芜', count: 148 },
-        { city: '常德', count: 152 },
-        { city: '保定', count: 153 },
-        { city: '湘潭', count: 154 },
-        { city: '金华', count: 157 },
-        { city: '岳阳', count: 169 },
-        { city: '长沙', count: 175 },
-        { city: '衢州', count: 177 },
-        { city: '廊坊', count: 193 },
-        { city: '菏泽', count: 194 },
-        { city: '合肥', count: 229 },
-        { city: '武汉', count: 273 },
-        { city: '大庆', count: 279 }
+        { city: '常德', count: 152 }
       ],
       mapChartOption: {
         title: {
@@ -71,7 +85,11 @@ export default {
           left: 'center'
         },
         tooltip: {
-          trigger: 'item'
+          trigger: 'item',
+          formatter: function(params) {
+            const res = params.seriesName + '</br>' + params.marker + params.name + ': ' + params.value[2]
+            return res
+          }
         },
         bmap: {
           center: [104.114129, 37.550339],
@@ -178,13 +196,12 @@ export default {
           }
         }
       },
-      QCPJplain: false,
+      QCPJplain: true,
       YDHYplain: true
     }
   },
   created() {
     this.getAreaData()
-    this.getQCPJcityData()
   },
   methods: {
     getAreaData() {
@@ -194,7 +211,6 @@ export default {
         const geoCoordMapItem = {}
 
         for (let i = 0; i < tempGeoCoordMap.length; i++) {
-        // for (let i = 0; i < 5; i++) {
           // 处理字符串中的经纬度
           const LonAlatItem = tempGeoCoordMap[i].center.split(',')
           for (let j = 0; j < 2; j++) {
@@ -213,36 +229,53 @@ export default {
     },
     // 获取阅读海洋地区访问统计数值
     getYDHYcityData() {
-      YDHYcityDistribution().then((result) => {
-        this.mapChartOption.title.subtext = '数据来源: 阅读海洋'
-        this.data = result.data.data
-        this.drawChinaMap()
-
-        this.QCPJplain = true
-        this.YDHYplain = false
-      }).catch((err) => {
-        console.log(err)
-      })
+      this.QCPJplain = true
+      this.YDHYplain = false
+      this.mapChartOption.title.subtext = '数据来源: 阅读海洋'
+      if (this.selectedDate === null || this.selectedDate.length === 0) {
+        YDHYcityDistribution().then((result) => {
+          this.data = result.data.data
+          this.addChartOptionSeries(0.00007)
+          this.drawChinaMap()
+        }).catch((err) => {
+          console.log(err)
+        })
+      } else {
+        YDHYcityDistribution({ date: this.selectedDate }).then((result) => {
+          this.data = result.data.data
+          this.addChartOptionSeries(0.1)
+          this.drawChinaMap()
+        }).catch((err) => {
+          console.log(err)
+        })
+      }
     },
     // 获取七彩评价地区访问统计数值
     getQCPJcityData() {
-      QCPJcityDistribution().then((result) => {
-        this.mapChartOption.title.subtext = '数据来源: 七彩评价'
-        this.data = result.data.data
-        this.drawChinaMap()
-        this.QCPJplain = false
-        this.YDHYplain = true
-      }).catch((err) => {
-        console.log(err)
-      })
+      this.mapChartOption.title.subtext = '数据来源: 七彩评价'
+      this.QCPJplain = false
+      this.YDHYplain = true
+      // 注意判空的顺序
+      if (this.selectedDate === null || this.selectedDate.length === 0) {
+        QCPJcityDistribution().then((result) => {
+          this.data = result.data.data
+          this.addChartOptionSeries(0.000007) // 默认获取所有日期数据时数据过大,传入倍率缩小描点显示大小
+          this.drawChinaMap()
+        }).catch((err) => {
+          console.log(err)
+        })
+      } else {
+        QCPJcityDistribution({ date: this.selectedDate }).then((result) => {
+          this.data = result.data.data
+          this.addChartOptionSeries(0.001)
+          this.drawChinaMap()
+        }).catch((err) => {
+          console.log(err)
+        })
+      }
     },
 
-    // 此处调用了两次 drawChinaMap() 方法(加载了两次地图),地图才得以显示
-    // 我jio得应该是数据和地图请求顺序的问题
-    // 但是我不知道怎么改_(:з」∠)_
-    // 地图绘制
-    drawChinaMap() {
-      this.ifShowMap = true
+    addChartOptionSeries(mag) {
       this.mapChartOption.series = [
         {
           name: '访问次数:',
@@ -250,7 +283,7 @@ export default {
           coordinateSystem: 'bmap',
           data: this.convertData(this.data),
           symbolSize: function(val) {
-            return val[2] * 0.000007
+            return val[2] * mag
           },
           label: {
             formatter: '{b}',
@@ -258,7 +291,7 @@ export default {
             show: false
           },
           itemStyle: {
-            color: '#39ac39'
+            color: ' #00ccff'
           },
           emphasis: {
             label: {
@@ -274,7 +307,7 @@ export default {
             return b.count - a.count
           }).slice(0, 6)),
           symbolSize: function(val) {
-            return val[2] * 0.000007
+            return val[2] * mag
           },
           showEffectOn: 'render',
           rippleEffect: {
@@ -294,8 +327,15 @@ export default {
           zlevel: 1
         }
       ]
-      var myChart = echarts.init(document.getElementById('mapContainer'))
+    },
 
+    // 此处调用了两次 drawChinaMap() 方法(加载了两次地图),地图才得以显示
+    // 我jio得应该是数据和地图请求顺序的问题
+    // 但是我不知道怎么改_(:з」∠)_
+    // 地图绘制
+    drawChinaMap() {
+      this.ifShowMap = true
+      var myChart = echarts.init(document.getElementById('mapContainer'))
       myChart.setOption(this.mapChartOption)
     },
 
