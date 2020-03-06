@@ -112,3 +112,33 @@ export function getAllSchoolInfo(para) {
     params: para
   })
 }
+
+/**
+ * 七彩评价获取单天各时段访问统计
+ *
+ * @export
+ * @param {date} para 单天日期 格式:yyyy-MM-dd
+ * @returns
+ */
+export function getQCPJTimeVisitCount(para) {
+  return request({
+    url: '/qcpj/log/timeVisitCount',
+    method: 'GET',
+    params: para
+  })
+}
+
+/**
+ * 阅读海洋获取单天各时段访问统计
+ *
+ * @export
+ * @param {date} para 单天日期 格式:yyyy-MM-dd
+ * @returns
+ */
+export function getYDHYTimeVisitCount(para) {
+  return request({
+    url: '/ro/log/timeVisitCount',
+    method: 'GET',
+    params: para
+  })
+}

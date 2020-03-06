@@ -218,6 +218,12 @@ export const constantRoutes = [
         name: 'responseCodeCount',
         component: () => import('@/views/systemData/responseCodeCount'),
         meta: { title: '访问响应码统计', icon: 'warn' }
+      },
+      {
+        path: 'accessDurationData',
+        name: 'accessDurationData',
+        component: () => import('@/views/systemData/accessDurationData'),
+        meta: { title: '每日时段访问统计', icon: 'time' }
       }
     ]
   },
