@@ -1,10 +1,25 @@
 <template>
   <div id="app-container">
     <div style="margin:20px;text-align: center;">
-      <el-button-group>
-        <el-button type="primary" :plain="QCPJplain" @click="getQCPJdevicesData">七彩评价</el-button>
-        <el-button type="primary" disabled :plain="YDHYplain" @click="getYDHYdevicesData">阅读海洋</el-button>
-      </el-button-group>
+      <div>
+        <el-date-picker
+          v-model="selectedDate"
+          style="min-width:400px;margin:10px"
+          type="daterange"
+          align="right"
+          unlink-panels
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          :picker-options="pickerOptions"
+          value-format="yyyy-MM-dd"
+        />
+
+        <el-button-group>
+          <el-button type="primary" :plain="QCPJplain" @click="getQCPJdevicesData">七彩评价</el-button>
+          <el-button type="primary" disabled :plain="YDHYplain" @click="getYDHYdevicesData">阅读海洋</el-button>
+        </el-button-group>
+      </div>
     </div>
     <div id="chart-main" style="width:100%; height:650px" />
   </div>
@@ -22,7 +37,36 @@ import { QCPJequipmentCount } from '@/api/system'
 export default {
   data() {
     return {
-      QCPJplain: false,
+      pickerOptions: {
+        shortcuts: [{
+          text: '最近一周',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近一个月',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近三个月',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+            picker.$emit('pick', [start, end])
+          }
+        }]
+      },
+      selectedDate: [],
+
+      QCPJplain: true,
       YDHYplain: true,
       chartOption: {
         title: {
@@ -67,9 +111,6 @@ export default {
       }
     }
   },
-  mounted() {
-    this.getQCPJdevicesData()
-  },
   methods: {
     // 获取阅读海洋地区访问统计数值(目前未提供接口,备用)
     getYDHYdevicesData() {
@@ -80,31 +121,41 @@ export default {
     },
     // 获取七彩评价地区访问统计数值
     getQCPJdevicesData() {
-      QCPJequipmentCount().then((result) => {
-        const data = result.data.data
-        const devicesNameArr = []
-        const devicesDataArr = []
-
-        for (let i = 0; i < data.length; i++) {
-          const val = data[i].count
-          const name = data[i].equipment
-          devicesNameArr.push(name)
-          devicesDataArr.push({ value: val, name: name })
-        }
-        this.chartOption.legend.data = devicesNameArr
-        this.chartOption.series[0].data = devicesDataArr
-
-        this.drawChinaMap()
-        this.QCPJplain = false
-        this.YDHYplain = true
-      }).catch((err) => {
-        console.log(err)
-      })
+      this.QCPJplain = false
+      this.YDHYplain = true
+      if (this.selectedDate.length === 0 || this.selectedDate.length === null) {
+        QCPJequipmentCount().then((result) => {
+          this.dataHandle(result.data.data)
+          this.drawChinaMap()
+        }).catch((err) => {
+          console.log(err)
+        })
+      } else {
+        QCPJequipmentCount({ sDate: this.selectedDate[0], eDate: this.selectedDate[1] }).then((result) => {
+          this.dataHandle(result.data.data)
+          this.drawChinaMap()
+        }).catch((err) => {
+          console.log(err)
+        })
+      }
     },
     drawChinaMap() {
       var myChart = echarts.init(document.getElementById('chart-main'), 'macarons')
 
       myChart.setOption(this.chartOption)
+    },
+    dataHandle(data) {
+      const devicesNameArr = []
+      const devicesDataArr = []
+
+      for (let i = 0; i < data.length; i++) {
+        const val = data[i].count
+        const name = data[i].equipment
+        devicesNameArr.push(name)
+        devicesDataArr.push({ value: val, name: name })
+      }
+      this.chartOption.legend.data = devicesNameArr
+      this.chartOption.series[0].data = devicesDataArr
     }
   }
 }
