@@ -86,6 +86,7 @@
         </template>
       </el-table-column>
       <el-table-column
+        fixed="right"
         class-name="status-col"
         label="管理操作"
         align="center"
