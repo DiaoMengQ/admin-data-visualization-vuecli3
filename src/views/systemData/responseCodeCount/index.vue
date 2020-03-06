@@ -145,7 +145,7 @@ export default {
         this.chartOption.series[0].encode.value = this.dateList[0]
         this.chartOption.series[0].encode.tooltip = this.dateList[0]
 
-        for (let i = 0; i < this.dateList.length - 1; i++) {
+        for (let i = 0; i < this.dateList.length; i++) {
           this.chartOption.dataset.source[0].push(this.dateList[i])
         }
       }
@@ -159,7 +159,7 @@ export default {
       if (this.selectedDate && this.selectedDate !== null) {
         // 请求每一天的统计数据
         // TODO: 天数控制this.dateList.length
-        for (let i = 0; i < this.dateList.length - 1; i++) {
+        for (let i = 0; i < this.dateList.length; i++) {
         //  单天数据填充0
           for (let ci = 1; ci < codeList.length + 1; ci++) {
             this.chartOption.dataset.source[ci].push(0)
@@ -194,8 +194,7 @@ export default {
       const codeList = Object.keys(this.responseCodeList)
       if (this.selectedDate && this.selectedDate !== null) {
         // 请求每一天的统计数据
-        // TODO: 天数控制this.dateList.length
-        for (let i = 0; i < this.dateList.length - 1; i++) {
+        for (let i = 0; i < this.dateList.length; i++) {
         //  单天数据填充0
           for (let ci = 1; ci < codeList.length + 1; ci++) {
             this.chartOption.dataset.source[ci].push(0)
