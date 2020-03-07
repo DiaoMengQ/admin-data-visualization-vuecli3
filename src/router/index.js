@@ -89,6 +89,26 @@ export const constantRoutes = [
         ]
       },
       {
+        path: 'personalProfile',
+        component: () => import('@/views/qcpj/personalProfile/index'), // Parent router-view
+        name: 'personalProfile',
+        meta: { title: '学生评价积分' },
+        children: [
+          {
+            path: 'totalPoints',
+            name: 'totalPoints',
+            meta: { title: '评价积分统计' },
+            component: () => import('@/views/qcpj/personalProfile/studentPoints/totalPoints')
+          },
+          {
+            path: 'pointsTrend',
+            name: 'pointsTrend',
+            meta: { title: '评价积分趋势' },
+            component: () => import('@/views/qcpj/personalProfile/studentPoints/pointsTrend')
+          }
+        ]
+      },
+      {
         path: 'clusterAnalysis',
         name: 'ClusterAnalysis',
         component: () => import('@/views/qcpj/clusterAnalysis/index'),

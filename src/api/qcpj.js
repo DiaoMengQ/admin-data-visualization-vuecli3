@@ -125,7 +125,13 @@ export function getClassinGrade(para) {
   })
 }
 
-// 获取该班级中的所有学生
+/**
+ * 获取该班级中的所有学生
+ *
+ * @export
+ * @param {*} para
+ * @returns
+ */
 export function getStuinClass(para) {
   return request({
     url: '/qcpj/common/classStudentInfo',
@@ -134,7 +140,13 @@ export function getStuinClass(para) {
   })
 }
 
-// 获取该学生的本学期成绩
+/**
+ * 获取某学生的老师评价科目积分(成绩)
+ *
+ * @export
+ * @param {studentId,week} para // week: 从第一周到指定周次
+ * @returns
+ */
 export function getStuSemester(para) {
   return request({
     url: '/qcpj/subject/getQcpjTeacherEvaStat',
