@@ -39,8 +39,9 @@
               <el-col :xs="24" class="postInfo-container">
                 <el-form-item label-width="100px" label="权限范围:" class="postInfo-container-item">
                   <el-input
-                    v-if="!ifShowAddAuth"
-                    v-model="adminInfo.roleTypeLabel"
+                    v-if="ifShowAuthRange"
+                    v-model="authRange"
+                    :autosize="{ minRows: 1, maxRows: 6}"
                     readonly
                     class="data-cannot-be-change"
                     remote
@@ -48,12 +49,12 @@
                   <el-button v-if="ifShowAddAuth" type="primary" plain @click="addAuth">授予权限范围</el-button>
                 </el-form-item>
               </el-col>
-              <el-col style="margin:10px 0" :xs="24" class="postInfo-container" type="flex" justify="end">
+              <el-col v-if="ifDataIsReady" style="margin:10px 0" :xs="24" class="postInfo-container" type="flex" justify="end">
                 <!-- 授权页 -->
                 <!-- 父子组件传值，adminInfo 数据是异步请求，有可能数据渲染时报错 -->
                 <!-- 故使用 v-if 控制组件的显示和传值 -->
-                <grant-auth v-if="ifDataIsReady" :admin-info="adminInfo" @selected-list="getSelectedList" />
-                <el-button v-if="ifDataIsReady" type="primary" @click="updateAuthInfo">提交授权</el-button>
+                <grant-auth :admin-info="adminInfo" @selected-list="getSelectedList" />
+                <el-button type="primary" @click="updateAuthInfo">提交授权</el-button>
               </el-col>
 
               <el-col :xs="24" :lg="12" :xl="8" class="postInfo-container">
@@ -213,8 +214,9 @@ export default {
   },
   data() {
     return {
-      authRange: [],
-      ifDataIsReady: false,
+      authRange: '',
+      ifShowAuthRange: false, // 是否显示权限范围
+      ifDataIsReady: false, // 网络请求(异步)是否已完成
       ifShowAddAuth: false, // 是否显示授权按钮
       statuOptions: [
         {
@@ -273,6 +275,7 @@ export default {
           this.schSelectedList = data
           break
         case 'CITY_ADMIN':
+          this.areaSelectedList = data
           break
         default:
           break
@@ -290,9 +293,24 @@ export default {
         // 判断是否已有权限范围
         if (data.length === 0) {
           this.ifShowAddAuth = true
+          this.ifShowAuthRange = false
         } else {
-          this.authRange = data
           this.ifShowAddAuth = false
+
+          switch (this.adminInfo.roleType) {
+            case 'SCHOOL_ADMIN':
+              for (let i = 0; i < data.length; i++) {
+                this.authRange += data[i].schoolName + ' '
+              }
+              this.ifShowAuthRange = true
+              break
+            case 'CITY_ADMIN':
+              for (let i = 0; i < data.length; i++) {
+                this.authRange += data[i].cityName + ' '
+              }
+              this.ifShowAuthRange = true
+              break
+          }
         }
         console.log(result.data.data)
       }).catch((err) => {
@@ -368,7 +386,7 @@ export default {
     // 更新权限信息
     updateAuthInfo() {
       const schools2upload = []
-
+      let citys2upload = []
       switch (this.adminInfo.roleType) {
         case 'SCHOOL_ADMIN':
           if (this.schSelectedList.length === 0) {
@@ -410,6 +428,25 @@ export default {
               message: '请选择所授权城市',
               type: 'error',
               duration: 3 * 1000
+            })
+          } else {
+            citys2upload = '[' + this.areaSelectedList + ']'
+
+            addAuth({ manaRange: citys2upload, userId: this.adminInfo.userId }).then((result) => {
+              MessageBox.confirm('授权成功', '完成', {
+                confirmButtonText: '确定',
+                type: 'success '
+              }).then(() => {
+                this.$router.push('/administration/adminList')
+              }).catch(() => {
+                this.$router.push('/administration/adminList')
+              })
+            }).catch((err) => {
+              MessageBox.confirm('授权失败,请重试', '失败', {
+                confirmButtonText: '确定',
+                type: 'error'
+              })
+              console.log(err)
             })
           }
           break

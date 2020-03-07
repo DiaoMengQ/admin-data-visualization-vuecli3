@@ -36,6 +36,7 @@
           label: 'cityName'
         }"
         :titles="['可选城市', '已选城市']"
+        @change="handleListChange"
       />
     </el-col>
 
@@ -50,7 +51,7 @@
         border
         fit
         highlight-current-row
-        @selection-change="handleSchChange"
+        @selection-change="handleListChange"
       >
         <el-table-column
           type="selection"
@@ -240,8 +241,7 @@ export default {
   },
   methods: {
     // 选择学校后操作
-    handleSchChange(val) {
-      this.schSelectedList = val
+    handleListChange(val) {
       this.$emit('selected-list', val)
     },
     // 获取父组件传入的 adminInfo
