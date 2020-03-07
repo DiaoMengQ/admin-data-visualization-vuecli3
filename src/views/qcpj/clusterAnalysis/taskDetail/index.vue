@@ -1,6 +1,21 @@
 <template>
   <div class="app-container">
-    <div id="chart-main" ref="chart" style="width:800px;height:600px;margin:0 auto;" />
+    <div v-if="ifShowChart" id="chart-main" ref="chart" style="width:800px;height:600px;margin:0 auto;" />
+
+    <el-table
+      :default-sort="{prop: 'u_name'}"
+      :data="stuList"
+      width="100%"
+      highlight-current-row
+      stripe
+      fit
+      border
+    >
+      <el-table-column v-for="(item,index) in tableHead" :key="index" sortable :label="item.label" :property="item.key" align="center">
+        <!-- <template slot-scope="scope">{{ scope.row[scope.column.key] }}</template> -->
+        <template slot-scope="scope">{{ scope.row[item.key] }}</template>
+      </el-table-column>
+    </el-table>
 
   </div>
 </template>
@@ -22,6 +37,9 @@ require('echarts/lib/component/title')
 export default {
   data() {
     return {
+      tableHead: [],
+      stuList: [],
+      listLoading: false,
       taskId: '',
       taskDetail: {
         id: 280357898402398200,
@@ -103,26 +121,62 @@ export default {
           }
         ],
         series: []
-      }
+      },
+      ifShowChart: true // 是否显示图表
     }
   },
   created() {
     this.taskId = this.$route.params && this.$route.params.taskId
   },
-  mounted: function() {
-    // 基于准备好的dom，初始化echarts实例
-    var clusterChart = echarts.init(document.getElementById('chart-main'), 'macarons')
-
+  mounted() {
     // TODO: this.taskDetailInit()
     this.DataHandler()
-    this.chartOptionAssignment()
-
-    // 绘制图表
-    if (this.option && typeof this.option === 'object') {
-      clusterChart.setOption(this.option, true)
-    }
+    this.dataFormat()
   },
   methods: {
+    // 显示表格
+    dataFormat() {
+      // console.log(this.taskDetail)
+      this.stuList = this.taskDetail.studentList
+      console.log(this.stuList)
+      const tableHead = []
+      for (let i = 0; i < this.taskDetail.subjectRange.length; i++) {
+        // 生成动态表头
+        tableHead.push({ key: this.taskDetail.subjectRange[i], label: this.taskDetail.subjectRange[i] }) // 动态表头
+
+        // 根据动态表头填充数据(长度为学生人数,即数据个数)
+        for (let j = 0; j < this.taskDetail.resultData.length; j++) {
+          this.stuList[j][this.taskDetail.subjectRange[i]] = this.taskDetail.handleData[j][i]
+          this.stuList[j].resultData = this.taskDetail.resultData[j]
+        }
+      }
+      console.log(this.stuList)
+      // 这里是固定的表头，如果没有可不写
+      const stableTableHead = [
+        {
+          key: 'u_name',
+          label: '学生姓名'
+        },
+        {
+          key: 'resultData',
+          label: '聚类类别'
+        }
+      ]
+      // 合并2部分的表头
+      this.tableHead = [...stableTableHead, ...tableHead] // 表头信息
+    },
+    // 绘制图形
+    drawChart() {
+      // 基于准备好的dom，初始化echarts实例
+      var clusterChart = echarts.init(document.getElementById('chart-main'), 'macarons')
+
+      this.chartOptionAssignment()
+
+      // 绘制图表
+      if (this.option && typeof this.option === 'object') {
+        clusterChart.setOption(this.option, true)
+      }
+    },
     // 获取任务详情数据
     taskDetailInit() {
       // eslint-disable-next-line no-unused-vars
@@ -172,6 +226,12 @@ export default {
       sl = sl.split('},{')
       sl = sl.map(str2json)
       this.taskDetail.studentList = sl
+
+      if (this.taskDetail.subjectRange.length <= 2) {
+        this.drawChart()
+      } else {
+        this.ifShowChart = false
+      }
     },
     // 将数据赋给chart option
     chartOptionAssignment() {
