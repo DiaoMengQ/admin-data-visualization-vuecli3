@@ -516,7 +516,7 @@ export default {
         if (valid) {
           this.loading = true
           const schools2upload = []
-          const city2upload = []
+          let citys2upload = []
           const adminInfo2upload = {
             username: this.adminInfo.username,
             password: this.adminInfo.password,
@@ -588,6 +588,36 @@ export default {
                   message: '请选择所授权城市',
                   type: 'error',
                   duration: 3 * 1000
+                })
+              } else {
+                citys2upload = '[' + this.areaSelectedList + ']'
+
+                addUser({ user: JSON.stringify(adminInfo2upload) }).then(response => {
+                  const data = response.data.data
+                  const userId = data.userId
+                  console.log('创建账户成功后返回信息', data)
+                  console.log(userId)
+
+                  addAuth({ manaRange: citys2upload, userId: userId }).then((result) => {
+                    MessageBox.confirm('创建账户完成', '完成', {
+                      confirmButtonText: '确定',
+                      type: 'success '
+                    }).then(() => {
+                      this.$router.push('/administration/adminList')
+                    })
+                  }).catch((err) => {
+                    MessageBox.confirm('已创建用户,授权失败,请稍后在账户列表重试', '失败', {
+                      confirmButtonText: '确定',
+                      type: 'error'
+                    }).then(() => {
+                      console.log(err)
+                      this.loading = false
+                      this.$router.push('/administration/adminList')
+                    })
+                  })
+                }).catch(error => {
+                  this.loading = false
+                  console.log('添加用户失败', error)
                 })
               }
               break
