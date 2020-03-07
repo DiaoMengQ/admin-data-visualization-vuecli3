@@ -1,9 +1,9 @@
 <template>
-  <article-detail :is-edit="true" />
+  <admin-detail :is-edit="true" />
 </template>
 
 <script>
-import ArticleDetail from './components/ArticleDetail'
+import AdminDetail from './components/AdminDetail'
 
 export default {
   /**
@@ -11,6 +11,6 @@ export default {
    * 如Java中的继承
    */
   name: 'EditForm',
-  components: { ArticleDetail }
+  components: { AdminDetail }
 }
 </script>

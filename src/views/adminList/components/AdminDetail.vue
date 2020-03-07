@@ -36,6 +36,26 @@
                 </el-form-item>
               </el-col>
 
+              <el-col :xs="24" class="postInfo-container">
+                <el-form-item label-width="100px" label="权限范围:" class="postInfo-container-item">
+                  <el-input
+                    v-if="!ifShowAddAuth"
+                    v-model="adminInfo.roleTypeLabel"
+                    readonly
+                    class="data-cannot-be-change"
+                    remote
+                  />
+                  <el-button v-if="ifShowAddAuth" type="primary" plain @click="addAuth">授予权限范围</el-button>
+                </el-form-item>
+              </el-col>
+              <el-col style="margin:10px 0" :xs="24" class="postInfo-container" type="flex" justify="end">
+                <!-- 授权页 -->
+                <!-- 父子组件传值，adminInfo 数据是异步请求，有可能数据渲染时报错 -->
+                <!-- 故使用 v-if 控制组件的显示和传值 -->
+                <grant-auth v-if="ifDataIsReady" :admin-info="adminInfo" @selected-list="getSelectedList" />
+                <el-button v-if="ifDataIsReady" type="primary" @click="updateAuthInfo">提交授权</el-button>
+              </el-col>
+
               <el-col :xs="24" :lg="12" :xl="8" class="postInfo-container">
                 <el-form-item label-width="100px" label="账户状态:" class="postInfo-container-item">
                   <el-input
@@ -133,7 +153,7 @@
           <!-- 用户头像操作区域 -->
           <el-col id="admin-avatar" :xs="24" :sm="6">
             <div class="avatar-img">
-              <!-- 若头像不显示,请使用 npm i element-ui -S 重新安装 -->
+              <!-- 若头像不显示,请使用 npm i element-ui 重新安装 -->
               <el-avatar
                 shape="square"
                 :size="100"
@@ -158,14 +178,14 @@
 </template>
 
 <script>
-import { getUserInfo, updateAdminInfo } from '@/api/user'
-import { Message } from 'element-ui'
+import { addAuth } from '@/api/user'
+import { getUserInfo, updateAdminInfo, getUserManaRange } from '@/api/user'
+import GrantAuth from '@/components/Grantauthorization'
+import { Message, MessageBox } from 'element-ui'
 
 // 此处仅作为结构展示
 // 因为在把对象赋值到 adminInfo 时，会覆盖此处初始化的属性
 const defaultForm = {
-  // display_time: null,
-
   nickname: '', // 昵称
   parentId: -1, // 所属管理员ID
   userId: -1, // ID
@@ -183,8 +203,8 @@ const defaultForm = {
 }
 
 export default {
-  name: 'ArticleDetail',
-  // components: {},
+  name: 'AdminDetail',
+  components: { GrantAuth },
   props: {
     isEdit: {
       type: Boolean,
@@ -192,19 +212,10 @@ export default {
     }
   },
   data() {
-    // eslint-disable-next-line no-unused-vars
-    const validateRequire = (rule, value, callback) => {
-      if (value === '') {
-        this.$message({
-          message: rule.field + '为必传项',
-          type: 'error'
-        })
-        callback(new Error(rule.field + '为必传项'))
-      } else {
-        callback()
-      }
-    }
     return {
+      authRange: [],
+      ifDataIsReady: false,
+      ifShowAddAuth: false, // 是否显示授权按钮
       statuOptions: [
         {
           statuKey: 'blocked',
@@ -241,27 +252,13 @@ export default {
       tempRoute: {}
     }
   },
-  computed: {
-    // 当前时间
-    displayTime: {
-      // set and get is useful when the data
-      // returned by the back end api is different from the front end
-      // back end return => "2013-06-25 06:59:25"
-      // front end need timestamp => 1372114765000
-      get() {
-        return +new Date(this.adminInfo.display_time)
-      },
-      set(val) {
-        this.adminInfo.display_time = new Date(val)
-      }
-    }
-  },
   created() {
     if (this.isEdit) {
       // 接收传入的ID
       const id = this.$route.params && this.$route.params.id
       // console.log(id)
       this.fetchData(id)
+      this.getUserManaRange(id)
     }
 
     // 在这里复制this.$route
@@ -269,6 +266,39 @@ export default {
     this.tempRoute = Object.assign({}, this.$route)
   },
   methods: {
+    // 获取子组件传来的数据(data)
+    getSelectedList(data) {
+      switch (this.adminInfo.roleType) {
+        case 'SCHOOL_ADMIN':
+          this.schSelectedList = data
+          break
+        case 'CITY_ADMIN':
+          break
+        default:
+          break
+      }
+      console.log(data)
+    },
+    // 用户授权
+    addAuth() {
+      this.ifDataIsReady = true
+    },
+    // 获取所查看用户的权限范围
+    getUserManaRange(userId) {
+      getUserManaRange({ userId: userId }).then((result) => {
+        const data = result.data.data
+        // 判断是否已有权限范围
+        if (data.length === 0) {
+          this.ifShowAddAuth = true
+        } else {
+          this.authRange = data
+          this.ifShowAddAuth = false
+        }
+        console.log(result.data.data)
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
     // 选中性别改变后设定信息
     genderChanged(val) {
       // 必须用 this.$forceUpdate() 重新 render！否则select所选值在界面上不改变
@@ -335,7 +365,56 @@ export default {
           console.log(err)
         })
     },
+    // 更新权限信息
+    updateAuthInfo() {
+      const schools2upload = []
 
+      switch (this.adminInfo.roleType) {
+        case 'SCHOOL_ADMIN':
+          if (this.schSelectedList.length === 0) {
+            Message({
+              message: '请选择所授权学校',
+              type: 'error',
+              duration: 3 * 1000
+            })
+            this.loading = false
+          } else {
+            // 提取学校列表里的学校ID
+            for (let i = 0; i < this.schSelectedList.length; i++) {
+              schools2upload.push(this.schSelectedList[i].schoolId)
+            }
+            const sch2upload = '[' + schools2upload + ']'
+
+            addAuth({ manaRange: sch2upload, userId: this.adminInfo.userId }).then((result) => {
+              MessageBox.confirm('授权成功', '完成', {
+                confirmButtonText: '确定',
+                type: 'success '
+              }).then(() => {
+                this.$router.push('/administration/adminList')
+              }).catch(() => {
+                this.$router.push('/administration/adminList')
+              })
+            }).catch((err) => {
+              MessageBox.confirm('授权失败,请重试', '失败', {
+                confirmButtonText: '确定',
+                type: 'error'
+              })
+              console.log(err)
+            })
+          }
+          break
+        case 'CITY_ADMIN':
+          console.log(this.areaSelectedList)
+          if (this.areaSelectedList.length === 0) {
+            Message({
+              message: '请选择所授权城市',
+              type: 'error',
+              duration: 3 * 1000
+            })
+          }
+          break
+      }
+    },
     // 上传更改后的用户信息
     UpdateAdminInfo() {
       // 判断账户是否冻结
