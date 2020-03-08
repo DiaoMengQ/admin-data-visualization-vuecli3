@@ -110,7 +110,8 @@
 </template>
 
 <script>
-import { getAdminList } from '@/api/user'
+import { getAdminList, blockedAccount } from '@/api/user'
+import { MessageBox } from 'element-ui';
 
 export default {
   data() {
@@ -134,9 +135,20 @@ export default {
     filterRoleTypeLabel(value, row) {
       return row.roleTypeLabel === value
     },
-    // 冻结管理员账户
+    // TODO: 冻结管理员账户
     frozenAdminAccount(adminID) {
-      console.log(adminID)
+      blockedAccount({ userId: adminID }).then((result) => {
+        MessageBox.confirm('已冻结账户', '完成', {
+          confirmButtonText: '确定',
+          type: 'success'
+        }).then(() => {
+          this.$router.push('/home')
+        }).catch(() => {
+          this.$router.push('/home')
+        })
+      }).catch((err) => {
+        console.log(err)
+      })
     },
     // 拉取数据
     fetchData() {

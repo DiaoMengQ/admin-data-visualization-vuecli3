@@ -46,7 +46,7 @@
                     class="data-cannot-be-change"
                     remote
                   />
-                  <el-button v-if="ifShowAddAuth" type="primary" plain @click="addAuth">授予权限范围</el-button>
+                  <el-button v-if="ifShowAddAuth" :disabled="disableChangeInfo" type="primary" plain @click="addAuth">授予权限范围</el-button>
                 </el-form-item>
               </el-col>
               <el-col v-if="ifDataIsReady" style="margin:10px 0" :xs="24" class="postInfo-container" type="flex" justify="end">
@@ -163,14 +163,14 @@
                 <img src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png">
               </el-avatar>
             </div>
-            <el-button v-loading="loading" size="medium" type="primary">上传头像</el-button>
+            <el-button v-loading="loading" :disabled="disableChangeInfo" size="medium" type="primary">上传头像</el-button>
           </el-col>
         </el-row>
 
         <el-row class="admin-info-post-controler" type="flex" justify="end">
-          <el-button v-loading="loading" type="primary" @click="UpdateAdminInfo">保存</el-button>
+          <el-button v-loading="loading" :disabled="disableChangeInfo" type="primary" @click="UpdateAdminInfo">保存</el-button>
           <router-link :to="'/administration/adminList'">
-            <el-button v-loading="loading" type="primary" plain>取消</el-button>
+            <el-button v-loading="loading" :disabled="disableChangeInfo" type="primary" plain>取消</el-button>
           </router-link>
         </el-row>
       </div>
@@ -214,6 +214,7 @@ export default {
   },
   data() {
     return {
+      disableChangeInfo: true,
       authRange: '',
       ifShowAuthRange: false, // 是否显示权限范围
       ifDataIsReady: false, // 网络请求(异步)是否已完成
@@ -270,6 +271,7 @@ export default {
   methods: {
     // 获取子组件传来的数据(data)
     getSelectedList(data) {
+      // console.log(data)
       switch (this.adminInfo.roleType) {
         case 'SCHOOL_ADMIN':
           this.schSelectedList = data
@@ -280,7 +282,6 @@ export default {
         default:
           break
       }
-      console.log(data)
     },
     // 用户授权
     addAuth() {
@@ -290,6 +291,7 @@ export default {
     getUserManaRange(userId) {
       getUserManaRange({ userId: userId }).then((result) => {
         const data = result.data.data
+        // console.log('权限范围', data)
         // 判断是否已有权限范围
         if (data.length === 0) {
           this.ifShowAddAuth = true
@@ -312,7 +314,6 @@ export default {
               break
           }
         }
-        console.log(result.data.data)
       }).catch((err) => {
         console.log(err)
       })
@@ -349,7 +350,7 @@ export default {
         .then(response => {
           this.adminInfo = response.data.data
           // // `${XXX.xx}` 与 XXX['xx'] 用法相同
-          // console.log(this.adminInfo)
+          console.log('用户信息', this.adminInfo)
 
           switch (this.adminInfo.sex) {
             case 1:
@@ -362,10 +363,12 @@ export default {
               break
           }
 
-          if (this.adminInfo.statu === 'blocked') {
+          if (this.adminInfo.status === 'blocked') {
             this.adminInfo.statuLabel = '已冻结'
+            this.disableChangeInfo = true
           } else {
             this.adminInfo.statuLabel = '正常使用'
+            this.disableChangeInfo = false
           }
 
           switch (this.adminInfo.roleType) {
