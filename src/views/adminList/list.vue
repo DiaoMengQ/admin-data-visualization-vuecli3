@@ -14,6 +14,7 @@
       element-loading-text="Loading"
       border
       fit
+      stripe
       highlight-current-row
       :data="adminList.filter(data => !searchFilter || data.username.toLowerCase().includes(searchFilter.toLowerCase()))"
     >
@@ -111,9 +112,10 @@
 
 <script>
 import { getAdminList, blockedAccount } from '@/api/user'
-import { MessageBox } from 'element-ui';
+import { MessageBox } from 'element-ui'
 
 export default {
+  inject: ['reload'],
   data() {
     return {
       adminList: [],
@@ -135,19 +137,24 @@ export default {
     filterRoleTypeLabel(value, row) {
       return row.roleTypeLabel === value
     },
-    // TODO: 冻结管理员账户
+    // 冻结管理员账户
     frozenAdminAccount(adminID) {
-      blockedAccount({ userId: adminID }).then((result) => {
-        MessageBox.confirm('已冻结账户', '完成', {
-          confirmButtonText: '确定',
-          type: 'success'
-        }).then(() => {
-          this.$router.push('/home')
-        }).catch(() => {
-          this.$router.push('/home')
+      MessageBox.confirm('是否确定冻结该账户?', '提示', {
+        confirmButtonText: '确定',
+        type: 'warning'
+      }).then(() => {
+        blockedAccount({ userId: adminID }).then((result) => {
+          MessageBox.confirm('已冻结账户', '完成', {
+            confirmButtonText: '确定',
+            type: 'success'
+          }).then(() => {
+            this.reload()
+          }).catch(() => {
+            this.reload()
+          })
+        }).catch((err) => {
+          console.log(err)
         })
-      }).catch((err) => {
-        console.log(err)
       })
     },
     // 拉取数据

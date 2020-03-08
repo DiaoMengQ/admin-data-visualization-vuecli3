@@ -208,7 +208,7 @@ export default {
           } else {
             MessageBox.confirm('抱歉,您当前没有被授予权限,请联系您的上级管理员进行授权', '错误', {
               confirmButtonText: '确定',
-              type: 'success '
+              type: 'error'
             }).then(() => {
               this.$router.push('/home')
             }).catch(() => {

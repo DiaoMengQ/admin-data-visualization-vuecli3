@@ -212,6 +212,8 @@ export default {
       default: false
     }
   },
+  inject: ['reload'],
+
   data() {
     return {
       disableChangeInfo: true,
@@ -406,21 +408,26 @@ export default {
             }
             const sch2upload = '[' + schools2upload + ']'
 
-            addAuth({ manaRange: sch2upload, userId: this.adminInfo.userId }).then((result) => {
-              MessageBox.confirm('授权成功', '完成', {
-                confirmButtonText: '确定',
-                type: 'success '
-              }).then(() => {
-                this.$router.push('/administration/adminList')
-              }).catch(() => {
-                this.$router.push('/administration/adminList')
+            MessageBox.confirm('请确认授权范围是否正确', '提示', {
+              confirmButtonText: '确定',
+              type: 'warning'
+            }).then(() => {
+              addAuth({ manaRange: sch2upload, userId: this.adminInfo.userId }).then((result) => {
+                MessageBox.confirm('授权成功', '完成', {
+                  confirmButtonText: '确定',
+                  type: 'success '
+                }).then(() => {
+                  this.reload()
+                }).catch(() => {
+                  this.reload()
+                })
+              }).catch((err) => {
+                MessageBox.confirm('授权失败,请重试', '失败', {
+                  confirmButtonText: '确定',
+                  type: 'error'
+                })
+                console.log(err)
               })
-            }).catch((err) => {
-              MessageBox.confirm('授权失败,请重试', '失败', {
-                confirmButtonText: '确定',
-                type: 'error'
-              })
-              console.log(err)
             })
           }
           break
@@ -435,21 +442,26 @@ export default {
           } else {
             citys2upload = '[' + this.areaSelectedList + ']'
 
-            addAuth({ manaRange: citys2upload, userId: this.adminInfo.userId }).then((result) => {
-              MessageBox.confirm('授权成功', '完成', {
-                confirmButtonText: '确定',
-                type: 'success '
-              }).then(() => {
-                this.$router.push('/administration/adminList')
-              }).catch(() => {
-                this.$router.push('/administration/adminList')
+            MessageBox.confirm('请确认授权范围是否正确', '提示', {
+              confirmButtonText: '确定',
+              type: 'warning'
+            }).then(() => {
+              addAuth({ manaRange: citys2upload, userId: this.adminInfo.userId }).then((result) => {
+                MessageBox.confirm('授权成功', '完成', {
+                  confirmButtonText: '确定',
+                  type: 'success '
+                }).then(() => {
+                  this.reload()
+                }).catch(() => {
+                  this.reload()
+                })
+              }).catch((err) => {
+                MessageBox.confirm('授权失败,请重试', '失败', {
+                  confirmButtonText: '确定',
+                  type: 'error'
+                })
+                console.log(err)
               })
-            }).catch((err) => {
-              MessageBox.confirm('授权失败,请重试', '失败', {
-                confirmButtonText: '确定',
-                type: 'error'
-              })
-              console.log(err)
             })
           }
           break
