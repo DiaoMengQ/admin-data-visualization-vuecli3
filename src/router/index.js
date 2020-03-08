@@ -199,11 +199,51 @@ export const constantRoutes = [
           }
         ]
       },
+
+      {
+        path: 'gthx',
+        component: () => import('@/components/LJH/gthx'),
+        meta: {
+          title: '个体画像',
+          keepAlive: true
+        }
+      },
+      {
+        path: 'moreStudent',
+        component: () => import('@/components/LJH/moreStudent'),
+        name: 'MoreStudent'
+      },
+      {
+        path: 'personalProfile',
+        component: () => import('@/views/ydhy/personalProfile/index'), // Parent router-view
+        name: 'personalProfile',
+        meta: { title: '学生阅读数据' },
+        children: [
+          {
+            path: 'readingCount',
+            name: 'readingCount',
+            meta: { title: '阅读兴趣统计' },
+            component: () => import('@/views/ydhy/personalProfile/readingCount')
+          },
+          {
+            path: 'readingTend',
+            name: 'readingTend',
+            meta: { title: '阅读兴趣趋势' },
+            component: () => import('@/views/ydhy/personalProfile/readingTend')
+          },
+          {
+            path: 'readingTaskCount',
+            name: 'readingTaskCount',
+            meta: { title: '阅读任务执行情况' },
+            component: () => import('@/views/ydhy/personalProfile/readingTaskCount')
+          }
+        ]
+      },
       {
         path: 'menu1',
         component: () => import('@/views/ydhy/menu1/index'), // Parent router-view
         name: 'Menu1',
-        meta: { title: '测试' },
+        meta: { title: 'Menu1' },
         children: [
           {
             path: 'menu1-1',
@@ -238,19 +278,6 @@ export const constantRoutes = [
             meta: { title: 'Menu1-3' }
           }
         ]
-      },
-      {
-        path: 'gthx',
-        component: () => import('@/components/LJH/gthx'),
-        meta: {
-          title: '个体画像',
-          keepAlive: true
-        }
-      },
-      {
-        path: 'moreStudent',
-        component: () => import('@/components/LJH/moreStudent'),
-        name: 'MoreStudent'
       }
     ]
   },
