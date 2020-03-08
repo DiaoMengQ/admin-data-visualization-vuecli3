@@ -138,6 +138,45 @@ export const constantRoutes = [
     meta: { title: '阅读海洋', icon: 'ydhy' },
     children: [
       {
+        path: 'groupProfile',
+        component: () => import('@/views/ydhy/groupProfile/index'), // Parent router-view
+        name: 'RoGroupProfile',
+        meta: { title: '群体画像' },
+        children: [
+          {
+            path: 'readingMession',
+            component: () => import('@/views/ydhy/groupProfile/readingMession'),
+            name: 'ReadingMession',
+            meta: { title: '班级用户阅读任务' },
+            children: [{
+              path: 'pieChart',
+              meta: { title: '班级用户阅读任务' },
+              component: () => import('@/views/ydhy/groupProfile/readingMession/pieChart')
+            }]
+          },
+          {
+            path: 'interestStatistics',
+            meta: { title: '班级阅读兴趣统计' },
+            component: () => import('@/views/ydhy/groupProfile/interestStatistics/index'),
+            children: [{
+              path: 'areaChart',
+              meta: { title: '班级阅读兴趣统计' },
+              component: () => import('@/views/ydhy/groupProfile/interestStatistics/areaChart')
+            }]
+          },
+          {
+            path: 'linearRegmession',
+            meta: { title: '学校阅读兴趣统计' },
+            component: () => import('@/views/ydhy/groupProfile/linearRegmession/index'),
+            children: [{
+              path: 'linear',
+              meta: { title: '学校阅读兴趣统计' },
+              component: () => import('@/views/ydhy/groupProfile/linearRegmession/linear')
+            }]
+          }
+        ]
+      },
+      {
         path: 'menu1',
         component: () => import('@/views/ydhy/menu1/index'), // Parent router-view
         name: 'Menu1',
