@@ -21,3 +21,21 @@ export function getYDHYSchoolInfo(para) {
     params: para
   })
 }
+
+// 获取某学校阅读海洋的班级信息
+export function classInfo(para) {
+  return request({
+    url: '/ro/comomon/classInfo',
+    method: 'GET',
+    params: para
+  })
+}
+
+// 获取某班级中的学生信息
+export function classUserInfo(para) {
+  return request({
+    url: '/ro/comomon/classUserInfo',
+    method: 'GET',
+    params: para
+  })
+}
