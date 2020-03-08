@@ -36,6 +36,27 @@
                 </el-form-item>
               </el-col>
 
+              <el-col :xs="24" class="postInfo-container">
+                <el-form-item label-width="100px" label="权限范围:" class="postInfo-container-item">
+                  <el-input
+                    v-if="ifShowAuthRange"
+                    v-model="authRange"
+                    :autosize="{ minRows: 1, maxRows: 6}"
+                    readonly
+                    class="data-cannot-be-change"
+                    remote
+                  />
+                  <el-button v-if="ifShowAddAuth" :disabled="disableChangeInfo" type="primary" plain @click="addAuth">授予权限范围</el-button>
+                </el-form-item>
+              </el-col>
+              <el-col v-if="ifDataIsReady" style="margin:10px 0" :xs="24" class="postInfo-container" type="flex" justify="end">
+                <!-- 授权页 -->
+                <!-- 父子组件传值，adminInfo 数据是异步请求，有可能数据渲染时报错 -->
+                <!-- 故使用 v-if 控制组件的显示和传值 -->
+                <grant-auth :admin-info="adminInfo" @selected-list="getSelectedList" />
+                <el-button type="primary" @click="updateAuthInfo">提交授权</el-button>
+              </el-col>
+
               <el-col :xs="24" :lg="12" :xl="8" class="postInfo-container">
                 <el-form-item label-width="100px" label="账户状态:" class="postInfo-container-item">
                   <el-input
@@ -133,7 +154,7 @@
           <!-- 用户头像操作区域 -->
           <el-col id="admin-avatar" :xs="24" :sm="6">
             <div class="avatar-img">
-              <!-- 若头像不显示,请使用 npm i element-ui -S 重新安装 -->
+              <!-- 若头像不显示,请使用 npm i element-ui 重新安装 -->
               <el-avatar
                 shape="square"
                 :size="100"
@@ -142,14 +163,14 @@
                 <img src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png">
               </el-avatar>
             </div>
-            <el-button v-loading="loading" size="medium" type="primary">上传头像</el-button>
+            <el-button v-loading="loading" :disabled="disableChangeInfo" size="medium" type="primary">上传头像</el-button>
           </el-col>
         </el-row>
 
         <el-row class="admin-info-post-controler" type="flex" justify="end">
-          <el-button v-loading="loading" type="primary" @click="UpdateAdminInfo">保存</el-button>
+          <el-button v-loading="loading" :disabled="disableChangeInfo" type="primary" @click="UpdateAdminInfo">保存</el-button>
           <router-link :to="'/administration/adminList'">
-            <el-button v-loading="loading" type="primary" plain>取消</el-button>
+            <el-button v-loading="loading" :disabled="disableChangeInfo" type="primary" plain>取消</el-button>
           </router-link>
         </el-row>
       </div>
@@ -158,14 +179,14 @@
 </template>
 
 <script>
-import { getUserInfo, updateAdminInfo } from '@/api/user'
-import { Message } from 'element-ui'
+import { addAuth } from '@/api/user'
+import { getUserInfo, updateAdminInfo, getUserManaRange } from '@/api/user'
+import GrantAuth from '@/components/Grantauthorization'
+import { Message, MessageBox } from 'element-ui'
 
 // 此处仅作为结构展示
 // 因为在把对象赋值到 adminInfo 时，会覆盖此处初始化的属性
 const defaultForm = {
-  // display_time: null,
-
   nickname: '', // 昵称
   parentId: -1, // 所属管理员ID
   userId: -1, // ID
@@ -183,28 +204,23 @@ const defaultForm = {
 }
 
 export default {
-  name: 'ArticleDetail',
-  // components: {},
+  name: 'AdminDetail',
+  components: { GrantAuth },
   props: {
     isEdit: {
       type: Boolean,
       default: false
     }
   },
+  inject: ['reload'],
+
   data() {
-    // eslint-disable-next-line no-unused-vars
-    const validateRequire = (rule, value, callback) => {
-      if (value === '') {
-        this.$message({
-          message: rule.field + '为必传项',
-          type: 'error'
-        })
-        callback(new Error(rule.field + '为必传项'))
-      } else {
-        callback()
-      }
-    }
     return {
+      disableChangeInfo: true,
+      authRange: '',
+      ifShowAuthRange: false, // 是否显示权限范围
+      ifDataIsReady: false, // 网络请求(异步)是否已完成
+      ifShowAddAuth: false, // 是否显示授权按钮
       statuOptions: [
         {
           statuKey: 'blocked',
@@ -241,27 +257,13 @@ export default {
       tempRoute: {}
     }
   },
-  computed: {
-    // 当前时间
-    displayTime: {
-      // set and get is useful when the data
-      // returned by the back end api is different from the front end
-      // back end return => "2013-06-25 06:59:25"
-      // front end need timestamp => 1372114765000
-      get() {
-        return +new Date(this.adminInfo.display_time)
-      },
-      set(val) {
-        this.adminInfo.display_time = new Date(val)
-      }
-    }
-  },
   created() {
     if (this.isEdit) {
       // 接收传入的ID
       const id = this.$route.params && this.$route.params.id
       // console.log(id)
       this.fetchData(id)
+      this.getUserManaRange(id)
     }
 
     // 在这里复制this.$route
@@ -269,6 +271,55 @@ export default {
     this.tempRoute = Object.assign({}, this.$route)
   },
   methods: {
+    // 获取子组件传来的数据(data)
+    getSelectedList(data) {
+      // console.log(data)
+      switch (this.adminInfo.roleType) {
+        case 'SCHOOL_ADMIN':
+          this.schSelectedList = data
+          break
+        case 'CITY_ADMIN':
+          this.areaSelectedList = data
+          break
+        default:
+          break
+      }
+    },
+    // 用户授权
+    addAuth() {
+      this.ifDataIsReady = true
+    },
+    // 获取所查看用户的权限范围
+    getUserManaRange(userId) {
+      getUserManaRange({ userId: userId }).then((result) => {
+        const data = result.data.data
+        // console.log('权限范围', data)
+        // 判断是否已有权限范围
+        if (data.length === 0) {
+          this.ifShowAddAuth = true
+          this.ifShowAuthRange = false
+        } else {
+          this.ifShowAddAuth = false
+
+          switch (this.adminInfo.roleType) {
+            case 'SCHOOL_ADMIN':
+              for (let i = 0; i < data.length; i++) {
+                this.authRange += data[i].schoolName + ' '
+              }
+              this.ifShowAuthRange = true
+              break
+            case 'CITY_ADMIN':
+              for (let i = 0; i < data.length; i++) {
+                this.authRange += data[i].cityName + ' '
+              }
+              this.ifShowAuthRange = true
+              break
+          }
+        }
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
     // 选中性别改变后设定信息
     genderChanged(val) {
       // 必须用 this.$forceUpdate() 重新 render！否则select所选值在界面上不改变
@@ -301,7 +352,7 @@ export default {
         .then(response => {
           this.adminInfo = response.data.data
           // // `${XXX.xx}` 与 XXX['xx'] 用法相同
-          // console.log(this.adminInfo)
+          console.log('用户信息', this.adminInfo)
 
           switch (this.adminInfo.sex) {
             case 1:
@@ -314,10 +365,12 @@ export default {
               break
           }
 
-          if (this.adminInfo.statu === 'blocked') {
+          if (this.adminInfo.status === 'blocked') {
             this.adminInfo.statuLabel = '已冻结'
+            this.disableChangeInfo = true
           } else {
             this.adminInfo.statuLabel = '正常使用'
+            this.disableChangeInfo = false
           }
 
           switch (this.adminInfo.roleType) {
@@ -335,7 +388,85 @@ export default {
           console.log(err)
         })
     },
+    // 更新权限信息
+    updateAuthInfo() {
+      const schools2upload = []
+      let citys2upload = []
+      switch (this.adminInfo.roleType) {
+        case 'SCHOOL_ADMIN':
+          if (this.schSelectedList.length === 0) {
+            Message({
+              message: '请选择所授权学校',
+              type: 'error',
+              duration: 3 * 1000
+            })
+            this.loading = false
+          } else {
+            // 提取学校列表里的学校ID
+            for (let i = 0; i < this.schSelectedList.length; i++) {
+              schools2upload.push(this.schSelectedList[i].schoolId)
+            }
+            const sch2upload = '[' + schools2upload + ']'
 
+            MessageBox.confirm('请确认授权范围是否正确', '提示', {
+              confirmButtonText: '确定',
+              type: 'warning'
+            }).then(() => {
+              addAuth({ manaRange: sch2upload, userId: this.adminInfo.userId }).then((result) => {
+                MessageBox.confirm('授权成功', '完成', {
+                  confirmButtonText: '确定',
+                  type: 'success '
+                }).then(() => {
+                  this.reload()
+                }).catch(() => {
+                  this.reload()
+                })
+              }).catch((err) => {
+                MessageBox.confirm('授权失败,请重试', '失败', {
+                  confirmButtonText: '确定',
+                  type: 'error'
+                })
+                console.log(err)
+              })
+            })
+          }
+          break
+        case 'CITY_ADMIN':
+          console.log(this.areaSelectedList)
+          if (this.areaSelectedList.length === 0) {
+            Message({
+              message: '请选择所授权城市',
+              type: 'error',
+              duration: 3 * 1000
+            })
+          } else {
+            citys2upload = '[' + this.areaSelectedList + ']'
+
+            MessageBox.confirm('请确认授权范围是否正确', '提示', {
+              confirmButtonText: '确定',
+              type: 'warning'
+            }).then(() => {
+              addAuth({ manaRange: citys2upload, userId: this.adminInfo.userId }).then((result) => {
+                MessageBox.confirm('授权成功', '完成', {
+                  confirmButtonText: '确定',
+                  type: 'success '
+                }).then(() => {
+                  this.reload()
+                }).catch(() => {
+                  this.reload()
+                })
+              }).catch((err) => {
+                MessageBox.confirm('授权失败,请重试', '失败', {
+                  confirmButtonText: '确定',
+                  type: 'error'
+                })
+                console.log(err)
+              })
+            })
+          }
+          break
+      }
+    },
     // 上传更改后的用户信息
     UpdateAdminInfo() {
       // 判断账户是否冻结

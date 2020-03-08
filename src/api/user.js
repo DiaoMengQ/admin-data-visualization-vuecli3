@@ -6,6 +6,36 @@
 import request from '@/utils/request'
 
 /**
+ * 冻结账户
+ *
+ * @export
+ * @param {userId} para
+ * @returns
+ */
+export function blockedAccount(data) {
+  return request({
+    url: '/user/blockedAccount',
+    method: 'POST',
+    data
+  })
+}
+
+/**
+ * 根据账户ID获取管理员权限范围
+ *
+ * @export
+ * @param {userId} para
+ * @returns
+ */
+export function getUserManaRange(para) {
+  return request({
+    url: '/auth/getUserManaRange',
+    method: 'get',
+    params: para
+  })
+}
+
+/**
  * 管理范围授权
  *
  * @export

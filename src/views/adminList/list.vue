@@ -14,6 +14,7 @@
       element-loading-text="Loading"
       border
       fit
+      stripe
       highlight-current-row
       :data="adminList.filter(data => !searchFilter || data.username.toLowerCase().includes(searchFilter.toLowerCase()))"
     >
@@ -110,9 +111,11 @@
 </template>
 
 <script>
-import { getAdminList } from '@/api/user'
+import { getAdminList, blockedAccount } from '@/api/user'
+import { MessageBox } from 'element-ui'
 
 export default {
+  inject: ['reload'],
   data() {
     return {
       adminList: [],
@@ -136,7 +139,23 @@ export default {
     },
     // 冻结管理员账户
     frozenAdminAccount(adminID) {
-      console.log(adminID)
+      MessageBox.confirm('是否确定冻结该账户?', '提示', {
+        confirmButtonText: '确定',
+        type: 'warning'
+      }).then(() => {
+        blockedAccount({ userId: adminID }).then((result) => {
+          MessageBox.confirm('已冻结账户', '完成', {
+            confirmButtonText: '确定',
+            type: 'success'
+          }).then(() => {
+            this.reload()
+          }).catch(() => {
+            this.reload()
+          })
+        }).catch((err) => {
+          console.log(err)
+        })
+      })
     },
     // 拉取数据
     fetchData() {

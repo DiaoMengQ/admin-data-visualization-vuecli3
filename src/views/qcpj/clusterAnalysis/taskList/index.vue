@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container" style="text-align: center;">
     <el-date-picker
       v-model="selectedDate"
       style="min-width:400px;margin:10px"
@@ -190,6 +190,5 @@ export default {
 <style>
 .app-container{
     margin: 20px;
-    text-align: center;
 }
 </style>
