@@ -65,12 +65,12 @@ export const constantRoutes = [
     path: '/qcpj',
     component: Layout,
     meta: { title: '七彩评价', icon: 'qcpj' },
-    redirect: '/qcpj/groupProfile', // 点击父级目录'七彩评价'的默认路径
+    redirect: '/qcpj/teaEvaAvg', // 点击父级目录'七彩评价'的默认路径
     children: [
       {
-        path: 'groupProfile',
+        path: 'teaEvaAvg',
         component: () => import('@/views/qcpj/groupProfile/index'), // Parent router-view
-        name: 'GroupProfile',
+        name: 'TeaEvaAvg',
         meta: { title: '班级评价积分平均值' },
         children: [
           {
@@ -87,6 +87,12 @@ export const constantRoutes = [
             component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/LineChart')
           }
         ]
+      },
+      {
+        path: 'linearRegression',
+        component: () => import('@/views/qcpj/groupProfile/LinearRegression'), // Parent router-view
+        name: 'LinearRegression',
+        meta: { title: '线性回归分析' }
       },
       {
         path: 'personalProfile',
@@ -155,10 +161,89 @@ export const constantRoutes = [
     meta: { title: '阅读海洋', icon: 'ydhy' },
     children: [
       {
+        path: 'groupProfile',
+        component: () => import('@/views/ydhy/groupProfile/index'), // Parent router-view
+        name: 'RoGroupProfile',
+        meta: { title: '群体画像' },
+        children: [
+          {
+            path: 'readingMession',
+            component: () => import('@/views/ydhy/groupProfile/readingMession'),
+            name: 'ReadingMession',
+            meta: { title: '班级用户阅读任务' },
+            children: [{
+              path: 'pieChart',
+              meta: { title: '班级用户阅读任务' },
+              component: () => import('@/views/ydhy/groupProfile/readingMession/pieChart')
+            }]
+          },
+          {
+            path: 'interestStatistics',
+            meta: { title: '班级阅读兴趣统计' },
+            component: () => import('@/views/ydhy/groupProfile/interestStatistics/index'),
+            children: [{
+              path: 'areaChart',
+              meta: { title: '班级阅读兴趣统计' },
+              component: () => import('@/views/ydhy/groupProfile/interestStatistics/areaChart')
+            }]
+          },
+          {
+            path: 'linearRegmession',
+            meta: { title: '学校阅读兴趣统计' },
+            component: () => import('@/views/ydhy/groupProfile/linearRegmession/index'),
+            children: [{
+              path: 'linear',
+              meta: { title: '学校阅读兴趣统计' },
+              component: () => import('@/views/ydhy/groupProfile/linearRegmession/linear')
+            }]
+          }
+        ]
+      },
+
+      {
+        path: 'gthx',
+        component: () => import('@/components/LJH/gthx'),
+        meta: {
+          title: '个体画像',
+          keepAlive: true
+        }
+      },
+      {
+        path: 'moreStudent',
+        component: () => import('@/components/LJH/moreStudent'),
+        name: 'MoreStudent'
+      },
+      {
+        path: 'personalProfile',
+        component: () => import('@/views/ydhy/personalProfile/index'), // Parent router-view
+        name: 'personalProfile',
+        meta: { title: '学生阅读数据' },
+        children: [
+          {
+            path: 'readingCount',
+            name: 'readingCount',
+            meta: { title: '阅读兴趣统计' },
+            component: () => import('@/views/ydhy/personalProfile/readingCount')
+          },
+          {
+            path: 'readingTend',
+            name: 'readingTend',
+            meta: { title: '阅读兴趣趋势' },
+            component: () => import('@/views/ydhy/personalProfile/readingTend')
+          },
+          {
+            path: 'readingTaskCount',
+            name: 'readingTaskCount',
+            meta: { title: '阅读任务执行情况' },
+            component: () => import('@/views/ydhy/personalProfile/readingTaskCount')
+          }
+        ]
+      },
+      {
         path: 'menu1',
         component: () => import('@/views/ydhy/menu1/index'), // Parent router-view
         name: 'Menu1',
-        meta: { title: '测试' },
+        meta: { title: 'Menu1' },
         children: [
           {
             path: 'menu1-1',
@@ -193,19 +278,6 @@ export const constantRoutes = [
             meta: { title: 'Menu1-3' }
           }
         ]
-      },
-      {
-        path: 'gthx',
-        component: () => import('@/components/LJH/gthx'),
-        meta: {
-          title: '个体画像',
-          keepAlive: true
-        }
-      },
-      {
-        path: 'moreStudent',
-        component: () => import('@/components/LJH/moreStudent'),
-        name: 'MoreStudent'
       }
     ]
   },
