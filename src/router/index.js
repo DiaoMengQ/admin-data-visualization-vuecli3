@@ -65,12 +65,12 @@ export const constantRoutes = [
     path: '/qcpj',
     component: Layout,
     meta: { title: '七彩评价', icon: 'qcpj' },
-    redirect: '/qcpj/groupProfile', // 点击父级目录'七彩评价'的默认路径
+    redirect: '/qcpj/teaEvaAvg', // 点击父级目录'七彩评价'的默认路径
     children: [
       {
-        path: 'groupProfile',
+        path: 'teaEvaAvg',
         component: () => import('@/views/qcpj/groupProfile/index'), // Parent router-view
-        name: 'GroupProfile',
+        name: 'TeaEvaAvg',
         meta: { title: '班级评价积分平均值' },
         children: [
           {
@@ -87,6 +87,12 @@ export const constantRoutes = [
             component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/LineChart')
           }
         ]
+      },
+      {
+        path: 'linearRegression',
+        component: () => import('@/views/qcpj/groupProfile/LinearRegression'), // Parent router-view
+        name: 'LinearRegression',
+        meta: { title: '线性回归分析' }
       },
       {
         path: 'personalProfile',
