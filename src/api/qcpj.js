@@ -162,9 +162,9 @@ export function getStuSemester(para) {
  * @param {*} para
  * @returns
  */
-export function studentSubLinearRegress(para) {
+export function classSubLinearRegress(para) {
   return request({
-    url: '/qcpj/subject/studentSubLinearRegress',
+    url: '/qcpj/subject/classSubLinearRegress',
     method: 'GET',
     params: para
   })

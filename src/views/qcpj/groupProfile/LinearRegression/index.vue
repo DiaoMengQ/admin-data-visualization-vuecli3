@@ -133,7 +133,7 @@
       </el-row>
 
       <el-row class="admin-info-post-controler" type="flex" justify="end">
-        <el-button type="primary" @click="getQcpjTeacherEvaStat">查询</el-button>
+        <el-button type="primary" @click="getQcpjEvaStat">查询</el-button>
       </el-row>
     </el-form>
 
@@ -146,7 +146,7 @@
 import { getUserInfo } from '@/api/user'
 import { MessageBox } from 'element-ui'
 import { provinceList, gradeList } from '@/utils/multiple'
-import { getSchoolInfo, getClassinGrade, getSchoolSubjects, schoolSubLinearRegress } from '@/api/qcpj'
+import { getSchoolInfo, getClassinGrade, getSchoolSubjects, schoolSubLinearRegress, classSubLinearRegress } from '@/api/qcpj'
 import { getAreaInfo } from '@/api/system'
 import { getUserManaRange } from '@/utils/auth'
 
@@ -406,42 +406,58 @@ export default {
     },
 
     // 获取QCPJ学校科目线性回归相关数据
-    getQcpjTeacherEvaStat() {
+    getQcpjEvaStat() {
+      // const para = {
+      //   schoolId: this.schoolId,
+      //   gradeId: this.gradeId,
+      //   startCoef: this.coef[0], // 系数范围
+      //   endCoef: this.coef[1], // 系数范围
+      //   modelScore: this.modelScore, // 线性回归模型的拟合度得分
+      //   subject: this.subjectLabel, // 科目
+      //   weekRange: this.weekRange // 可选周数: 1-9/9-18/1-18
+      // }
+
       const para = {
-        schoolId: this.schoolId,
-        gradeId: this.gradeId,
+        schoolId: 1100002,
+        gradeId: 4,
         startCoef: this.coef[0], // 系数范围
         endCoef: this.coef[1], // 系数范围
         modelScore: this.modelScore, // 线性回归模型的拟合度得分
-        subject: this.subjectLabel, // 科目
+        subject: '数学', // 科目
         weekRange: this.weekRange // 可选周数: 1-9/9-18/1-18
       }
-      //   const para = {
-      //     schoolId: 1100002,
-      //     gradeId: 4,
-      //     startCoef: this.coef[0], // 系数范围
-      //     endCoef: this.coef[1], // 系数范围
-      //     modelScore: this.modelScore, // 线性回归模型的拟合度得分
-      //     subject: '数学', // 科目
-      //     weekRange: this.weekRange // 可选周数: 1-9/9-18/1-18
-      //   }
-
       //   console.log('线性回归请求参数', para)
-      schoolSubLinearRegress(para).then((result) => {
+
+      if (this.classId === null) {
+        schoolSubLinearRegress(para).then((result) => {
         // console.log('线性回归返回数据', result.data.data)
-        const data = result.data.data
-        const scoreList = []
-        for (let i = 0; i < data.length; i++) {
-          const score = JSON.parse(data[i].score)
-          for (let j = 0; j < score.length; j++) {
-            scoreList.push([score[j].week, score[j].score])
-          }
+          this.dataProcess(result.data.data)
+          this.drawChart()
+        }).catch((err) => {
+          console.log(err)
+        })
+      } else {
+        para.classId = this.classId
+        classSubLinearRegress(para).then((result) => {
+          // console.log('线性回归返回数据', result.data.data)
+          this.dataProcess(result.data.data)
+          this.drawChart()
+        }).catch((err) => {
+          console.log(err)
+        })
+      }
+    },
+
+    // 数据处理
+    dataProcess(data) {
+      const scoreList = []
+      for (let i = 0; i < data.length; i++) {
+        const score = JSON.parse(data[i].score)
+        for (let j = 0; j < score.length; j++) {
+          if (score[j].score !== 0) { scoreList.push([score[j].week, score[j].score]) }
         }
-        this.chartData = scoreList
-        this.drawChart()
-      }).catch((err) => {
-        console.log(err)
-      })
+      }
+      this.chartData = scoreList
     },
 
     // 选择学校后重置年级ID
