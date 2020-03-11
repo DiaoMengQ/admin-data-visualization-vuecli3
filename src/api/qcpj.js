@@ -154,3 +154,33 @@ export function getStuSemester(para) {
     params: para
   })
 }
+
+/**
+ * 七彩评价获取班级老师评价科目线性回归接口
+ *
+ * @export
+ * @param {*} para
+ * @returns
+ */
+export function studentSubLinearRegress(para) {
+  return request({
+    url: '/qcpj/subject/studentSubLinearRegress',
+    method: 'GET',
+    params: para
+  })
+}
+
+/**
+ * 七彩评价获取学校老师评价科目线性回归接口
+ *
+ * @export
+ * @param {*} para
+ * @returns
+ */
+export function schoolSubLinearRegress(para) {
+  return request({
+    url: '/qcpj/subject/schoolSubLinearRegress',
+    method: 'GET',
+    params: para
+  })
+}

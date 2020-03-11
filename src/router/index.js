@@ -92,7 +92,7 @@ export const constantRoutes = [
         path: 'linearRegression',
         component: () => import('@/views/qcpj/groupProfile/LinearRegression'), // Parent router-view
         name: 'LinearRegression',
-        meta: { title: '线性回归分析' }
+        meta: { title: '群体线性回归分析' }
       },
       {
         path: 'personalProfile',
@@ -214,9 +214,9 @@ export const constantRoutes = [
         name: 'MoreStudent'
       },
       {
-        path: 'personalProfile',
+        path: 'personalReadingProf',
         component: () => import('@/views/ydhy/personalProfile/index'), // Parent router-view
-        name: 'personalProfile',
+        name: 'personalReadingProf',
         meta: { title: '学生阅读数据' },
         children: [
           {
