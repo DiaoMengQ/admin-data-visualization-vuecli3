@@ -1,4 +1,5 @@
 <template>
+
   <div id="app-container">
     <div style="margin:20px;text-align: center;">
       <div>
@@ -16,30 +17,29 @@
         </el-button-group>
       </div>
     </div>
-    <div v-if="ifShowMap" id="mapContainer">
-      <baidu-map
-        ak="vgU1xLIOGzk8yPQkqW5xT8PylCwXfliW"
-        class="bm-view"
-        @ready="drawChinaMap"
-      />
-    </div>
+
+    <div id="chinaMap" ref="myEchart" style="height:800px;width:100%;" />
   </div>
 </template>
 
 <script>
 import echarts from 'echarts'
-import 'echarts/extension/bmap/bmap'
+import 'echarts/theme/macarons'
+import 'echarts/map/js/china.js' // 引入中国地图数据
 
-import BaiduMap from 'vue-baidu-map/components/map/Map.vue'
+import 'echarts/map/js/province/beijing.js' // 引入北京地图数据
+import 'echarts/map/js/province/fujian.js' // 引入福建地图数据
+import 'echarts/map/js/province/anhui.js' // 引入安徽地图数据
+import 'echarts/map/js/province/xinjiang.js' // 引入新疆地图数据
+import 'echarts/map/js/province/xizang.js' // 引入西藏地图数据
 
 // 引入提示框和标题组件
-require('echarts/lib/component/tooltip')
 require('echarts/lib/component/title')
+require('echarts/lib/component/tooltip')
 
 import { QCPJcityDistribution, YDHYcityDistribution, getAreaInfo } from '@/api/system'
 
 export default {
-  components: { BaiduMap },
   data() {
     return {
       selectedDate: '',
@@ -68,183 +68,84 @@ export default {
           }
         }]
       },
-      ifShowMap: false,
-      geoCoordMap: {
-        '莱芜': [117.67, 36.19],
-        '常德': [111.69, 29.05]
-      },
-      data: [
-        { city: '莱芜', count: 148 },
-        { city: '常德', count: 152 }
-      ],
-      mapChartOption: {
+
+      QCPJplain: true,
+      YDHYplain: true,
+      option: {
+        backgroundColor: '#fff', // 设置背景颜色
         title: {
-          text: '用户访问区域统计信息',
-          subtext: '数据来源: 七彩评价',
-          sublink: 'http://www.pm25.in',
+          show: true,
+          text: '标题--中国地图',
+          subtext: 'made by xzc',
           left: 'center'
         },
         tooltip: {
-          trigger: 'item',
-          formatter: function(params) {
-            const res = params.seriesName + '</br>' + params.marker + params.name + ': ' + params.value[2]
-            return res
+          trigger: 'item'
+        },
+        // 左侧小导航图标
+        visualMap: {
+          show: true,
+          x: 'left',
+          y: 'bottom',
+          // splitList: [
+          //   { start: 10, end: 20 },
+          //   { start: 6, end: 10 },
+          //   { start: 0, end: 6 }
+          // ],
+          // color: ['#1E90FF', '#7FFFAA', '#F0E68C']
+          min: 0,
+          max: 20,
+          text: ['High', 'Low'],
+          realtime: false,
+          calculable: true,
+          inRange: {
+            // color: ['lightskyblue', 'yellow', 'red']
+            color: ['white', 'yellow', 'red']
           }
         },
-        bmap: {
-          center: [104.114129, 37.550339],
-          zoom: 5,
-          roam: true,
-          mapStyle: {
-            styleJson: [{
-              'featureType': 'water',
-              'elementType': 'all',
-              'stylers': {
-                'color': '#d1d1d1'
-              }
-            }, {
-              'featureType': 'land',
-              'elementType': 'all',
-              'stylers': {
-                'color': '#f3f3f3'
-              }
-            }, {
-              'featureType': 'railway',
-              'elementType': 'all',
-              'stylers': {
-                'visibility': 'off'
-              }
-            }, {
-              'featureType': 'highway',
-              'elementType': 'all',
-              'stylers': {
-                'color': '#fdfdfd'
-              }
-            }, {
-              'featureType': 'highway',
-              'elementType': 'labels',
-              'stylers': {
-                'visibility': 'off'
-              }
-            }, {
-              'featureType': 'arterial',
-              'elementType': 'geometry',
-              'stylers': {
-                'color': '#fefefe'
-              }
-            }, {
-              'featureType': 'arterial',
-              'elementType': 'geometry.fill',
-              'stylers': {
-                'color': '#fefefe'
-              }
-            }, {
-              'featureType': 'poi',
-              'elementType': 'all',
-              'stylers': {
-                'visibility': 'off'
-              }
-            }, {
-              'featureType': 'green',
-              'elementType': 'all',
-              'stylers': {
-                'visibility': 'off'
-              }
-            }, {
-              'featureType': 'subway',
-              'elementType': 'all',
-              'stylers': {
-                'visibility': 'off'
-              }
-            }, {
-              'featureType': 'manmade',
-              'elementType': 'all',
-              'stylers': {
-                'color': '#d1d1d1'
-              }
-            }, {
-              'featureType': 'local',
-              'elementType': 'all',
-              'stylers': {
-                'color': '#d1d1d1'
-              }
-            }, {
-              'featureType': 'arterial',
-              'elementType': 'labels',
-              'stylers': {
-                'visibility': 'off'
-              }
-            }, {
-              'featureType': 'boundary',
-              'elementType': 'all',
-              'stylers': {
-                'color': '#fefefe'
-              }
-            }, {
-              'featureType': 'building',
-              'elementType': 'all',
-              'stylers': {
-                'color': '#d1d1d1'
-              }
-            }, {
-              'featureType': 'label',
-              'elementType': 'labels.text.fill',
-              'stylers': {
-                'color': '#999999'
-              }
-            }]
-          }
-        }
-      },
-      QCPJplain: true,
-      YDHYplain: true
+        // 配置属性
+        series: [{
+          name: '数量',
+          type: 'map',
+
+          map: 'china',
+          roam: false,
+          zoom: 1.2,
+          label: {
+            normal: {
+              show: true
+            },
+            emphasis: {
+              show: false
+            }
+          },
+          data: []
+        }]
+      }
     }
   },
-  created() {
-    this.getAreaData()
+  mounted() {
+    // this.drawChart()
+    // this.chinaConfigure()
+    // this.chinamap()
   },
   methods: {
-    getAreaData() {
-      // 获取经纬度
-      getAreaInfo().then((result) => {
-        const tempGeoCoordMap = result.data.data
-        const geoCoordMapItem = {}
-
-        for (let i = 0; i < tempGeoCoordMap.length; i++) {
-          // 处理字符串中的经纬度
-          const LonAlatItem = tempGeoCoordMap[i].center.split(',')
-          for (let j = 0; j < 2; j++) {
-            LonAlatItem[j] = parseFloat(LonAlatItem[j])
-          }
-
-          // 生成城市数据单项
-          const cityName = tempGeoCoordMap[i].cityName
-          geoCoordMapItem[cityName] = LonAlatItem
-        }
-        this.geoCoordMap = geoCoordMapItem
-        // console.log(this.geoCoordMap)
-      }).catch((err) => {
-        console.log(err)
-      })
-    },
     // 获取阅读海洋地区访问统计数值
     getYDHYcityData() {
       this.QCPJplain = true
       this.YDHYplain = false
-      this.mapChartOption.title.subtext = '数据来源: 阅读海洋'
+      this.baiduMapOption.title.subtext = '数据来源: 阅读海洋'
       if (this.selectedDate === null || this.selectedDate.length === 0) {
         YDHYcityDistribution().then((result) => {
-          this.data = result.data.data
-          this.addChartOptionSeries(0.00007)
-          this.drawChinaMap()
+          const data = result.data.data
+          // this.drawChinaMap()
         }).catch((err) => {
           console.log(err)
         })
       } else {
         YDHYcityDistribution({ date: this.selectedDate }).then((result) => {
-          this.data = result.data.data
-          this.addChartOptionSeries(0.1)
-          this.drawChinaMap()
+          const data = result.data.data
+          // this.drawChinaMap()
         }).catch((err) => {
           console.log(err)
         })
@@ -252,119 +153,76 @@ export default {
     },
     // 获取七彩评价地区访问统计数值
     getQCPJcityData() {
-      this.mapChartOption.title.subtext = '数据来源: 七彩评价'
+      // this.baiduMapOption.title.subtext = '数据来源: 七彩评价'
       this.QCPJplain = false
       this.YDHYplain = true
       // 注意判空的顺序
       if (this.selectedDate === null || this.selectedDate.length === 0) {
         QCPJcityDistribution().then((result) => {
-          this.data = result.data.data
-          this.addChartOptionSeries(0.000007) // 默认获取所有日期数据时数据过大,传入倍率缩小描点显示大小
-          this.drawChinaMap()
+          const data = result.data.data
+          for (let i = 0; i < data.length; i++) {
+            data[i].name = data[i].city
+            data[i].value = data[i].count
+            delete data[i].city
+            delete data[i].count
+          }
+          this.option.series[0].data = data
+          // console.log(data)
+          this.chinamap()
+          // this.drawChinaMap()
         }).catch((err) => {
           console.log(err)
         })
       } else {
         QCPJcityDistribution({ date: this.selectedDate }).then((result) => {
-          this.data = result.data.data
-          this.addChartOptionSeries(0.001)
-          this.drawChinaMap()
+          const data = result.data.data
+          // this.drawChinaMap()
         }).catch((err) => {
           console.log(err)
         })
       }
     },
 
-    addChartOptionSeries(mag) {
-      this.mapChartOption.series = [
-        {
-          name: '访问次数:',
-          type: 'scatter',
-          coordinateSystem: 'bmap',
-          data: this.convertData(this.data),
-          symbolSize: function(val) {
-            return val[2] * mag
-          },
-          label: {
-            formatter: '{b}',
-            position: 'right',
-            show: false
-          },
-          itemStyle: {
-            color: ' #00ccff'
-          },
-          emphasis: {
-            label: {
-              show: true
-            }
-          }
-        },
-        {
-          name: '最多访问Top 5:',
-          type: 'effectScatter',
-          coordinateSystem: 'bmap',
-          data: this.convertData(this.data.sort(function(a, b) {
-            return b.count - a.count
-          }).slice(0, 6)),
-          symbolSize: function(val) {
-            return val[2] * mag
-          },
-          showEffectOn: 'render',
-          rippleEffect: {
-            brushType: 'stroke'
-          },
-          hoverAnimation: true,
-          label: {
-            formatter: '{b}',
-            position: 'right',
-            show: true
-          },
-          itemStyle: {
-            color: '#39ac39',
-            shadowBlur: 10,
-            shadowColor: '#555'
-          },
-          zlevel: 1
-        }
-      ]
-    },
+    // 绘制图形
+    drawChart() {
+      // 基于准备好的dom，初始化echarts实例
+      var clusterChart = echarts.init(document.getElementById('chart-main'), 'macarons')
 
-    // 此处调用了两次 drawChinaMap() 方法(加载了两次地图),地图才得以显示
-    // 我jio得应该是数据和地图请求顺序的问题
-    // 但是我不知道怎么改_(:з」∠)_
-    // 地图绘制
-    drawChinaMap() {
-      this.ifShowMap = true
-      var myChart = echarts.init(document.getElementById('mapContainer'))
-      myChart.setOption(this.mapChartOption)
-    },
-
-    // 原数据处理
-    convertData(data) {
-      var res = []
-      for (var i = 0; i < data.length; i++) {
-        var geoCoord = this.geoCoordMap[data[i].city]
-        if (geoCoord) {
-          res.push({
-            name: data[i].city,
-            value: geoCoord.concat(data[i].count)
-          })
-        }
+      // 绘制图表
+      if (this.option && typeof this.option === 'object') {
+        clusterChart.setOption(this.option, true)
       }
-      return res
+    },
+
+    chinamap() {
+      var myChart = echarts.init(document.getElementById('chinaMap'))
+      window.addEventListener('resize', function() {
+        myChart.resize()
+      })
+      // this.option =
+
+      console.log(this.option)
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(this.option)
+
+      // myChart.on('mouseover', function(params) {
+      //   var dataIndex = params.dataIndex
+      //   console.log(dataIndex)
+      // })
+
+      myChart.on('click', function(chinaParam) {
+        var option = myChart.getOption()
+        option.series[0].map = chinaParam.name
+        option.series[0].mapType = chinaParam.name
+        myChart.clear()
+        console.log(chinaParam.name)
+        myChart.setOption(option, true)
+      })
     }
   }
 }
 </script>
 
 <style>
-#mapContainer{
-  width: 90%;
-  margin: auto;
-  height: 650px
-}
-.bm-view {
-  width: 100%;
-  height: 650px;
-}
+
 </style>
