@@ -24,7 +24,8 @@ module.exports = {
    * In most cases please use '/' !!!
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
-  publicPath: '/',
+  // publicPath: process.env.NODE_ENV === 'production' ? '/你在Tomcat新建的文件夹名称/' : '/',
+  publicPath: process.env.NODE_ENV === 'production' ? '/admin-data-visualization-vue/' : '/',
   outputDir: 'dist',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',

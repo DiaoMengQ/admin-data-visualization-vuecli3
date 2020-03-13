@@ -363,6 +363,7 @@ export const constantRoutes = [
 
 const createRouter = () => new Router({
   mode: 'history', // 需要服务器支持
+  base: process.env.NODE_ENV === 'production' ? '/admin-data-visualization-vue/' : '/', // 部署到Tomcat必须写
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })
