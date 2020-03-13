@@ -142,15 +142,8 @@
 import { getClassinGrade, getSchoolSubjects, getSchoolInfo, createSubjectCluster } from '@/api/qcpj'
 import { json2Obj } from '@/utils/index'
 import { MessageBox, Message } from 'element-ui'
+import { gradeList } from '@/utils/multiple'
 
-const GradeL = [
-  { gradeId: 1, gradeName: '一年级' },
-  { gradeId: 2, gradeName: '二年级' },
-  { gradeId: 3, gradeName: '三年级' },
-  { gradeId: 4, gradeName: '四年级' },
-  { gradeId: 5, gradeName: '五年级' },
-  { gradeId: 6, gradeName: '六年级' }
-]
 const WeekL = [
   { weekId: 1, weekLabel: '至第 1 周' },
   { weekId: 2, weekLabel: '至第 2 周' },
@@ -197,7 +190,7 @@ export default {
 
       gradeId: '', // 所选年级代号
       gradeLabel: '',
-      gradeList: GradeL, // 年级可选项
+      gradeList: [], // 年级可选项
 
       classList: [], // 班级可选项
       classLabel: '',
@@ -288,6 +281,7 @@ export default {
   },
   created() {
     this.schoolId = this.$route.params && this.$route.params.schoolId
+    this.gradeList = gradeList()
   },
   mounted() {
     // 请求学校信息(根据路径中的学校ID请求学校名称)
@@ -300,9 +294,6 @@ export default {
       subjectOptions = json2Obj(subList)
       this.subjects = subjectOptions
     })
-  },
-  destroyed() {
-    console.log('当前页已销毁')
   },
   methods: {
     // 年级选择变化

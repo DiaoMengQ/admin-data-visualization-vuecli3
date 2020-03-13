@@ -21,8 +21,6 @@
 </template>
 
 <script>
-import { handleData2arr, str2num, str2json } from '@/utils/index'
-
 // 引入 ECharts 主模块
 // var echarts = require('echarts/lib/echarts') 两种方式皆可
 import echarts from 'echarts'
@@ -127,18 +125,15 @@ export default {
   },
   created() {
     this.taskId = this.$route.params && this.$route.params.taskId
+    this.taskDetailInit()
   },
   mounted() {
-    // TODO: this.taskDetailInit()
-    this.DataHandler()
-    this.dataFormat()
   },
   methods: {
     // 显示表格
     dataFormat() {
-      // console.log(this.taskDetail)
       this.stuList = this.taskDetail.studentList
-      console.log(this.stuList)
+      // console.log('学生列表', this.stuList)
       const tableHead = []
       for (let i = 0; i < this.taskDetail.subjectRange.length; i++) {
         // 生成动态表头
@@ -150,7 +145,7 @@ export default {
           this.stuList[j].resultData = this.taskDetail.resultData[j]
         }
       }
-      console.log(this.stuList)
+      // console.log(this.stuList)
       // 这里是固定的表头，如果没有可不写
       const stableTableHead = [
         {
@@ -179,53 +174,28 @@ export default {
     },
     // 获取任务详情数据
     taskDetailInit() {
-      // eslint-disable-next-line no-unused-vars
-      const tID = 280357898402398208
-      // getSubjectClusterDetail(tID).then((result) => {
       getSubjectClusterDetail(this.taskId).then((result) => {
         this.taskDetail = result.data.data
-        console.log(this.taskDetail)
+        // console.log('任务详情数据', this.taskDetail)
+        this.DataHandler()
+        this.dataFormat()
       }).catch((err) => {
         console.log(err)
       })
     },
     // 数据处理
     DataHandler() {
-      // 科目数组信息处理
-      // '["德育","语文"]'
-      let sr = this.taskDetail.subjectRange
-      sr = sr.replace('["', '')
-      sr = sr.replace('"]', '')
-      sr = sr.replace('","', ',')
-      sr = sr.split(',')
-      this.taskDetail.subjectRange = sr
+      // 科目数组 '["德育","语文"]'
+      this.taskDetail.subjectRange = JSON.parse(this.taskDetail.subjectRange)
 
-      // 对科目待处理剧进行处理
-      // '[[375,406],[640,571]]'
-      let hd = this.taskDetail.handleData
-      hd = hd.replace('[[', '')
-      hd = hd.replace(']]', '')
-      hd = hd.split('],[')
-      hd = hd.map(handleData2arr) // 对数组中的每一个字符串数组进行处理
-      this.taskDetail.handleData = hd
+      // 科目待处理数据 '[[375,406],[640,571]]'
+      this.taskDetail.handleData = JSON.parse(this.taskDetail.handleData)
 
-      // 对结果数据进行处理
-      // '[2, 0, 0]'
-      let td = this.taskDetail.resultData
-      td = td.replace('[', '')
-      td = td.replace(']', '')
-      td = td.split(',')
-      td = td.map(str2num)
-      this.taskDetail.resultData = td
+      // 结果数据 '[2, 0, 0]'
+      this.taskDetail.resultData = JSON.parse(this.taskDetail.resultData)
 
-      // 对学生列表 json 数组的字符串进行处理
-      // '[{"u_id":"03f175d5-d631-43bd-89a5-270b93612c4f","u_name":"郑峻熙"}]'
-      let sl = this.taskDetail.studentList
-      sl = sl.replace('[{', '')
-      sl = sl.replace('}]', '')
-      sl = sl.split('},{')
-      sl = sl.map(str2json)
-      this.taskDetail.studentList = sl
+      // 学生列表 json 数组的字符串 '[{"u_id":"03f175d5-d631-43bd-89a5-270b93612c4f","u_name":"郑峻熙"}]'
+      this.taskDetail.studentList = JSON.parse(this.taskDetail.studentList)
 
       if (this.taskDetail.subjectRange.length <= 2) {
         this.drawChart()

@@ -102,7 +102,7 @@ export default {
 
               getAreaInfo({ province_id: this.provinceId }).then(response => {
                 this.cityList = response.data['data']
-                console.log(this.cityList)
+                // console.log(this.cityList)
               })
             }
             this.areaCode = null
