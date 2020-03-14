@@ -6,7 +6,7 @@
   </div>
 </template>
 <script>
-import { getSchools } from '@/api/ydhy'
+import { getYDHYSchoolInfo } from '@/api/ydhy'
 export default {
   name: 'SchoolPicker',
   model: {
@@ -64,7 +64,7 @@ export default {
     // 获取班级列表
     getschools() {
       const self = this
-      getSchools().then(res => {
+      getYDHYSchoolInfo().then(res => {
         self.schools = res.data.data
         // 如果班级不为空就帮用户选第一个
         self.schools.length && (self.schoolVal = self.schools[0].schoolId)
