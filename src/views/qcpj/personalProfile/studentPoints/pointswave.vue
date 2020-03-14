@@ -75,14 +75,8 @@
           />
         </el-select>
         <!-- 按钮 -->
-        <el-button plain type="primary" size="small" style="height:40px" @click="barCharts(stunum,findweek)">查看评价积分统计</el-button>
+        <el-button plain type="primary" size="small" style="height:40px" @click="initCharts (stunum)">查看评价积分趋势</el-button>
       </p>
-      <div v-show="sw">
-        <span><font>选择周次：</font></span>
-        <div>
-          <el-slider v-model="findweek" show-input :max="maxweek" :min="1" style="width:60%" @change="barCharts(stunum,findweek)" />
-        </div>
-      </div>
     </div>
     <!-- 显示可视化图表 -->
     <div ref="chart" style="width:1600px;height:600px;margin:0 auto;" />
@@ -109,10 +103,6 @@ export default {
       stunum: '',
       // 查询周次
       findweek: '',
-      // 使点击各周按钮时时间轴会显示出来
-      sw: false,
-      // 点击显示或隐藏多名学生按钮
-      ms: false,
       // 获取所选中学生当前有多少周成绩
       maxweek: '7',
       // 获取所选中的学生名字
@@ -179,9 +169,8 @@ export default {
           // console.log(sub[0].name)
         })
     },
-    // 柱状图获取各周单科成绩
-    barCharts(Stu, getweek) {
-      // 未选择学生弹框提示先选择学生
+    // 折线图显示获取到的数据
+    initCharts(Stu) {
       if (Stu.length <= 0) {
         this.$alert('请先选择学生', '错误！未选择学生', {
           confirmButtonText: '确定',
@@ -193,22 +182,28 @@ export default {
           }
         })
       } else {
-        // 使各周成绩中的选择周次轴显示
-        this.sw = true
-        this.ms = false
-        const barChart = echarts.init(this.$refs.chart, 'macarons')
-        // 清空echarts画布，避免图像重叠显示
-        barChart.clear()
-        barChart.setOption({
-          title: { text: this.nowStuName + '——前' + this.findweek + '周——' + '成绩' },
+      // 使各周成绩中的选择周次轴隐藏
+        this.sw = false
+        this.ms = true
+        const myChart = echarts.init(this.$refs.chart, 'macarons')
+        // let _this = this
+        myChart.clear()
+        // 折线图属性设置
+        myChart.setOption({
+          title: { text: this.nowStuName + '本学期成绩' },
           tooltip: {
             trigger: 'axis',
-            axisPointer: { // 坐标轴指示器，坐标轴触发有效
-              type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+            axisPointer: {
+              type: 'cross',
+              label: {
+                backgroundColor: '#6a7985'
+              }
             }
           },
-          legend: {
-            data: ['人文', '实践', '科学']
+          toolbox: {
+            feature: {
+              saveAsImage: {}
+            }
           },
           grid: {
             left: '3%',
@@ -217,14 +212,18 @@ export default {
             containLabel: true
           },
           xAxis: {
-            type: 'value'
+            type: 'category',
+            boundaryGap: false
           },
           yAxis: {
-            type: 'category'
+            type: 'value'
+          },
+          legend: {
+            data: ['人文', '实践', '科学']
           },
           series: []
         })
-        getStuSemester({ 'studentId': Stu, 'week': getweek })
+        getStuSemester({ 'studentId': Stu })
           .then(res => {
           // 定义学生人文成绩
             const objData = []
@@ -276,46 +275,28 @@ export default {
             // console.log(objData)
 
             // 此位置将获取到数据显示到图上
-            barChart.setOption({
+            myChart.setOption({
               series: [
                 {
                   name: '人文',
-                  type: 'bar',
-                  stack: '总量',
-                  label: {
-                    normal: {
-                      show: true,
-                      position: 'insideRight'
-                    }
-                  },
+                  type: 'line',
+                  areaStyle: {},
                   data: objData
                 },
                 {
                   name: '实践',
-                  type: 'bar',
-                  stack: '总量',
-                  label: {
-                    normal: {
-                      show: true,
-                      position: 'insideRight'
-                    }
-                  },
+                  type: 'line',
+                  areaStyle: {},
                   data: objSj
                 },
                 {
                   name: '科学',
-                  type: 'bar',
-                  stack: '总量',
-                  label: {
-                    normal: {
-                      show: true,
-                      position: 'insideRight'
-                    }
-                  },
+                  type: 'line',
+                  areaStyle: {},
                   data: objKx
                 }
               ],
-              yAxis: {
+              xAxis: {
                 data: weekArr
               }
             })

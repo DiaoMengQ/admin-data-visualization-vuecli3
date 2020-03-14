@@ -1,9 +1,26 @@
 <template>
   <div id="app">
     <div id="nav">
-      <!-- 学生年级 -->
-      <!-- GradeChange(stugrade) -->
-      <p>年级：
+      <!-- 选择所想查看的学校 -->
+      <p>选择学校：
+        <el-select
+          id="School"
+          v-model="schoolId"
+          name="school"
+          placeholder="请选择学校"
+          style="width:250px"
+        >
+          <el-option
+            v-for="(item,schoolName) in school"
+            :key="schoolName"
+            :value="item.schoolId"
+            :label="item.schoolName"
+          />
+        </el-select>
+
+        <!-- 学生年级 -->
+        <!-- GradeChange(stugrade) -->
+        年级：
         <el-select
           id="Grade"
           v-model="stugrade"
@@ -49,7 +66,7 @@
           clearable
           placeholder="请选择该班级的学生"
           style="width:180px"
-          @change="StuChange(stunum)"
+          @change="getSubLinearRegress(stunum)"
         >
           <el-option
             v-for="(stu,istu) in getClass"
@@ -58,23 +75,71 @@
             :label="stu.name"
           />
         </el-select>
-        <!-- 按钮 -->
-        <el-button plain type="primary" size="small" style="height:40px" @click="initCharts (stunum)">查看评价积分趋势</el-button>
+        <br>
+      </p>
+      <p>
+        <!-- 斜率范围 -->
+        <el-row>
+          <el-col :lg="12" :xl="8">
+            <el-form>
+              <el-form-item label-width="100px" label="系数范围：" class="posiInfo-container-item" @change="getSubLinearRegress(stunum)">
+                <el-slider v-model="coef" range show-stops :min="coefRange[0]" :max="coefRange[1]" :step="coefStep" />
+              </el-form-item>
+            </el-form>
+          </el-col>
+        </el-row>
+
+        <!-- 数据相光度 -->
+        <el-row>
+          <el-col :lg="12" :xl="8">
+            <el-form>
+              <el-form-item label="数据相关度" label-width="100px" class="postInfo-container-item" @change="getSubLinearRegress(stunum)">
+                <el-slider v-model="modelScore" show-stops :max="1" :step="modelScoreStep" />
+              </el-form-item>
+            </el-form>
+          </el-col>
+        </el-row>
+
+        <!-- 学期范围 -->
+        <el-col :xs="24" :lg="8" :xl="8">
+          <el-form>
+            <el-form-item label-width="100px" label="学期范围：" class="postInfo-container-item" @change="getSubLinearRegress(stunum)">
+              <el-select v-model="weekRange" placeholder="请选择">
+                <el-option v-for="week in weekList" :key="week.weekId" :label="week.weekLabel" :value="week.weekId" />
+              </el-select>
+            </el-form-item>
+          </el-form>
+        </el-col>
+
+        <el-col :xs="24" :lg="8" :xl="8">
+          <el-form>
+            <el-form-item label-width="100px" label="科目选择：" class="postInfo-container-item">
+              <el-select v-model="book " placeholder="请选择">
+                <el-option v-for="bk in bookType" :key="bk.bookTypeId" :label="bk.bookTypeLabel" :value="bk.bookTypeId" />
+              </el-select>
+            </el-form-item>
+          </el-form>
+        </el-col>
       </p>
     </div>
+
     <!-- 显示可视化图表 -->
     <div ref="chart" style="width:1600px;height:600px;margin:0 auto;" />
   </div>
 </template>
-
 <script>
 import store from '@/store/index.js'
 import echarts from 'echarts'
+import ecStat from 'echarts-stat'
 import 'echarts/theme/macarons'
-import { getClassinGrade, getStuinClass, getStuSemester } from '@/api/qcpj'
+import { getSchoolInfo, getClassinGrade, getStuinClass, getstudentSubLinearRegress } from '@/api/qcpj'
 export default {
   data() {
     return {
+      // 学校名称
+      school: [],
+      // 学校ID
+      schoolId: '',
       // 此时的所有年级
       stugrade: '',
       // 此年级的所有班级
@@ -86,7 +151,44 @@ export default {
       // 获取所选中学生当前有多少周成绩
       maxweek: '7',
       // 获取所选中的学生名字
-      nowStuName: ''
+      nowStuName: '',
+
+      weekRange: '',
+      book: '',
+      modelScore: 0.7457315232377556,
+      modelScoreStep: 0.1,
+      coef: [-180, 180],
+      coefRange: [-180, 180],
+      coefStep: 10,
+      weekList1: [
+        { weekId: '1-9', weekLabel: '上半学期' },
+        { weekId: '9-18', weekLabel: '下半学期' },
+        { weekId: '1-18', weekLabel: '全学年' }
+      ],
+      weekList: '1-18',
+      bookType: '数学',
+      bookType1: [
+        { bookTypeId: '书法', bookTypeLabel: '书法' },
+        { bookTypeId: '体育', bookTypeLabel: '体育' },
+        { bookTypeId: '体育活动', bookTypeLabel: '体育活动' },
+        { bookTypeId: '信息技术', bookTypeLabel: '信息技术' },
+        { bookTypeId: '品德与操行', bookTypeLabel: '品德与操行' },
+        { bookTypeId: '品德与社会', bookTypeLabel: '品德与社会' },
+        { bookTypeId: '幸福生活劳动', bookTypeLabel: '幸福生活劳动' },
+        { bookTypeId: '德育', bookTypeLabel: '德育' },
+        { bookTypeId: '心理健康', bookTypeLabel: '心理健康' },
+        { bookTypeId: '数学', bookTypeLabel: '数学' },
+        { bookTypeId: '科学', bookTypeLabel: '科学' },
+        { bookTypeId: '综合实践', bookTypeLabel: '综合实践' },
+        { bookTypeId: '美术', bookTypeLabel: '美术' },
+        { bookTypeId: '英语', bookTypeLabel: '英语' },
+        { bookTypeId: '语文', bookTypeLabel: '语文' },
+        { bookTypeId: '足球', bookTypeLabel: '足球' },
+        { bookTypeId: '道德与法治', bookTypeLabel: '道德与法治' },
+        { bookTypeId: '阅读', bookTypeLabel: '阅读' },
+        { bookTypeId: '队会', bookTypeLabel: '队会' },
+        { bookTypeId: '音乐', bookTypeLabel: '音乐' }
+      ]
     }
   },
   computed: {
@@ -103,11 +205,19 @@ export default {
       return store.state.Stu
     }
   },
+  created() {
+    // 获取学校ID
+    getSchoolInfo()
+      .then(res => {
+        console.log(res.data.data)
+        this.school = res.data.data
+      })
+  },
   methods: {
     // 年级改变，同时获取该年级的所有班级
     GradeChange(item) {
       //   获取班级接口
-      getClassinGrade({ 'schoolId': '4404001', 'endGradeId': item, 'startGradeId': item })
+      getClassinGrade({ 'schoolId': this.schoolId, 'endGradeId': item, 'startGradeId': item })
         .then(res => {
           // 将获取到的年级存储到store中
           const grade = res.data.data
@@ -128,161 +238,118 @@ export default {
           console.log(store.state.Class)
         })
     },
-    // 所选学生改变，显示学生的各周次分数
-    StuChange(Stu) {
-      getStuSemester({ 'studentId': Stu })
+    getSubLinearRegress(stunum) {
+      getstudentSubLinearRegress({
+        studentId: stunum,
+        endCoef: '180',
+        modelScore: this.modelScore,
+        startCoef: '-180',
+        subject: this.bookType,
+        weekRange: this.weekList
+
+      })
         .then(res => {
-        // console.log(res.data.data[0].subType)
-          const sub = res.data.data
-          store.commit('setStu', sub)
-          console.log(store.state.Stu)
-          this.maxweek = sub.length
-          this.nowStuName = sub[0].name
-          // console.log(sub[0].name)
+          // console.log(res.data.data)
+          const Score = res.data.data[0].score
+          // console.log(Score)
+          // console.log(Score.split('}'))
+          // console.log(Score.length)
+          var a = []
+          for (var i = 0; i < (Score.split('}').length - 1); i++) {
+            // 对获取到的结果进行正则筛选
+            a = Score.replace(/[^\d,]/g, '')
+          }
+          console.log(a)
+          var b = a.split(',')
+          var c = []
+          var d = []
+          for (var j = 0, k = 0; k < (b.length / 2) || j < b.length; j = j + 2, k++) {
+            c[k] = [parseInt(b[j + 1]), parseInt(b[j])]
+            d[k] = c[k]
+          }
+          // console.log(a)
+          // console.log(b)
+          console.log(c)
+          // var d = c.split(',')
+          console.log(d)
+          this.drawLinear(d)
         })
     },
-    // 折线图显示获取到的数据
-    initCharts(Stu) {
-      if (Stu.length <= 0) {
-        this.$alert('请先选择学生', '错误！未选择学生', {
-          confirmButtonText: '确定',
-          callback: action => {
-            this.$message({
-              type: 'info',
-              message: `action: ${action}`
-            })
+    drawLinear(c) {
+      const myRegression = ecStat.regression('linear', c)
+      myRegression.points.sort(function(a, b) { return a[0] - b[0] })
+      const myChart = echarts.init(this.$refs.chart, 'macarons')
+      myChart.clear()
+      // 折线图属性设置
+      myChart.setOption({
+        title: {
+          text: 'Linear Regression',
+          subtext: 'By ecStat.regression',
+          left: 'center'
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'cross'
           }
-        })
-      } else {
-      // 使各周成绩中的选择周次轴隐藏
-        this.sw = false
-        this.ms = true
-        const myChart = echarts.init(this.$refs.chart, 'macarons')
-        // let _this = this
-        myChart.clear()
-        // 折线图属性设置
-        myChart.setOption({
-          title: { text: this.nowStuName + '本学期成绩' },
-          tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              type: 'cross',
-              label: {
-                backgroundColor: '#6a7985'
-              }
+        },
+        xAxis: {
+          type: 'value',
+          splitLine: {
+            lineStyle: {
+              type: 'dashed'
+            }
+          }
+        },
+        yAxis: {
+          type: 'value',
+          min: 1.5,
+          splitLine: {
+            lineStyle: {
+              type: 'dashed'
+            }
+          }
+        },
+        series: [{
+          symbolSize: 20,
+          name: 'scatter',
+          type: 'scatter',
+          emphasis: {
+            label: {
+              show: true,
+              position: 'left',
+              color: 'blue',
+              fontSize: 16
             }
           },
-          toolbox: {
-            feature: {
-              saveAsImage: {}
-            }
-          },
-          grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            containLabel: true
-          },
-          xAxis: {
-            type: 'category',
-            boundaryGap: false
-          },
-          yAxis: {
-            type: 'value'
-          },
-          legend: {
-            data: ['人文', '实践', '科学']
-          },
-          series: []
-        })
-        getStuSemester({ 'studentId': Stu })
-          .then(res => {
-          // 定义学生人文成绩
-            const objData = []
-            // 定义实践成绩
-            const objSj = []
-            // 定义科学成绩
-            const objKx = []
-            // 定义用来存存储周次的数据，在后面setOption出将其传入x轴作为x轴的data
-            const weekArr = []
-
-            // 将获取到的学生成绩存储到sessionStorage中
-            const sub = res.data.data
-            sessionStorage.setItem('sub', JSON.stringify(sub))
-
-            // 有几周成绩，同时将获取到的字符串转换为obj，没有成绩的赋值为0
-            for (var i = 0; i < sub.length; i++) {
-              console.log(sub[i].subType)
-              /** 人文 */
-              // 将获取到的字符串转为obj
-              const obj = JSON.parse(sub[i].subType)
-              if (obj['人文'] == null) {
-                objData[i] = parseInt('0')
-              } else {
-              // 同时将获取到的每周人文转换为int，方便下方传入到图中data
-                objData[i] = parseInt(obj['人文'])
-              }
-              console.log(obj['人文'])
-
-              /** 实践 */
-              if (obj['实践'] == null) {
-                objSj[i] = parseInt('0')
-              } else {
-                // 同时将获取到的每周实践转换为int，方便下方传入到图中data
-                objSj[i] = parseInt(obj['实践'])
-              }
-
-              /** 科学 */
-              if (obj['科学'] == null) {
-                objKx[i] = parseInt('0')
-              } else {
-                // 同时将获取到的每周科学转换为int，方便下方传入到图中data
-                objKx[i] = parseInt(obj['科学'])
-              }
-              // 将周次传入到weekArr数组中，以便将周次实时同步
-              weekArr[i] = ['第' + (i + 1) + '周']
-            }
-
-            // console.log(weekArr)
-            // console.log(objData)
-
-            // 此位置将获取到数据显示到图上
-            myChart.setOption({
-              series: [
-                {
-                  name: '人文',
-                  type: 'line',
-                  areaStyle: {},
-                  data: objData
-                },
-                {
-                  name: '实践',
-                  type: 'line',
-                  areaStyle: {},
-                  data: objSj
-                },
-                {
-                  name: '科学',
-                  type: 'line',
-                  areaStyle: {},
-                  data: objKx
-                }
-              ],
-              xAxis: {
-                data: weekArr
-              }
-            })
-          })
-          .catch(res => {
-            console.log('Error：出错了！')
-            console.log(res)
-          })
-      }
+          data: c
+        },
+        {
+          name: 'line',
+          type: 'line',
+          showSymbol: false,
+          data: myRegression.points,
+          markPoint: {
+            itemStyle: {
+              color: 'transparent'
+            },
+            label: {
+              show: true,
+              position: 'left',
+              formatter: myRegression.expression,
+              color: '#333',
+              fontSize: 14
+            },
+            data: [{
+              coord: myRegression.points[myRegression.points.length - 1]
+            }]
+          }
+        }]
+      })
     }
   }
 }
 </script>
-
 <style scoped>
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;

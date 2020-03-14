@@ -45,6 +45,9 @@ const store = new Vuex.Store({
     // 获取学生每周分数
     setStu(state, stu) {
       state.Stu = stu
+    },
+    setSchoolId(state, sch) {
+      state.SchoolId = sch
     }
   },
   actions: {

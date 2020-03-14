@@ -22,21 +22,6 @@ export function getYDHYSchoolInfo(para) {
   })
 }
 
-// 获取某学校阅读海洋的班级信息
-export function classInfo(para) {
-  return request({
-    url: '/ro/comomon/classInfo',
-    method: 'GET',
-    params: para
-  })
-}
-
-// 获取某班级中的学生信息
-export function classUserInfo(para) {
-  return request({
-    url: '/ro/comomon/classUserInfo',
-    method: 'GET',
-    params: para
 /**
  * 根据学校id，起终点的年级id请求阅读海洋对应学学校的班级信息
  *
@@ -44,11 +29,26 @@ export function classUserInfo(para) {
  * @param {schoolId, startGradeId, endGradeId}
  * @returns
  */
-export function getYDHYClassInfo(params) {
+export function getYDHYClassInfo(para) {
   return request({
     url: '/ro/comomon/classInfo',
     method: 'get',
-    params
+    params: para
+  })
+}
+
+/**
+ * 根据班级ID获取该班级的学生信息
+ *
+ * @export
+ * @param { classId }
+ * @returns
+ */
+export function classUserInfo(para) {
+  return request({
+    url: '/ro/comomon/classUserInfo',
+    method: 'get',
+    params: para
   })
 }
 
@@ -102,3 +102,28 @@ export function getSchools() {
     method: 'get'
   })
 }
+
+export function getuserReadHabit(para) {
+  return request({
+    url: '/ro/read/userReadHabit',
+    method: 'get',
+    params: para
+  })
+}
+
+export function getuserReadHabitLinReg(para) {
+  return request({
+    url: '/ro/read/userReadHabitLinReg',
+    method: 'get',
+    params: para
+  })
+}
+
+export function getuserTaskStat(para) {
+  return request({
+    url: '/ro/read/userTaskStat',
+    method: 'get',
+    params: para
+  })
+}
+

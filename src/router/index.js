@@ -111,6 +111,12 @@ export const constantRoutes = [
             name: 'pointsTrend',
             meta: { title: '评价积分趋势' },
             component: () => import('@/views/qcpj/personalProfile/studentPoints/pointsTrend')
+          },
+          {
+            path: 'pointswave',
+            name: 'pointswave',
+            meta: { title: '评价积分波动' },
+            component: () => import('@/views/qcpj/personalProfile/studentPoints/pointswave')
           }
         ]
       },
