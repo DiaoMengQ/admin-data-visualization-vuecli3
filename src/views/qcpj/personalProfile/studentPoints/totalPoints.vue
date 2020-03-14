@@ -21,7 +21,7 @@
         <!-- 市 -->
         <el-col :xs="24" :lg="8" :xl="8">
           <el-form>
-            <el-form-item label-width="100px" label="市:" class="postInfo-container-item">
+            <el-form-item label-width="100px" label="城市:" class="postInfo-container-item">
               <el-select v-model="areaCode" :disabled="ifCityChangeDisabled" placeholder="请选择">
                 <el-option
                   v-for="city in cityList"
@@ -77,7 +77,7 @@
         <!-- 学生班级 -->
         <el-col :xs="24" :lg="8" :xl="8">
           <el-form>
-            <el-form-item label-width="100px" label="年级:" class="postInfo-container-item">
+            <el-form-item label-width="100px" label="班级:" class="postInfo-container-item">
               <el-select
                 id="Class"
                 v-model="stucla"
@@ -101,7 +101,7 @@
         <!-- 班级学生人数 -->
         <el-col :xs="24" :lg="8" :xl="8">
           <el-form>
-            <el-form-item label-width="100px" label="年级:" class="postInfo-container-item">
+            <el-form-item label-width="100px" label="学生:" class="postInfo-container-item">
               <el-select
                 id="Student"
                 v-model="stunum"
