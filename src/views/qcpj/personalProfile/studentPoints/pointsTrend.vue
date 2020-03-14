@@ -168,7 +168,7 @@
     </div>
     <br>
     <!-- 显示可视化图表 -->
-    <div ref="chart" style="width:1600px;height:600px;margin:0 auto;" />
+    <div ref="chart" style="width:100%;height:600px;margin:0 auto;" />
   </div>
 </template>
 <script>
@@ -377,6 +377,8 @@ export default {
     },
     // 年级改变，同时获取该年级的所有班级
     GradeChange(item) {
+      this.stucla = null
+      this.stunum = null
       //   获取班级接口
       getClassinGrade({ 'schoolId': this.schoolId, 'endGradeId': item, 'startGradeId': item })
         .then(res => {
@@ -390,6 +392,7 @@ export default {
     },
     // 班级改变，获取该班级的Id,同时获取该班级的学生
     ClassChange(claId) {
+      this.stunum = null
       getStuinClass({ 'classId': claId })
         .then(res => {
           const stu = res.data.data
