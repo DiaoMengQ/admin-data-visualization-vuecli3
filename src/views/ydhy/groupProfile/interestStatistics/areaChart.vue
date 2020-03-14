@@ -1,7 +1,8 @@
 <template>
   <div id="app">
     <div class="nav">
-      <YDHYClassPicker v-model="classId" class="class-picker" @update="getData" />
+      <school-picker v-model="schoolId" @update="getData" />
+      <YDHYClassPicker v-model="classId" :school-id="schoolId" class="class-picker" @update="getData" />
       <div class="nav-other">
         <div class="slider-wrapper item">
           <span class="desc">分数段选择</span>
@@ -17,6 +18,7 @@
 
 <script>
 import echarts from 'echarts'
+import SchoolPicker from '@/components/class/SchoolPicker'
 import YDHYClassPicker from '@/components/class/YDHYClassPicker'
 import BookTypePicker from '@/components/class/BookTypePicker'
 
@@ -24,9 +26,10 @@ import { getReadHabitByClass } from '@/api/ydhy'
 
 export default {
   name: 'RoBarChart',
-  components: { YDHYClassPicker, BookTypePicker },
+  components: { YDHYClassPicker, BookTypePicker, SchoolPicker },
   data() {
     return {
+      schoolId: '',
       classId: '', // 当前班级Id,
       bookType: '', // 当前选中的书类型
       scores: [0, 100], // 分数

@@ -21,6 +21,10 @@ export default {
     value: {
       type: String,
       required: true
+    },
+    schoolId: {
+      type: Number,
+      required: true
     }
   },
   data() {
@@ -58,17 +62,21 @@ export default {
     // 监听选中值的变化，告知父组件
     classValue(newVal) {
       this.$emit('update', newVal)
+    },
+    schoolId() {
+      this.getClassList()
     }
   },
   created() {
-    this.getClassList()
+    this.schoolId && this.getClassList()
   },
   methods: {
     // 获取班级列表
     getClassList() {
+      console.log('getClass')
       const self = this
       getClassinGrade({
-        schoolId: 4404001,
+        schoolId: this.schoolId,
         startGradeId: this.grades[0],
         endGradeId: this.grades[1]
       }).then(res => {

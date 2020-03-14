@@ -8,14 +8,14 @@
 <script>
 import { getSchools } from '@/api/ydhy'
 export default {
-  name: 'BookTypePicker',
+  name: 'SchoolPicker',
   model: {
     props: 'value',
     event: 'update'
   },
   props: {
     value: {
-      type: String,
+      type: [String, Number],
       required: true
     }
   },
@@ -53,6 +53,7 @@ export default {
   watch: {
     // 监听选中值的变化，告知父组件
     schoolVal(newVal) {
+      console.log('newVal', newVal)
       this.$emit('update', newVal)
     }
   },
