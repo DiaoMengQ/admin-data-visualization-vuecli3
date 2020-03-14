@@ -36,9 +36,9 @@
             <el-select v-model="schoolId" placeholder="请选择" @change="handleSchSelected">
               <el-option
                 v-for="sch in schoolList"
-                :key="sch.schoolId"
+                :key="sch.qcpjSchoolId"
                 :label="sch['schoolName']"
-                :value="sch.schoolId"
+                :value="sch.qcpjSchoolId"
               />
             </el-select>
           </el-form-item>
