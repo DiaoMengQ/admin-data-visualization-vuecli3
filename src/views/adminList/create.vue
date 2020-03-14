@@ -207,6 +207,7 @@
 </template>
 
 <script>
+import { provinceList } from '@/utils/multiple'
 import { addAuth, addUser } from '@/api/user'
 import { getAreaInfo, getAllSchoolInfo } from '@/api/system'
 import { validatePassword } from '@/utils/validate'
@@ -299,39 +300,7 @@ export default {
       listLoading: false, // 是否正在加载学校列表
 
       provinceId: '',
-      provinceList: [
-        { provinceId: 44, provinceName: '广东' },
-        { provinceId: 45, provinceName: '广西' },
-        { provinceId: 46, provinceName: '海南' },
-        { provinceId: 50, provinceName: '重庆' },
-        { provinceId: 51, provinceName: '四川' },
-        { provinceId: 52, provinceName: '贵州' },
-        { provinceId: 53, provinceName: '云南' },
-        { provinceId: 54, provinceName: '西藏' },
-        { provinceId: 61, provinceName: '陕西' },
-        { provinceId: 62, provinceName: '甘肃' },
-        { provinceId: 63, provinceName: '青海' },
-        { provinceId: 64, provinceName: '宁夏' },
-        { provinceId: 65, provinceName: '新疆' },
-        { provinceId: 11, provinceName: '北京' },
-        { provinceId: 12, provinceName: '天津' },
-        { provinceId: 13, provinceName: '河北' },
-        { provinceId: 14, provinceName: '山西' },
-        { provinceId: 15, provinceName: '内蒙古' },
-        { provinceId: 21, provinceName: '辽宁' },
-        { provinceId: 22, provinceName: '吉林' },
-        { provinceId: 23, provinceName: '黑龙江' },
-        { provinceId: 31, provinceName: '上海' },
-        { provinceId: 32, provinceName: '江苏' },
-        { provinceId: 33, provinceName: '浙江' },
-        { provinceId: 34, provinceName: '安徽' },
-        { provinceId: 35, provinceName: '福建' },
-        { provinceId: 36, provinceName: '江西' },
-        { provinceId: 37, provinceName: '山东' },
-        { provinceId: 41, provinceName: '河南' },
-        { provinceId: 42, provinceName: '湖北' },
-        { provinceId: 43, provinceName: '湖南' }
-      ],
+      provinceList: [],
       areaCode: null,
       areaSelectedList: [],
       cityList: [],
@@ -462,6 +431,7 @@ export default {
     }
   },
   created() {
+    this.provinceList = provinceList()
   },
   methods: {
     handleSchChange(val) {

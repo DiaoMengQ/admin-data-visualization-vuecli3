@@ -92,7 +92,7 @@ export const constantRoutes = [
         path: 'linearRegression',
         component: () => import('@/views/qcpj/groupProfile/LinearRegression'), // Parent router-view
         name: 'LinearRegression',
-        meta: { title: '线性回归分析' }
+        meta: { title: '群体线性回归分析' }
       },
       {
         path: 'personalProfile',
@@ -220,9 +220,9 @@ export const constantRoutes = [
         name: 'MoreStudent'
       },
       {
-        path: 'personalProfile',
+        path: 'personalReadingProf',
         component: () => import('@/views/ydhy/personalProfile/index'), // Parent router-view
-        name: 'personalProfile',
+        name: 'personalReadingProf',
         meta: { title: '学生阅读数据' },
         children: [
           {
@@ -369,6 +369,7 @@ export const constantRoutes = [
 
 const createRouter = () => new Router({
   mode: 'history', // 需要服务器支持
+  base: process.env.NODE_ENV === 'production' ? '/admin-data-visualization-vue/' : '/', // 部署到Tomcat必须写
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })
