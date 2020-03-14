@@ -69,24 +69,9 @@ export const constantRoutes = [
     children: [
       {
         path: 'teaEvaAvg',
-        component: () => import('@/views/qcpj/groupProfile/index'), // Parent router-view
+        component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/BarChart'),
         name: 'TeaEvaAvg',
-        meta: { title: '班级评价积分平均值' },
-        children: [
-          {
-            path: 'bar',
-            meta: { title: '柱状图' },
-            component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/BarChart')
-          }, {
-            path: 'radar',
-            meta: { title: '雷达图' },
-            component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/RadarChart')
-          }, {
-            path: 'line',
-            meta: { title: '折线图' },
-            component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/LineChart')
-          }
-        ]
+        meta: { title: '班级评价积分平均值' }
       },
       {
         path: 'linearRegression',
@@ -162,7 +147,7 @@ export const constantRoutes = [
   {
     path: '/ydhy',
     component: Layout,
-    redirect: '/ydhy/menu1',
+    redirect: '/ydhy/groupProfile',
     name: 'ydhy',
     meta: { title: '阅读海洋', icon: 'ydhy' },
     children: [

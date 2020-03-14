@@ -14,7 +14,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col v-if="ifShowCityList" :xs="24" :lg="12" :xl="8">
+        <el-col :xs="24" :lg="12" :xl="8">
           <el-form-item label-width="100px" label="市:" class="postInfo-container-item">
             <el-select v-model="areaCode" :disabled="ifCityChangeDisabled" placeholder="请选择">
               <el-option
@@ -26,7 +26,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col v-if="ifShowSchoolList" :xs="24" :lg="12" :xl="8">
+        <el-col :xs="24" :lg="12" :xl="8">
           <el-form-item label-width="100px" label="学校:" class="postInfo-container-item">
             <el-select v-model="schoolId" placeholder="请选择">
               <el-option
@@ -38,19 +38,24 @@
             </el-select>
           </el-form-item>
         </el-col>
+
+        <class-picker v-model="classId" :school-id="schoolId" class="class-picker" @update="getData" />
+
+        <el-col :xs="24" :lg="12" :xl="8">
+          <el-form-item label-width="100px" label="周数:" class="postInfo-container-item">
+            <el-input-number
+              v-model="week"
+              class="week-picker"
+              :min="1"
+              :max="14"
+              label="周数"
+              @change="getData"
+            />
+          </el-form-item>
+        </el-col>
       </el-row>
     </el-form>
-    <div class="nav">
-      <class-picker v-model="classId" :school-id="schoolId" class="class-picker" @update="getData" />
-      <el-input-number
-        v-model="week"
-        class="week-picker"
-        :min="1"
-        :max="14"
-        label="周数"
-        @change="getData"
-      />
-    </div>
+
     <!-- 显示可视化图表 -->
     <div ref="chart" style="width:90%;height:90%;margin:0 auto;min-height:500px;min-width:800px;" />
   </div>
@@ -72,8 +77,6 @@ export default {
     return {
       ifProvinceChangeDisabled: true, // 是否允许切换省份,默认不允许
       ifCityChangeDisabled: true, // 是否允许切换城市,默认不允许
-      ifShowCityList: false, // 是否显示城市列表
-      ifShowSchoolList: false, // 是否显示学校列表
       listLoading: false, // 是否正在加载学校列表
       provinceId: undefined,
       provinceList: [],
@@ -104,13 +107,8 @@ export default {
       handler(val, old) {
         switch (this.$store.state.user['roleType']) {
           case 'SUPER_ADMIN':
-            // console.log('值已改变')
-            // console.log('新选中值: ', val, '旧值: ', old)
-            // console.log('省ID: ', this.provinceId)
             if (this.provinceId && this.provinceId !== old) {
-              this.ifShowCityList = true // 城市选项复位
               this.schoolList = [] // 学校列表复位
-              this.ifShowSchoolList = false // 隐藏学校列表
 
               getAreaInfo({ province_id: this.provinceId }).then(response => {
                 this.cityList = response.data['data']
@@ -137,10 +135,9 @@ export default {
             break
           default:
             if (this.areaCode && this.areaCode !== old) {
-              this.ifShowSchoolList = true
               this.listLoading = true
               getSchoolInfo({ areaCode: this.areaCode }).then(response => {
-                // console.log(response.data.data)
+                console.log(response.data.data)
                 this.schoolList = response.data.data
                 this.listLoading = false
               }).catch(error => {
@@ -327,16 +324,8 @@ export default {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-}
-.nav {
-  width: 100%;
-  display: inline-flex;
-  justify-content: center;
-  align-items: space-around;
-  box-sizing: border-box;
-  padding: 20px;
+  margin:20px;
 }
 .class-picker {
   flex: 2;
