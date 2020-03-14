@@ -21,6 +21,11 @@ export default {
     value: {
       type: String,
       required: true
+    },
+    schoolId: {
+      type: [String, Number],
+      required: false,
+      default: 4404001
     }
   },
   data() {
@@ -58,6 +63,9 @@ export default {
     // 监听选中值的变化，告知父组件
     classValue(newVal) {
       this.$emit('update', newVal)
+    },
+    schoolId() {
+      this.getClassList()
     }
   },
   created() {
@@ -68,7 +76,7 @@ export default {
     getClassList() {
       const self = this
       getYDHYClassInfo({
-        schoolId: 4404001,
+        schoolId: this.schoolId,
         startGradeId: this.grades[0],
         endGradeId: this.grades[1]
       }).then(res => {

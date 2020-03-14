@@ -1,7 +1,8 @@
 <template>
   <div id="app">
+    <school-picker v-model="schoolId" />
     <div class="nav">
-      <YDHYClassPicker v-model="classId" class="class-picker" @update="getData" />
+      <YDHYClassPicker v-model="classId" :school-id="schoolId" class="class-picker" @update="getData" />
     </div>
     <!-- 显示可视化图表 -->
     <div ref="chart" style="width:90%;height:90%;margin:0 auto;min-height:500px;min-width:800px;" />
@@ -11,13 +12,16 @@
 <script>
 import echarts from 'echarts'
 import YDHYClassPicker from '@/components/class/YDHYClassPicker'
+import SchoolPicker from '@/components/class/SchoolPicker'
+
 import { getReadingMessionByClass } from '@/api/ydhy'
 
 export default {
   name: 'RoPieChart',
-  components: { YDHYClassPicker },
+  components: { YDHYClassPicker, SchoolPicker },
   data() {
     return {
+      schoolId: '',
       classId: '', // 当前班级Id,
       data: {} // 数据
     }

@@ -29,11 +29,26 @@ export function getYDHYSchoolInfo(para) {
  * @param {schoolId, startGradeId, endGradeId}
  * @returns
  */
-export function getYDHYClassInfo(params) {
+export function getYDHYClassInfo(para) {
   return request({
     url: '/ro/comomon/classInfo',
     method: 'get',
-    params
+    params: para
+  })
+}
+
+/**
+ * 根据班级ID获取该班级的学生信息
+ *
+ * @export
+ * @param { classId }
+ * @returns
+ */
+export function classUserInfo(para) {
+  return request({
+    url: '/ro/comomon/classUserInfo',
+    method: 'get',
+    params: para
   })
 }
 
@@ -81,9 +96,27 @@ export function getSchoolReadingReg(params) {
   })
 }
 
-export function getSchools() {
+export function getuserReadHabit(para) {
   return request({
-    url: '/ro/comomon/schoolInfo',
-    method: 'get'
+    url: '/ro/read/userReadHabit',
+    method: 'get',
+    params: para
   })
 }
+
+export function getuserReadHabitLinReg(para) {
+  return request({
+    url: '/ro/read/userReadHabitLinReg',
+    method: 'get',
+    params: para
+  })
+}
+
+export function getuserTaskStat(para) {
+  return request({
+    url: '/ro/read/userTaskStat',
+    method: 'get',
+    params: para
+  })
+}
+
