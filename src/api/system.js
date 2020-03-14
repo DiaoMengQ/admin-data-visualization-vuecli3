@@ -24,6 +24,21 @@ export function getAreaInfo(para) {
 }
 
 /**
+ * 七彩评价获取省份统计信息
+ *
+ * @export
+ * @param {date} para //若 data 为空则默认为全部
+ * @returns
+ */
+export function QCPJprovDistribution(para) {
+  return request({
+    url: '/qcpj/log/provinceDistribution',
+    method: 'GET',
+    params: para
+  })
+}
+
+/**
  * 七彩评价获取区域统计信息
  *
  * @export
@@ -33,6 +48,21 @@ export function getAreaInfo(para) {
 export function QCPJcityDistribution(para) {
   return request({
     url: '/qcpj/log/cityDistribution',
+    method: 'GET',
+    params: para
+  })
+}
+
+/**
+ * 阅读海洋获取省份统计信息
+ *
+ * @export
+ * @param {date} para //若 data 为空则默认为全部
+ * @returns
+ */
+export function YDHYprovDistribution(para) {
+  return request({
+    url: '/ro/log/provinceDistribution',
     method: 'GET',
     params: para
   })

@@ -68,31 +68,24 @@ export const constantRoutes = [
     redirect: '/qcpj/teaEvaAvg', // 点击父级目录'七彩评价'的默认路径
     children: [
       {
-        path: 'teaEvaAvg',
+        path: 'groupProfile',
         component: () => import('@/views/qcpj/groupProfile/index'), // Parent router-view
-        name: 'TeaEvaAvg',
-        meta: { title: '班级评价积分平均值' },
+        name: 'qcpjGroupProfile',
+        meta: { title: '群体评价积分' },
         children: [
           {
-            path: 'bar',
-            meta: { title: '柱状图' },
-            component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/BarChart')
-          }, {
-            path: 'radar',
-            meta: { title: '雷达图' },
-            component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/RadarChart')
-          }, {
-            path: 'line',
-            meta: { title: '折线图' },
-            component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/LineChart')
+            path: 'teaEvaAvg',
+            component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/BarChart'),
+            name: 'TeaEvaAvg',
+            meta: { title: '班级评价积分平均值' }
+          },
+          {
+            path: 'linearRegression',
+            component: () => import('@/views/qcpj/groupProfile/LinearRegression'), // Parent router-view
+            name: 'LinearRegression',
+            meta: { title: '群体线性回归分析' }
           }
         ]
-      },
-      {
-        path: 'linearRegression',
-        component: () => import('@/views/qcpj/groupProfile/LinearRegression'), // Parent router-view
-        name: 'LinearRegression',
-        meta: { title: '群体线性回归分析' }
       },
       {
         path: 'personalProfile',
@@ -125,7 +118,7 @@ export const constantRoutes = [
         name: 'ClusterAnalysis',
         component: () => import('@/views/qcpj/clusterAnalysis/index'),
         redirect: '/qcpj/clusterAnalysis/taskList',
-        meta: { title: '科目成绩聚类分析', icon: 'cluster' },
+        meta: { title: '科目积分聚类分析', icon: 'cluster' },
         children: [
           {
             path: 'taskList',
@@ -162,7 +155,7 @@ export const constantRoutes = [
   {
     path: '/ydhy',
     component: Layout,
-    redirect: '/ydhy/menu1',
+    redirect: '/ydhy/groupProfile',
     name: 'ydhy',
     meta: { title: '阅读海洋', icon: 'ydhy' },
     children: [
@@ -170,7 +163,7 @@ export const constantRoutes = [
         path: 'groupProfile',
         component: () => import('@/views/ydhy/groupProfile/index'), // Parent router-view
         name: 'RoGroupProfile',
-        meta: { title: '群体画像' },
+        meta: { title: '群体阅读数据' },
         children: [
           {
             path: 'readingMession',
@@ -205,20 +198,6 @@ export const constantRoutes = [
           }
         ]
       },
-
-      {
-        path: 'gthx',
-        component: () => import('@/components/LJH/gthx'),
-        meta: {
-          title: '个体画像',
-          keepAlive: true
-        }
-      },
-      {
-        path: 'moreStudent',
-        component: () => import('@/components/LJH/moreStudent'),
-        name: 'MoreStudent'
-      },
       {
         path: 'personalReadingProf',
         component: () => import('@/views/ydhy/personalProfile/index'), // Parent router-view
@@ -242,46 +221,6 @@ export const constantRoutes = [
             name: 'readingTaskCount',
             meta: { title: '阅读任务执行情况' },
             component: () => import('@/views/ydhy/personalProfile/readingTaskCount')
-          }
-        ]
-      },
-      {
-        path: 'menu1',
-        component: () => import('@/views/ydhy/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: { title: 'Menu1' },
-        children: [
-          {
-            path: 'menu1-1',
-            component: () => import('@/views/ydhy/menu1/menu1-1'),
-            name: 'Menu1-1',
-            meta: { title: 'Menu1-1' }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/ydhy/menu1/menu1-2'),
-            name: 'Menu1-2',
-            meta: { title: 'Menu1-2' },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/ydhy/menu1/menu1-2/menu1-2-1'),
-                name: 'Menu1-2-1',
-                meta: { title: 'Menu1-2-1' }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/ydhy/menu1/menu1-2/menu1-2-2'),
-                name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/ydhy/menu1/menu1-3'),
-            name: 'Menu1-3',
-            meta: { title: 'Menu1-3' }
           }
         ]
       }
@@ -348,18 +287,6 @@ export const constantRoutes = [
       meta: { title: '账户信息编辑', noCache: true },
       hidden: true
     }
-    ]
-  },
-
-  // *备用连接
-  {
-    path: 'external-link',
-    component: Layout,
-    children: [
-      {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
-      }
     ]
   },
 

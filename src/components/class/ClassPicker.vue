@@ -1,16 +1,31 @@
 <template>
-  <div class="picker">
-    <div class="block">
-      <span class="demonstration">年级范围</span>
-      <el-slider v-model="grades" range show-stops :max="9" :step="1" :marks="marks" @change="getClassList" />
-    </div>
-    <el-select v-model="classValue" placeholder="请选择班级" class="select">
-      <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-    </el-select>
+  <div>
+    <el-col :xs="24" :lg="12" :xl="8">
+      <el-form-item label-width="100px" label="年级:" class="postInfo-container-item">
+
+        <el-select v-model="gradeId" clearable placeholder="请选择" @change="getClassList">
+          <el-option
+            v-for="grade in gradeList"
+            :key="grade.gradeId"
+            :label="grade['gradeName']"
+            :value="grade.gradeId"
+          />
+        </el-select>
+      </el-form-item>
+    </el-col>
+
+    <el-col :xs="24" :lg="12" :xl="8">
+      <el-form-item label-width="100px" label="班级:" class="postInfo-container-item">
+        <el-select v-model="classValue" placeholder="请选择班级" class="select">
+          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
+      </el-form-item>
+    </el-col>
   </div>
 </template>
 <script>
 import { getClassinGrade } from '@/api/qcpj'
+import { gradeList } from '@/utils/multiple'
 export default {
   name: 'ClassPicker',
   model: {
@@ -21,11 +36,16 @@ export default {
     value: {
       type: String,
       required: true
+    },
+    schoolId: {
+      type: Number,
+      required: true
     }
   },
   data() {
     return {
-      grades: [1, 9], // 年级范围
+      gradeId: 1,
+      gradeList: [],
       classes: [], // 班级列表
       classValue: '' // 当前选中的班级的id
     }
@@ -38,39 +58,35 @@ export default {
       }
       return this.classes.map(_class => {
         return {
-          label: `${_class.gradeName}${_class.className}`,
+          label: `${_class.className}`,
           value: _class.classId
         }
       })
-    },
-    // 生成年级的标记
-    marks() {
-      const arr = []
-      for (let i = 1; i <= 9; i++) {
-        const temp = {}
-        temp[i] = `${i}年级`
-        arr.push(temp)
-      }
-      return arr
     }
+
   },
   watch: {
     // 监听选中值的变化，告知父组件
     classValue(newVal) {
       this.$emit('update', newVal)
+    },
+    schoolId() {
+      this.getClassList()
     }
   },
   created() {
-    this.getClassList()
+    this.gradeList = gradeList()
+    this.schoolId && this.getClassList()
   },
   methods: {
     // 获取班级列表
     getClassList() {
+      console.log('getClass')
       const self = this
       getClassinGrade({
-        schoolId: 4404001,
-        startGradeId: this.grades[0],
-        endGradeId: this.grades[1]
+        schoolId: this.schoolId,
+        startGradeId: this.gradeId,
+        endGradeId: this.gradeId
       }).then(res => {
         self.classes = res.data.data
         // 如果班级不为空就帮用户选第一个
@@ -83,15 +99,5 @@ export default {
 <style scoped>
 .picker {
   width: 100%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: space-around;
-}
-.select{
-  flex: 1;
-}
-.block{
-  flex: 1;
-  margin-right: 20px;
 }
 </style>

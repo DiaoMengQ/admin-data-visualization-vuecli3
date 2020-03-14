@@ -25,19 +25,49 @@
 <script>
 import echarts from 'echarts'
 import 'echarts/theme/macarons'
-import 'echarts/map/js/china.js' // 引入中国地图数据
-
-import 'echarts/map/js/province/beijing.js' // 引入北京地图数据
-import 'echarts/map/js/province/fujian.js' // 引入福建地图数据
-import 'echarts/map/js/province/anhui.js' // 引入安徽地图数据
-import 'echarts/map/js/province/xinjiang.js' // 引入新疆地图数据
-import 'echarts/map/js/province/xizang.js' // 引入西藏地图数据
+// 引入中国地图数据
+import 'echarts/map/js/china.js'
+// 引入省份地图
+import 'echarts/map/js/province/anhui.js'
+import 'echarts/map/js/province/aomen.js'
+import 'echarts/map/js/province/beijing.js'
+import 'echarts/map/js/province/chongqing.js'
+import 'echarts/map/js/province/fujian.js'
+import 'echarts/map/js/province/gansu.js'
+import 'echarts/map/js/province/guangdong.js'
+import 'echarts/map/js/province/guangxi.js'
+import 'echarts/map/js/province/guizhou.js'
+import 'echarts/map/js/province/hainan.js'
+import 'echarts/map/js/province/hebei.js'
+import 'echarts/map/js/province/heilongjiang.js'
+import 'echarts/map/js/province/henan.js'
+import 'echarts/map/js/province/hubei.js'
+import 'echarts/map/js/province/hunan.js'
+import 'echarts/map/js/province/jiangsu.js'
+import 'echarts/map/js/province/jiangxi.js'
+import 'echarts/map/js/province/jilin.js'
+import 'echarts/map/js/province/liaoning.js'
+import 'echarts/map/js/province/neimenggu.js'
+import 'echarts/map/js/province/ningxia.js'
+import 'echarts/map/js/province/qinghai.js'
+import 'echarts/map/js/province/shandong.js'
+import 'echarts/map/js/province/shanghai.js'
+import 'echarts/map/js/province/shanxi.js'
+import 'echarts/map/js/province/shanxi1.js'
+import 'echarts/map/js/province/sichuan.js'
+import 'echarts/map/js/province/taiwan.js'
+import 'echarts/map/js/province/tianjin.js'
+import 'echarts/map/js/province/xianggang.js'
+import 'echarts/map/js/province/xinjiang.js'
+import 'echarts/map/js/province/xizang.js'
+import 'echarts/map/js/province/yunnan.js'
+import 'echarts/map/js/province/zhejiang.js'
 
 // 引入提示框和标题组件
 require('echarts/lib/component/title')
 require('echarts/lib/component/tooltip')
 
-import { QCPJcityDistribution, YDHYcityDistribution, getAreaInfo } from '@/api/system'
+import { QCPJcityDistribution, QCPJprovDistribution, YDHYcityDistribution, YDHYprovDistribution } from '@/api/system'
 
 export default {
   data() {
@@ -75,7 +105,7 @@ export default {
         backgroundColor: '#fff', // 设置背景颜色
         title: {
           show: true,
-          text: '标题--中国地图',
+          text: '用户访问区域统计',
           subtext: 'made by xzc',
           left: 'center'
         },
@@ -83,26 +113,19 @@ export default {
           trigger: 'item'
         },
         // 左侧小导航图标
-        visualMap: {
+        visualMap: [{
           show: true,
           x: 'left',
           y: 'bottom',
-          // splitList: [
-          //   { start: 10, end: 20 },
-          //   { start: 6, end: 10 },
-          //   { start: 0, end: 6 }
-          // ],
-          // color: ['#1E90FF', '#7FFFAA', '#F0E68C']
           min: 0,
           max: 20,
           text: ['High', 'Low'],
           realtime: false,
           calculable: true,
           inRange: {
-            // color: ['lightskyblue', 'yellow', 'red']
             color: ['white', 'yellow', 'red']
           }
-        },
+        }],
         // 配置属性
         series: [{
           name: '数量',
@@ -126,97 +149,137 @@ export default {
   },
   mounted() {
     // this.drawChart()
-    // this.chinaConfigure()
-    // this.chinamap()
   },
   methods: {
+    // 对请求的省份数据进行处理
+    handleMapData(data) {
+      // 设置地名的数值
+      this.option.series[0].data = data
+
+      const countList = []
+      for (let i = 0; i < data.length; i++) {
+        // console.log(data[i].name, data[i].value)
+        countList.push(data[i].value)
+      }
+      // 设置地图左下角热力对照条的最大值和最小值
+      this.option.visualMap[0].min = Math.min.apply(Math, countList)
+      this.option.visualMap[0].max = Math.max.apply(Math, countList)
+
+      this.drawVectorMap()
+    },
     // 获取阅读海洋地区访问统计数值
     getYDHYcityData() {
+      this.option.title.subtext = '数据来源: 阅读海洋'
       this.QCPJplain = true
       this.YDHYplain = false
-      this.baiduMapOption.title.subtext = '数据来源: 阅读海洋'
-      if (this.selectedDate === null || this.selectedDate.length === 0) {
-        YDHYcityDistribution().then((result) => {
-          const data = result.data.data
-          // this.drawChinaMap()
-        }).catch((err) => {
-          console.log(err)
-        })
-      } else {
-        YDHYcityDistribution({ date: this.selectedDate }).then((result) => {
-          const data = result.data.data
-          // this.drawChinaMap()
-        }).catch((err) => {
-          console.log(err)
-        })
+
+      let para = null
+      if (this.selectedDate) {
+        para = { date: this.selectedDate }
       }
+
+      YDHYprovDistribution(para).then((result) => {
+        this.handleMapData(result.data.data)
+      }).catch((err) => {
+        console.log(err)
+      })
     },
     // 获取七彩评价地区访问统计数值
     getQCPJcityData() {
-      // this.baiduMapOption.title.subtext = '数据来源: 七彩评价'
+      this.option.title.subtext = '数据来源: 七彩评价'
       this.QCPJplain = false
       this.YDHYplain = true
-      // 注意判空的顺序
-      if (this.selectedDate === null || this.selectedDate.length === 0) {
-        QCPJcityDistribution().then((result) => {
-          const data = result.data.data
-          for (let i = 0; i < data.length; i++) {
-            data[i].name = data[i].city
-            data[i].value = data[i].count
-            delete data[i].city
-            delete data[i].count
-          }
-          this.option.series[0].data = data
-          // console.log(data)
-          this.chinamap()
-          // this.drawChinaMap()
-        }).catch((err) => {
-          console.log(err)
-        })
-      } else {
-        QCPJcityDistribution({ date: this.selectedDate }).then((result) => {
-          const data = result.data.data
-          // this.drawChinaMap()
-        }).catch((err) => {
-          console.log(err)
-        })
+
+      let para = null
+      if (this.selectedDate) {
+        para = { date: this.selectedDate }
       }
+
+      QCPJprovDistribution(para).then((result) => {
+        this.handleMapData(result.data.data)
+      }).catch((err) => {
+        console.log(err)
+      })
     },
 
-    // 绘制图形
-    drawChart() {
-      // 基于准备好的dom，初始化echarts实例
-      var clusterChart = echarts.init(document.getElementById('chart-main'), 'macarons')
-
-      // 绘制图表
-      if (this.option && typeof this.option === 'object') {
-        clusterChart.setOption(this.option, true)
-      }
-    },
-
-    chinamap() {
+    // 绘制矢量地图
+    drawVectorMap() {
       var myChart = echarts.init(document.getElementById('chinaMap'))
       window.addEventListener('resize', function() {
         myChart.resize()
       })
-      // this.option =
 
-      console.log(this.option)
       // 使用刚指定的配置项和数据显示图表。
+      myChart.clear() // 用于清除城市地图上设置的数据
       myChart.setOption(this.option)
 
-      // myChart.on('mouseover', function(params) {
-      //   var dataIndex = params.dataIndex
-      //   console.log(dataIndex)
-      // })
+      const selectedDate = this.selectedDate // 所选时间
 
-      myChart.on('click', function(chinaParam) {
-        var option = myChart.getOption()
-        option.series[0].map = chinaParam.name
-        option.series[0].mapType = chinaParam.name
+      // 判断当前所选平台
+      let selected = ''
+      if (this.YDHYplain === true && this.QCPJplain === false) {
+        selected = 'QCPJ'
+      } else if (this.YDHYplain === false && this.QCPJplain === true) {
+        selected = 'YDHY'
+      }
+
+      const provincesText = ['上海', '河北', '山西', '内蒙古', '辽宁', '吉林', '黑龙江', '江苏', '浙江', '安徽', '福建', '江西', '山东', '河南', '湖北', '湖南', '广东', '广西', '海南', '四川', '贵州', '云南', '西藏', '陕西', '甘肃', '青海', '宁夏', '新疆', '北京', '天津', '重庆', '香港', '澳门', '台湾']
+      // 判断当前要加载的地图是不是省
+      const isProvince = (name) => {
+        return provincesText.some((province) => {
+          return province === name
+        })
+      }
+
+      // 画图
+      const drawMap = (data, chinaParamName) => {
+        const option = myChart.getOption()
+
+        // 设置地名的数值
+        option.series[0].data = data
+
+        // 设置地图左下角热力对照条的最大值和最小值
+        const countList = []
+        for (let i = 0; i < data.length; i++) { countList.push(data[i].value) }
+        option.visualMap[0].min = Math.min.apply(Math, countList)
+        option.visualMap[0].max = Math.max.apply(Math, countList)
+
+        // 设置显示的地图
+        option.series[0].map = chinaParamName
+        option.series[0].mapType = chinaParamName
+
         myChart.clear()
-        console.log(chinaParam.name)
         myChart.setOption(option, true)
+      }
+
+      // 点击省份的单个块跳转至省级地图
+      myChart.on('click', function(chinaParam) {
+        // console.log('点击地图事件', chinaParam)
+        if (isProvince(chinaParam.name)) {
+          const para = { province: chinaParam.name }
+          if (selectedDate) {
+            para.date = selectedDate
+          }
+
+          switch (selected) {
+            case 'QCPJ':
+              QCPJcityDistribution(para).then((result) => {
+                drawMap(result.data.data, chinaParam.name)
+              }).catch((err) => {
+                console.log(err)
+              })
+              break
+            case 'YDHY':
+              YDHYcityDistribution(para).then((result) => {
+                drawMap(result.data.data, chinaParam.name)
+              }).catch((err) => {
+                console.log(err)
+              })
+              break
+            default:
+              break
+          }
+        }
       })
     }
   }
