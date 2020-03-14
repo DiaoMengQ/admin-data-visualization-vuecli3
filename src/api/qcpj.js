@@ -184,3 +184,11 @@ export function schoolSubLinearRegress(para) {
     params: para
   })
 }
+
+export function getstudentSubLinearRegress(para) {
+  return request({
+    url: '/qcpj/subject/studentSubLinearRegress',
+    method: 'GET',
+    params: para
+  })
+}
