@@ -68,16 +68,24 @@ export const constantRoutes = [
     redirect: '/qcpj/teaEvaAvg', // 点击父级目录'七彩评价'的默认路径
     children: [
       {
-        path: 'teaEvaAvg',
-        component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/BarChart'),
-        name: 'TeaEvaAvg',
-        meta: { title: '班级评价积分平均值' }
-      },
-      {
-        path: 'linearRegression',
-        component: () => import('@/views/qcpj/groupProfile/LinearRegression'), // Parent router-view
-        name: 'LinearRegression',
-        meta: { title: '群体线性回归分析' }
+        path: 'groupProfile',
+        component: () => import('@/views/qcpj/groupProfile/index'), // Parent router-view
+        name: 'qcpjGroupProfile',
+        meta: { title: '群体评价积分' },
+        children: [
+          {
+            path: 'teaEvaAvg',
+            component: () => import('@/views/qcpj/groupProfile/teaEvaAvg/BarChart'),
+            name: 'TeaEvaAvg',
+            meta: { title: '班级评价积分平均值' }
+          },
+          {
+            path: 'linearRegression',
+            component: () => import('@/views/qcpj/groupProfile/LinearRegression'), // Parent router-view
+            name: 'LinearRegression',
+            meta: { title: '群体线性回归分析' }
+          }
+        ]
       },
       {
         path: 'personalProfile',
@@ -110,7 +118,7 @@ export const constantRoutes = [
         name: 'ClusterAnalysis',
         component: () => import('@/views/qcpj/clusterAnalysis/index'),
         redirect: '/qcpj/clusterAnalysis/taskList',
-        meta: { title: '科目成绩聚类分析', icon: 'cluster' },
+        meta: { title: '科目积分聚类分析', icon: 'cluster' },
         children: [
           {
             path: 'taskList',
@@ -155,7 +163,7 @@ export const constantRoutes = [
         path: 'groupProfile',
         component: () => import('@/views/ydhy/groupProfile/index'), // Parent router-view
         name: 'RoGroupProfile',
-        meta: { title: '群体画像' },
+        meta: { title: '群体阅读数据' },
         children: [
           {
             path: 'readingMession',
