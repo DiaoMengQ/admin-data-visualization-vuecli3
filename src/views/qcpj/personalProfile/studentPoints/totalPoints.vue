@@ -1,82 +1,132 @@
 <template>
   <div id="app">
     <div id="nav">
-      <!-- 选择所想查看的学校 -->
-      <p>选择学校：
-        <el-select
-          id="School"
-          v-model="schoolId"
-          name="school"
-          placeholder="请选择学校"
-          style="width:250px"
-        >
-          <el-option
-            v-for="(item,schoolName) in school"
-            :key="schoolName"
-            :value="item.schoolId"
-            :label="item.schoolName"
-          />
-        </el-select>
+      <el-row>
+        <!-- 省份 -->
+        <el-col :xs="24" :lg="8" :xl="8">
+          <el-form>
+            <el-form-item label-width="100px" label="省份:" class="postInfo-container-item">
+              <el-select v-model="provinceId" :disabled="ifProvinceChangeDisabled" placeholder="请选择">
+                <el-option
+                  v-for="province in provinceList"
+                  :key="province.provinceId"
+                  :label="province.provinceName"
+                  :value="province.provinceId"
+                />
+              </el-select>
+            </el-form-item>
+          </el-form>
+        </el-col>
+
+        <!-- 市 -->
+        <el-col :xs="24" :lg="8" :xl="8">
+          <el-form>
+            <el-form-item label-width="100px" label="城市:" class="postInfo-container-item">
+              <el-select v-model="areaCode" :disabled="ifCityChangeDisabled" placeholder="请选择">
+                <el-option
+                  v-for="city in cityList"
+                  :key="city.areaCode"
+                  :label="city['cityName']"
+                  :value="city.areaCode"
+                />
+              </el-select>
+            </el-form-item>
+          </el-form>
+        </el-col>
+
+        <!-- 学校 -->
+        <el-col :xs="24" :lg="8" :xl="8">
+          <el-form>
+            <el-form-item label-width="100px" label="学校:" class="postInfo-container-item">
+              <el-select v-model="schoolId" placeholder="请选择" @change="GradeChange(stugrade)">
+                <el-option
+                  v-for="sch in schoolList"
+                  :key="sch.schoolId"
+                  :label="sch['schoolName']"
+                  :value="sch.schoolId"
+                />
+              </el-select>
+            </el-form-item>
+          </el-form>
+        </el-col>
+
         <!-- 学生年级 -->
         <!-- GradeChange(stugrade) -->
-        年级：
-        <el-select
-          id="Grade"
-          v-model="stugrade"
-          name="grade"
-          clearable
-          placeholder="请选择年级"
-          style="width:150px"
-          @change="GradeChange(stugrade)"
-        >
-          <el-option
-            v-for="(item,istugrade) in 6"
-            :key="istugrade"
-            :value="item"
-            :label="item+'年级'"
-          />
-        </el-select>
+        <el-col :xs="24" :lg="8" :xl="8">
+          <el-form>
+            <el-form-item label-width="100px" label="年级：" class="postInfo-container-item">
+              <el-select
+                id="Grade"
+                v-model="stugrade"
+                name="grade"
+                clearable
+                placeholder="请选择年级"
+                @change="GradeChange(stugrade)"
+              >
+                <el-option
+                  v-for="(item,istugrade) in 6"
+                  :key="istugrade"
+                  :value="item"
+                  :label="item+'年级'"
+                />
+              </el-select>
+            </el-form-item>
+          </el-form>
+        </el-col>
 
         <!-- 学生班级 -->
-        班级：
-        <el-select
-          id="Class"
-          v-model="stucla"
-          name="class"
-          clearable
-          placeholder="请选择班级"
-          style="width:150px"
-          @change="ClassChange (stucla)"
-        >
-          <el-option
-            v-for="(claId,istucla) in getGrade"
-            :key="istucla"
-            :value="claId.classId"
-            :label="claId.className"
-          />
-        </el-select>
+        <el-col :xs="24" :lg="8" :xl="8">
+          <el-form>
+            <el-form-item label-width="100px" label="班级:" class="postInfo-container-item">
+              <el-select
+                id="Class"
+                v-model="stucla"
+                name="class"
+                clearable
+                placeholder="请选择班级"
+                style="width:150px"
+                @change="ClassChange (stucla)"
+              >
+                <el-option
+                  v-for="(claId,istucla) in getGrade"
+                  :key="istucla"
+                  :value="claId.classId"
+                  :label="claId.className"
+                />
+              </el-select>
+            </el-form-item>
+          </el-form>
+        </el-col>
 
         <!-- 班级学生人数 -->
-        班级学生：
-        <el-select
-          id="Student"
-          v-model="stunum"
-          name="student"
-          clearable
-          placeholder="请选择该班级的学生"
-          style="width:180px"
-          @change="StuChange(stunum)"
-        >
-          <el-option
-            v-for="(stu,istu) in getClass"
-            :key="istu"
-            :value="stu.studentId"
-            :label="stu.name"
-          />
-        </el-select>
-        <!-- 按钮 -->
-        <el-button plain type="primary" size="small" style="height:40px" @click="barCharts(stunum,findweek)">查看评价积分统计</el-button>
-      </p>
+        <el-col :xs="24" :lg="8" :xl="8">
+          <el-form>
+            <el-form-item label-width="100px" label="学生:" class="postInfo-container-item">
+              <el-select
+                id="Student"
+                v-model="stunum"
+                name="student"
+                clearable
+                placeholder="请选择该班级的学生"
+                style="width:180px"
+                @change="StuChange(stunum)"
+              >
+                <el-option
+                  v-for="(stu,istu) in getClass"
+                  :key="istu"
+                  :value="stu.studentId"
+                  :label="stu.name"
+                />
+              </el-select>
+              <!-- 按钮 -->
+              <el-button plain type="primary" size="small" style="height:40px" @click="barCharts(stunum,findweek)">查看评价积分统计</el-button>
+            </el-form-item>
+
+          </el-form>
+        </el-col>
+
+      </el-row>
+
       <div v-show="sw">
         <span><font>选择周次：</font></span>
         <div>
@@ -90,6 +140,10 @@
 </template>
 
 <script>
+import { MessageBox } from 'element-ui'
+import { getUserManaRange } from '@/utils/auth'
+import { getAreaInfo } from '@/api/system'
+import { provinceList } from '@/utils/multiple'
 import store from '@/store/index.js'
 import echarts from 'echarts'
 import 'echarts/theme/macarons'
@@ -97,10 +151,18 @@ import { getClassinGrade, getStuinClass, getStuSemester, getSchoolInfo } from '@
 export default {
   data() {
     return {
-      // 学校名称
-      school: [],
-      // 学校ID
-      schoolId: '',
+      ifProvinceChangeDisabled: true, // 是否允许切换省份,默认不允许
+      ifCityChangeDisabled: true, // 是否允许切换城市,默认不允许
+
+      provinceId: undefined,
+      provinceList: [],
+
+      areaCode: null,
+      cityList: [],
+
+      schoolId: null,
+      schoolList: [],
+
       // 此时的所有年级
       stugrade: '',
       // 此年级的所有班级
@@ -133,15 +195,120 @@ export default {
       return store.state.Stu
     }
   },
+  watch: {
+    // 所选省改变
+    provinceId: {
+      immediate: true,
+      handler(val, old) {
+        switch (this.$store.state.user['roleType']) {
+          case 'SUPER_ADMIN':
+            if (this.provinceId && this.provinceId !== old) {
+              this.schoolList = [] // 学校列表复位
+
+              getAreaInfo({ province_id: this.provinceId }).then(response => {
+                this.cityList = response.data['data']
+              })
+            }
+            this.areaCode = null
+            break
+          case 'CITY_ADMIN':
+            break
+          case 'SCHOOL_ADMIN':
+            break
+          default:
+            break
+        }
+      }
+    },
+    // 所选市改变
+    areaCode: {
+      immediate: true,
+      handler(val, old) {
+        switch (this.$store.state.user['roleType']) {
+          case 'SCHOOL_ADMIN':
+            break
+          default:
+            this.schoolId = null
+            if (this.areaCode && this.areaCode !== old) {
+              getSchoolInfo({ areaCode: this.areaCode }).then(response => {
+                this.schoolList = response.data.data
+              }).catch(error => {
+                console.log('请求错误 ' + error)
+              })
+            }
+            break
+        }
+      }
+    }
+  },
+  mounted() {
+    this.JudgeManaRange()
+  },
   created() {
-    // 获取学校ID
-    getSchoolInfo()
-      .then(res => {
-        console.log(res.data.data)
-        this.school = res.data.data
-      })
+    this.provinceList = provinceList()
   },
   methods: {
+    // 用户权限判断
+    JudgeManaRange() {
+      const manaRange = getUserManaRange(this.$store.state.user['roleType'])
+      // console.log(manaRange)
+      switch (this.$store.state.user['roleType']) {
+        case 'SUPER_ADMIN':
+          this.ifProvinceChangeDisabled = false
+          this.ifCityChangeDisabled = false
+          break
+        case 'CITY_ADMIN':
+          this.ifProvinceChangeDisabled = true
+          this.ifCityChangeDisabled = false
+
+          this.provinceList = []
+          this.cityList = []
+          if (manaRange !== null && manaRange.length > 0) {
+          // 将当前账户权限省份加入备选列表
+            this.provinceList.push({ provinceId: manaRange[0].provinceId, provinceName: manaRange[0].provinceName })
+            this.provinceId = manaRange[0].provinceId
+            // 将当前账户权限城市加入备选列表
+            for (let i = 0; i < manaRange.length; i++) {
+              this.cityList.push(manaRange[i])
+              this.areaCode = manaRange[i].areaCode
+            }
+          } else {
+            MessageBox.confirm('抱歉,您当前没有被授予权限,请联系您的上级管理员进行授权', '错误', {
+              confirmButtonText: '确定',
+              type: 'error'
+            }).then(() => {
+              this.$router.push('/home')
+            }).catch(() => {
+              this.$router.push('/home')
+            })
+          }
+          break
+        case 'SCHOOL_ADMIN':
+          this.ifProvinceChangeDisabled = true
+          this.ifCityChangeDisabled = true
+
+          this.provinceList = []
+          this.cityList = []
+          getAreaInfo({ province_id: manaRange[0].provinceId, city_id: manaRange[0].cityid }).then((result) => {
+            const areaInfo = result.data.data[0]
+            if (areaInfo) {
+              const provinceItem = { provinceId: areaInfo.provinceId, provinceName: areaInfo.provinceName }
+              this.provinceList.push(provinceItem)
+              this.provinceId = areaInfo.provinceId
+
+              this.cityList.push(areaInfo)
+              this.areaCode = areaInfo.areaCode
+            }
+          }).catch((err) => {
+            console.log(err)
+          })
+
+          this.schoolList = manaRange
+          break
+        default:
+          break
+      }
+    },
     // 年级改变，同时获取该年级的所有班级
     GradeChange(item) {
       //   获取班级接口

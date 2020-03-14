@@ -96,13 +96,6 @@ export function getSchoolReadingReg(params) {
   })
 }
 
-export function getSchools() {
-  return request({
-    url: '/ro/comomon/schoolInfo',
-    method: 'get'
-  })
-}
-
 export function getuserReadHabit(para) {
   return request({
     url: '/ro/read/userReadHabit',

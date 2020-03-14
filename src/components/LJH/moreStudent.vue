@@ -23,7 +23,8 @@
         style="width:850px;height:350px;margin:0 auto;"
       />
     </div>
-  </div></template>
+  </div>
+</template>
 <script>
 // import store from '@/store/index.js'
 import echarts from 'echarts'
