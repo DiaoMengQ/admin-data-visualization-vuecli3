@@ -190,20 +190,6 @@ export const constantRoutes = [
           }
         ]
       },
-
-      {
-        path: 'gthx',
-        component: () => import('@/components/LJH/gthx'),
-        meta: {
-          title: '个体画像',
-          keepAlive: true
-        }
-      },
-      {
-        path: 'moreStudent',
-        component: () => import('@/components/LJH/moreStudent'),
-        name: 'MoreStudent'
-      },
       {
         path: 'personalReadingProf',
         component: () => import('@/views/ydhy/personalProfile/index'), // Parent router-view
@@ -227,46 +213,6 @@ export const constantRoutes = [
             name: 'readingTaskCount',
             meta: { title: '阅读任务执行情况' },
             component: () => import('@/views/ydhy/personalProfile/readingTaskCount')
-          }
-        ]
-      },
-      {
-        path: 'menu1',
-        component: () => import('@/views/ydhy/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: { title: 'Menu1' },
-        children: [
-          {
-            path: 'menu1-1',
-            component: () => import('@/views/ydhy/menu1/menu1-1'),
-            name: 'Menu1-1',
-            meta: { title: 'Menu1-1' }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/ydhy/menu1/menu1-2'),
-            name: 'Menu1-2',
-            meta: { title: 'Menu1-2' },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/ydhy/menu1/menu1-2/menu1-2-1'),
-                name: 'Menu1-2-1',
-                meta: { title: 'Menu1-2-1' }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/ydhy/menu1/menu1-2/menu1-2-2'),
-                name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/ydhy/menu1/menu1-3'),
-            name: 'Menu1-3',
-            meta: { title: 'Menu1-3' }
           }
         ]
       }
@@ -333,18 +279,6 @@ export const constantRoutes = [
       meta: { title: '账户信息编辑', noCache: true },
       hidden: true
     }
-    ]
-  },
-
-  // *备用连接
-  {
-    path: 'external-link',
-    component: Layout,
-    children: [
-      {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
-      }
     ]
   },
 
