@@ -179,7 +179,6 @@ import { provinceList } from '@/utils/multiple'
 import store from '@/store/index.js'
 import echarts from 'echarts'
 import ecStat from 'echarts-stat'
-import 'echarts/theme/macarons'
 import { getSchoolInfo, getClassinGrade, getStuinClass, getstudentSubLinearRegress } from '@/api/qcpj'
 export default {
   data() {
@@ -448,7 +447,7 @@ export default {
     drawLinear(c) {
       const myRegression = ecStat.regression('linear', c)
       myRegression.points.sort(function(a, b) { return a[0] - b[0] })
-      const myChart = echarts.init(this.$refs.chart, 'macarons')
+      const myChart = echarts.init(this.$refs.chart)
       myChart.clear()
       // 折线图属性设置
       myChart.setOption({
