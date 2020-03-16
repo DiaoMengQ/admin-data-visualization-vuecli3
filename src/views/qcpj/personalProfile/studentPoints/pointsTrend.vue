@@ -109,7 +109,7 @@
                 clearable
                 placeholder="请选择该班级的学生"
                 style="width:180px"
-                @change="getSubLinearRegress(stunum)"
+                @change="getSubLinearRegress()"
               >
                 <el-option
                   v-for="(stu,istu) in getClass"
@@ -127,8 +127,8 @@
       <el-row>
         <el-col :lg="12" :xl="8">
           <el-form>
-            <el-form-item label-width="100px" label="系数范围：" class="posiInfo-container-item" @change="getSubLinearRegress(stunum)">
-              <el-slider v-model="coef" range show-stops :min="coefRange[0]" :max="coefRange[1]" :step="coefStep" />
+            <el-form-item label-width="100px" label="系数范围：" class="posiInfo-container-item">
+              <el-slider v-model="coef" range show-stops :min="coefRange[0]" :max="coefRange[1]" :step="coefStep" @change="getSubLinearRegress()" />
             </el-form-item>
           </el-form>
         </el-col>
@@ -138,8 +138,8 @@
       <el-row>
         <el-col :lg="12" :xl="8">
           <el-form>
-            <el-form-item label="数据相关度" label-width="100px" class="postInfo-container-item" @change="getSubLinearRegress(stunum)">
-              <el-slider v-model="modelScore" show-stops :max="1" :step="modelScoreStep" />
+            <el-form-item label="数据相关度" label-width="100px" class="postInfo-container-item">
+              <el-slider v-model="modelScore" show-stops :max="1" :step="modelScoreStep" @change="getSubLinearRegress()" />
             </el-form-item>
           </el-form>
         </el-col>
@@ -148,8 +148,8 @@
       <!-- 学期范围 -->
       <el-col :xs="24" :lg="8" :xl="8">
         <el-form>
-          <el-form-item label-width="100px" label="学期范围：" class="postInfo-container-item" @change="getSubLinearRegress(stunum)">
-            <el-select v-model="weekRange" placeholder="请选择">
+          <el-form-item label-width="100px" label="学期范围：" class="postInfo-container-item">
+            <el-select v-model="weekRange" placeholder="请选择 " @change="getSubLinearRegress()">
               <el-option v-for="week in weekList" :key="week.weekId" :label="week.weekLabel" :value="week.weekId" />
             </el-select>
           </el-form-item>
@@ -159,7 +159,7 @@
       <el-col :xs="24" :lg="8" :xl="8">
         <el-form>
           <el-form-item label-width="100px" label="科目选择：" class="postInfo-container-item">
-            <el-select v-model="book " placeholder="请选择">
+            <el-select v-model="book " placeholder="请选择" @change="getSubLinearRegress()">
               <el-option v-for="bk in bookType" :key="bk.bookTypeId" :label="bk.bookTypeLabel" :value="bk.bookTypeId" />
             </el-select>
           </el-form-item>
@@ -186,16 +186,15 @@ export default {
     return {
       ifProvinceChangeDisabled: true, // 是否允许切换省份,默认不允许
       ifCityChangeDisabled: true, // 是否允许切换城市,默认不允许
-
+      // 省份
       provinceId: undefined,
       provinceList: [],
-
+      // 城市
       areaCode: null,
       cityList: [],
-
+      // 学校
       schoolId: null,
       schoolList: [],
-
       // 此时的所有年级
       stugrade: '',
       // 此年级的所有班级
@@ -208,22 +207,25 @@ export default {
       maxweek: '7',
       // 获取所选中的学生名字
       nowStuName: '',
-
-      weekRange: '',
-      book: '',
+      // 默认周次
+      weekRange: '1-18',
+      // 默认科目
+      book: '数学',
+      // 默认数据相关度
       modelScore: 0.7457315232377556,
       modelScoreStep: 0.1,
+      // 默认系数范围
       coef: [-180, 180],
       coefRange: [-180, 180],
       coefStep: 10,
-      weekList1: [
+      // 学期下拉框范围
+      weekList: [
         { weekId: '1-9', weekLabel: '上半学期' },
         { weekId: '9-18', weekLabel: '下半学期' },
         { weekId: '1-18', weekLabel: '全学年' }
       ],
-      weekList: '1-18',
-      bookType: '数学',
-      bookType1: [
+      // 科目下拉框
+      bookType: [
         { bookTypeId: '书法', bookTypeLabel: '书法' },
         { bookTypeId: '体育', bookTypeLabel: '体育' },
         { bookTypeId: '体育活动', bookTypeLabel: '体育活动' },
@@ -402,41 +404,45 @@ export default {
           console.log(store.state.Class)
         })
     },
-    getSubLinearRegress(stunum) {
+    getSubLinearRegress() {
       getstudentSubLinearRegress({
-        studentId: stunum,
-        endCoef: '180',
+        studentId: this.stunum,
+        endCoef: this.coef[1],
         modelScore: this.modelScore,
-        startCoef: '-180',
-        subject: this.bookType,
-        weekRange: this.weekList
-
+        startCoef: this.coef[0],
+        subject: this.book,
+        weekRange: this.weekRange
       })
         .then(res => {
-          // console.log(res.data.data)
-          const Score = res.data.data[0].score
-          // console.log(Score)
-          // console.log(Score.split('}'))
-          // console.log(Score.length)
-          var a = []
-          for (var i = 0; i < (Score.split('}').length - 1); i++) {
+          if (res.data.data[0] == null) {
+            alert('此学生暂无数据')
+          } else {
+            // console.log(res.data.data)
+            // console.log(this.stunum)
+            const Score = res.data.data[0].score
+            // console.log(Score)
+            // console.log(Score.split('}'))
+            // console.log(Score.length)
+            var a = []
+            for (var i = 0; i < (Score.split('}').length - 1); i++) {
             // 对获取到的结果进行正则筛选
-            a = Score.replace(/[^\d,]/g, '')
+              a = Score.replace(/[^\d,]/g, '')
+            }
+            console.log(a)
+            var b = a.split(',')
+            var c = []
+            var d = []
+            for (var j = 0, k = 0; k < (b.length / 2) || j < b.length; j = j + 2, k++) {
+              c[k] = [parseInt(b[j + 1]), parseInt(b[j])]
+              d[k] = c[k]
+            }
+            // console.log(a)
+            // console.log(b)
+            console.log(c)
+            // var d = c.split(',')
+            console.log(d)
+            this.drawLinear(d)
           }
-          console.log(a)
-          var b = a.split(',')
-          var c = []
-          var d = []
-          for (var j = 0, k = 0; k < (b.length / 2) || j < b.length; j = j + 2, k++) {
-            c[k] = [parseInt(b[j + 1]), parseInt(b[j])]
-            d[k] = c[k]
-          }
-          // console.log(a)
-          // console.log(b)
-          console.log(c)
-          // var d = c.split(',')
-          console.log(d)
-          this.drawLinear(d)
         })
     },
     drawLinear(c) {
@@ -447,8 +453,7 @@ export default {
       // 折线图属性设置
       myChart.setOption({
         title: {
-          text: 'Linear Regression',
-          subtext: 'By ecStat.regression',
+          text: this.weekRange + '周' + this.book + '成绩',
           left: 'center'
         },
         tooltip: {

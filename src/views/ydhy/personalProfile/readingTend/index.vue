@@ -110,6 +110,7 @@
                 clearable
                 placeholder="请选择该班级的学生"
                 style="width:180px"
+                @change="getReadHabitLinReg()"
               >
                 <el-option
                   v-for="(stu,istu) in getClass"
@@ -125,9 +126,12 @@
         <!-- 选择所想查看的科目 -->
         <el-col :xs="24" :lg="8" :xl="8">
           <el-form>
-            <el-form-item label-width="100px" label="科目:" class="postInfo-container-item">
-              <book-type-picker v-model="bookType" style="width:180px" class="item" @update="getReadHabitLinReg(stunum)" />
-            </el-form-item></el-form>
+            <el-form-item label-width="100px" label="科目选择：" class="postInfo-container-item">
+              <el-select v-model="book " placeholder="请选择" @change="getReadHabitLinReg()">
+                <el-option v-for="bk in bookType" :key="bk.bookTypeId" :label="bk.bookTypeLabel" :value="bk.bookTypeId" />
+              </el-select>
+            </el-form-item>
+          </el-form>
         </el-col>
       </el-row>
     </div>
@@ -145,20 +149,18 @@ import echarts from 'echarts'
 import ecStat from 'echarts-stat'
 import 'echarts/theme/macarons'
 import { getYDHYSchoolInfo, getYDHYClassInfo, classUserInfo, getuserReadHabitLinReg } from '@/api/ydhy'
-import BookTypePicker from '@/components/class/BookTypePicker'
 export default {
-  components: { BookTypePicker },
   data() {
     return {
       ifProvinceChangeDisabled: true, // 是否允许切换省份,默认不允许
       ifCityChangeDisabled: true, // 是否允许切换城市,默认不允许
-
+      // 省份
       provinceId: undefined,
       provinceList: [],
-
+      // 城市
       areaCode: null,
       cityList: [],
-
+      // 学校
       schoolId: null,
       schoolList: [],
       // 此时的所有年级
@@ -168,11 +170,29 @@ export default {
       // 该班级的学生人数
       stunum: '',
       // 当前选中的书类型
-      bookType: '',
+      book: 'category_kexue',
       // 该学生当前科目历史成绩
       historyScore: {},
       // 该学生该科目的平均成绩
-      scrore: ''
+      scrore: '',
+      // 科目下拉框
+      bookType: [
+        { bookTypeId: 'cate', bookTypeLabel: 'cate' },
+        { bookTypeId: 'category_kexue', bookTypeLabel: '科学' },
+        { bookTypeId: 'category_lishi', bookTypeLabel: '历史' },
+        { bookTypeId: 'category_manhua', bookTypeLabel: '漫画' },
+        { bookTypeId: 'category_mingren', bookTypeLabel: '名人' },
+        { bookTypeId: 'category_mingzhu', bookTypeLabel: '名著' },
+        { bookTypeId: 'category_parents', bookTypeLabel: '亲情' },
+        { bookTypeId: 'category_shenhua', bookTypeLabel: '神话' },
+        { bookTypeId: 'category_shige', bookTypeLabel: '诗歌' },
+        { bookTypeId: 'category_shuxue', bookTypeLabel: '数学' },
+        { bookTypeId: 'category_teachers', bookTypeLabel: '教育' },
+        { bookTypeId: 'category_tonghua', bookTypeLabel: '童话' },
+        { bookTypeId: 'category_xiaoshuo', bookTypeLabel: '小说' }
+      ],
+      // 定义此时所选的科目名，以便可以作为图表标题
+      subjectName: ''
     }
   },
   computed: {
@@ -335,17 +355,32 @@ export default {
           console.log(store.state.Class)
         })
     },
-    getReadHabitLinReg(stunum) {
-      getuserReadHabitLinReg({ userId: stunum, bookType: this.bookType })
+    getReadHabitLinReg() {
+      getuserReadHabitLinReg({ userId: this.stunum, bookType: this.book })
         .then(res => {
           console.log(res.data.data)
-          this.historyScore = res.data.data[0].historyScore
-          this.scrore = res.data.data[0].nearSevInter
-          console.log(this.historyScore)
-          this.drawLinear()
+          if (res.data.data[0] == null) {
+            alert('该科目本学期没有成绩')
+          } else {
+            this.historyScore = res.data.data[0].historyScore
+            this.scrore = res.data.data[0].nearSevInter
+            console.log(this.historyScore)
+            this.drawLinear()
+          }
         })
     },
+    // 将获取到的书本id匹配对应的书本名称，以便作为图表标题
+    findBookName(val) {
+      const bookName = this.bookType.find((item) => {
+        if (item.bookTypeId === val) {
+          return item.bookTypeLabel
+        }
+      })
+      this.subjectName = bookName.bookTypeLabel
+      console.log(bookName.bookTypeLabel)
+    },
     drawLinear() {
+      this.findBookName(this.book)
       const myRegression = ecStat.regression('linear', this.wrappedData)
       myRegression.points.sort(function(a, b) { return a[0] - b[0] })
       // console.log(this.wrappedData)
@@ -354,8 +389,8 @@ export default {
       // 折线图属性设置
       myChart.setOption({
         title: {
-          text: this.bookType,
-          subtext: 'By ecStat.regression',
+          text: '本学期' + this.subjectName + '阅读兴趣趋势',
+          subtext: '各个时间' + this.subjectName + '所获得的成绩及成绩k线',
           left: 'center'
         },
         tooltip: {

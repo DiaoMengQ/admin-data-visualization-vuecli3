@@ -151,13 +151,13 @@ export default {
     return {
       ifProvinceChangeDisabled: true, // 是否允许切换省份,默认不允许
       ifCityChangeDisabled: true, // 是否允许切换城市,默认不允许
-
+      // 省份
       provinceId: undefined,
       provinceList: [],
-
+      // 城市
       areaCode: null,
       cityList: [],
-
+      // 学校
       schoolId: null,
       schoolList: [],
 
