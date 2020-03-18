@@ -1,9 +1,9 @@
 <template>
-  <div class="dashboard-container">
+  <div class="home-container">
     <!-- 需要获取值的键（相当于ID） -->
-    <div class="dashboard-text">当前用户:  {{ username }}</div>
-    <div class="dashboard-text">用户身份:  {{ roleType }} {{ roleTypeLabel }}管理员</div>
-    <div class="dashboard-text">管辖范围:
+    <div class="home-text">当前用户:  {{ username }}</div>
+    <div class="home-text">用户身份:  {{ roleType }} {{ roleTypeLabel }}管理员</div>
+    <div class="home-text">管辖范围:
       <span
         v-for="(manaRangeItem,key) in manaRangeLabelList"
         :key="key"
@@ -74,7 +74,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.dashboard {
+.home {
   &-container {
     margin: 30px;
   }

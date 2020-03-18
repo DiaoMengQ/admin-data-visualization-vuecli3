@@ -43,11 +43,9 @@ service.interceptors.request.use(
   config => {
     if (getToken()) {
       // 让每一个请求带上token，['XXX'] 自定义请求头key
-      // console.log(getToken())
-      // config.headers['Content-Type'] = 'multipart/form-data;charset=UTF-8'
       config.headers['access_token'] = getToken()
     }
-    // console.log(config) // for debug
+    // console.log(config)
     return config
   },
   // 请求错误

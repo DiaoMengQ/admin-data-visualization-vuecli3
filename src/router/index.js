@@ -50,7 +50,7 @@ export const constantRoutes = [
   {
     path: '/', // Url相对根路径路径
     component: Layout,
-    redirect: '/home', // 重定向路径（可以直接写路径，也可以写成“ redirect:{ name:'foo'} ”）
+    redirect: '/home', // 点击父级目录的重定向路径（可以直接写路径，也可以写成“ redirect:{ name:'foo'} ”）
     children: [{
       path: 'home', // url显示的路径
       name: 'home', // 用于路由间的调用
@@ -65,7 +65,7 @@ export const constantRoutes = [
     path: '/qcpj',
     component: Layout,
     meta: { title: '七彩评价', icon: 'qcpj' },
-    redirect: '/qcpj/teaEvaAvg', // 点击父级目录'七彩评价'的默认路径
+    redirect: '/qcpj/teaEvaAvg',
     children: [
       {
         path: 'groupProfile',
@@ -290,13 +290,13 @@ export const constantRoutes = [
     ]
   },
 
-  // 404页必须放在末尾！！
+  // 此处是所有路由地址都找不到后的最后路径,必须放在末尾
   { path: '*', redirect: '/404', hidden: true }
 ]
 
 const createRouter = () => new Router({
   mode: 'history', // 需要服务器支持
-  base: process.env.NODE_ENV === 'production' ? '/admin-data-visualization-vue/' : '/', // 部署到Tomcat必须写
+  base: process.env.NODE_ENV === 'production' ? '/admin/' : '/', // 部署到Tomcat必须写
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })
