@@ -56,6 +56,13 @@ export const constantRoutes = [
       name: 'home', // 用于路由间的调用
       component: () => import('@/views/home/index'),
       meta: { title: '首页', icon: 'home' }
+    },
+    {
+      path: 'personalInfo/:id(\\d+)',
+      name: 'personalInfo',
+      component: () => import('@/views/home/personalInfo'),
+      meta: { title: '个人资料' },
+      hidden: true
     }]
   },
 
@@ -273,7 +280,7 @@ export const constantRoutes = [
       path: 'adminEdit/:id(\\d+)',
       name: 'adminEdit',
       component: () => import('@/views/adminList/edit'),
-      meta: { title: '账户信息编辑', noCache: true },
+      meta: { title: '账户信息', noCache: true },
       hidden: true
     }
     ]

@@ -163,7 +163,7 @@
                 <img src="https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png?imageView2/1/w/80/h/80">
               </el-avatar>
             </div>
-            <el-button v-loading="loading" :disabled="disableChangeInfo" size="medium" type="primary" @click="dialogFormVisible=true">上传头像</el-button>
+            <el-button v-if="ifEditAvator" v-loading="loading" :disabled="disableChangeInfo" size="medium" type="primary" @click="dialogFormVisible=true">上传头像</el-button>
           </el-col>
         </el-row>
 
@@ -212,7 +212,7 @@ export default {
   name: 'AdminDetail',
   components: { GrantAuth, AvatarUpload },
   props: {
-    isEdit: {
+    ifEditAvator: {
       type: Boolean,
       default: false
     }
@@ -265,21 +265,16 @@ export default {
     }
   },
   created() {
-    if (this.isEdit) {
-      // 接收传入的ID
-      const id = this.$route.params && this.$route.params.id
-      // console.log(id)
-      this.fetchData(id)
-    }
+    // 接收传入的ID
+    const id = this.$route.params && this.$route.params.id
+    // console.log(id)
+    this.fetchData(id)
 
     // 在这里复制this.$route
     // 当进入此页并快速切换标记，可能使在执行setTagsViewTitle函数时，this.$route不再指向当前页
     this.tempRoute = Object.assign({}, this.$route)
   },
   methods: {
-    uploadHeadImg() {
-      console.log('点击上传头像')
-    },
     // 获取子组件传来的数据(data)
     getSelectedList(data) {
       // console.log(data)
@@ -361,7 +356,7 @@ export default {
         .then(response => {
           this.adminInfo = response.data.data
           // `${XXX.xx}` 与 XXX['xx'] 用法相同
-          console.log('用户信息', this.adminInfo)
+          // console.log('用户信息', this.adminInfo)
 
           // 如果头像路径存在则在头像路径前加上请求头像地址
           this.adminInfo.headImg = this.adminInfo.headImg && `${process.env.VUE_APP_HEADIMG_API}${this.adminInfo.headImg}`
@@ -386,6 +381,9 @@ export default {
           }
 
           switch (this.adminInfo.roleType) {
+            case 'SUPER_ADMIN':
+              this.adminInfo.roleTypeLabel = '超级管理员'
+              break
             case 'CITY_ADMIN':
               this.adminInfo.roleTypeLabel = '市级管理员'
               break
