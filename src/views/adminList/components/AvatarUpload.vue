@@ -51,6 +51,7 @@
 <script>
 import { VueCropper } from 'vue-cropper'
 import { createUploadHeadImgOss } from '@/api/user'
+import { Base64toFile } from '@/utils/multiple'
 import axios from 'axios'
 
 export default {
@@ -89,69 +90,53 @@ export default {
       // 创建axios实例
       const service = axios.create({
         baseURL: process.env.VUE_APP_BASE_API,
-        // headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
-        headers: { 'Content-Type': 'multipart/form-data;charset=UTF-8' },
-        transformRequest: [function(data) {
-          let res4format = ''
-          for (const it in data) {
-            res4format += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
-          }
-          res4format = res4format.substring(0, res4format.lastIndexOf('&'))
-          return res4format
-        }],
+        headers: { 'Content-Type': 'multipart/form-data' },
         timeout: 4 * 1000 // 请求超时
       })
-
       service.interceptors.response.use(response => {
-        const res = response.data
-        console.log('返回的数据： ', res)
-        return response
+        const code = response.data.code
+        if (code === 200) {
+          this.$confirm('上传头像成功！刷新后生效。', '完成', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'success'
+          }).then(() => {
+            location.reload()
+          }).catch(() => {
+            location.reload()
+          })
+        }
+        return code
       }, error => {
         return Promise.reject(error)
       })
-      // const data = { username: 'superadmin', password: 'e10adc3949ba59abbe56e057f20f883e' }
-      // const res = service({
-      //   url: '/user/login',
-      //   method: 'post',
-      //   data
-      // })
-      // console.log(res)
 
       const avatorUploadInfo = new FormData()
       createUploadHeadImgOss().then((result) => {
-        const data = result.data.data
-        // console.log(data)
-        avatorUploadInfo.append('key', data.key)
-        avatorUploadInfo.append('callback', data.callback)
-        avatorUploadInfo.append('ossaccessKeyId', data.ossaccessKeyId)
-        avatorUploadInfo.append('policy', data.policy)
-        avatorUploadInfo.append('signature', data.signature)
-        for (const key in data.myvars) {
-          avatorUploadInfo.append(key, data.myvars[key])
+        const res = result.data.data
+        avatorUploadInfo.append('key', res.key)
+        avatorUploadInfo.append('callback', res.callback)
+        avatorUploadInfo.append('ossaccessKeyId', res.ossaccessKeyId)
+        avatorUploadInfo.append('policy', res.policy)
+        avatorUploadInfo.append('signature', res.signature)
+        for (const key in res.myvars) {
+          avatorUploadInfo.append(key, res.myvars[key])
         }
         // console.log(avatorUploadInfo.get('ossaccessKeyId')) // 测试是否存放完成
 
         // 获取截图的 base64 数据
-        this.$refs.cropper.getCropData(data => {
-          console.log('字节长度', Buffer.byteLength(data, 'base64') / 1024 + 'kb')
+        this.$refs.cropper.getCropData(img => {
+          console.log('图片大小', Buffer.byteLength(img, 'base64') / 1024 + 'kb')
+          const imgFile = Base64toFile(img, 'imgFile')
+          // console.log(imgFile)
+          avatorUploadInfo.append('file', imgFile)
+          const data = avatorUploadInfo
 
-          const imgBuffer = Buffer.from(data, 'base64')
-          //   console.log(imgBuffer)
-          avatorUploadInfo.append('file', imgBuffer)
-
-          const res = service({
-            url: 'http://bdps.dwllm.top',
+          service({
+            url: 'http://bdps.oss-cn-shenzhen.aliyuncs.com',
             method: 'post',
-            avatorUploadInfo
+            data
           })
-          console.log(res)
-
-          // if (res === 'success') {
-          //   this.$message({
-          //     type: 'success',
-          //     message: '上传成功'
-          //   })
-          // }
         })
       }).catch((err) => {
         console.log(err)
@@ -160,7 +145,7 @@ export default {
 
     // 将用户选择的图片放入裁剪区
     getSelectdImg(file) {
-      console.log('本地图片', file)
+      // console.log('本地图片', file)
       this.fileName = file.name
       const reader = new FileReader()
       reader.onload = e => {
@@ -175,9 +160,9 @@ export default {
         event.target.value = '' // 避免每次选择同样的文件时，input @change 方法不执行问题
       }
       // 转化为base64
-      // reader.readAsDataURL(file)
+      reader.readAsDataURL(file)
       // 转化为blob
-      reader.readAsArrayBuffer(file)
+      // reader.readAsArrayBuffer(file)
     },
     // 文件数超出限制时
     imgOnExceed(files, fileList) {
@@ -195,7 +180,7 @@ export default {
     handleRemove(file, fileList) {
       console.log(file, fileList)
     },
-    // 点击文件列表中已上传的文件时
+    // 点击文件列表中已上传的文件时(需设定 el-upload 控件的 show-file-list 属性为 true )
     handlePreview(file) {
       console.log('已上传的文件', file)
     },
