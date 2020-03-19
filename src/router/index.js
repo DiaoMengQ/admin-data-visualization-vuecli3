@@ -71,7 +71,7 @@ export const constantRoutes = [
         path: 'groupProfile',
         component: () => import('@/views/qcpj/groupProfile/index'), // Parent router-view
         name: 'qcpjGroupProfile',
-        meta: { title: '群体评价积分' },
+        meta: { title: '群体评价积分', icon: 'group' },
         children: [
           {
             path: 'teaEvaAvg',
@@ -91,7 +91,7 @@ export const constantRoutes = [
         path: 'personalProfile',
         component: () => import('@/views/qcpj/personalProfile/index'), // Parent router-view
         name: 'personalProfile',
-        meta: { title: '学生评价积分' },
+        meta: { title: '学生评价积分', icon: 'person' },
         children: [
           {
             path: 'totalPoints',
@@ -164,7 +164,7 @@ export const constantRoutes = [
         component: () => import('@/views/ydhy/groupProfile/index'), // Parent router-view
         redirect: '/ydhy/groupProfile/readingMession',
         name: 'RoGroupProfile',
-        meta: { title: '群体阅读数据' },
+        meta: { title: '群体阅读数据', icon: 'group' },
         children: [
           {
             path: 'readingMession',
@@ -191,7 +191,7 @@ export const constantRoutes = [
         path: 'personalReadingProf',
         component: () => import('@/views/ydhy/personalProfile/index'), // Parent router-view
         name: 'personalReadingProf',
-        meta: { title: '学生阅读数据' },
+        meta: { title: '学生阅读数据', icon: 'person' },
         children: [
           {
             path: 'readingCount',
