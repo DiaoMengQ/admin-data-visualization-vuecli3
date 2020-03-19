@@ -1,16 +1,17 @@
 <template>
   <div id="app">
-    <div class="nav">
-      <school-picker v-model="schoolId" @update="getData" />
-      <YDHYClassPicker v-model="classId" :school-id="schoolId" class="class-picker" @update="getData" />
-      <div class="nav-other">
-        <div class="slider-wrapper item">
-          <span class="desc">分数段选择</span>
-          <el-slider v-model="scores" class="slider" :max="5" range @change="getData" />
-        </div>
-        <book-type-picker v-model="bookType" class="item" @update="getData" />
-      </div>
-    </div>
+    <school-picker v-model="schoolId" @update="getData" />
+    <YDHYClassPicker v-model="classId" :school-id="schoolId" @update="getData" />
+    <book-type-picker v-model="bookType" @update="getData" />
+    <el-form>
+      <el-row>
+        <el-col :xs="24" :sm="12" :lg="8" :xl="8">
+          <el-form-item label-width="100px" label="分数段选择:">
+            <el-slider v-model="scores" :max="5" range @change="getData" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-form>
     <!-- 显示可视化图表 -->
     <div ref="chart" style="width:90%;height:90%;margin:0 auto;min-height:500px;min-width:800px;" />
   </div>
@@ -140,42 +141,7 @@ export default {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-}
-.nav {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: space-around;
-  box-sizing: border-box;
-  padding: 20px;
-}
-.nav-other{
-    display: inline-flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.slider-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-}
-.slider {
-    width: 100%;
-}
-.item {
-    flex: 1;
-    margin: 20px 20px;
-}
-.class-picker {
-  flex: 2;
-}
-.week-picker {
-  flex: 1;
-  margin-left: 20px;
-  margin-bottom: -5px;
+  margin: 1.8em;
 }
 </style>

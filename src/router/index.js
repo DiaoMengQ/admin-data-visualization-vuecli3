@@ -162,39 +162,28 @@ export const constantRoutes = [
       {
         path: 'groupProfile',
         component: () => import('@/views/ydhy/groupProfile/index'), // Parent router-view
+        redirect: '/ydhy/groupProfile/readingMession',
         name: 'RoGroupProfile',
         meta: { title: '群体阅读数据' },
         children: [
           {
             path: 'readingMession',
-            component: () => import('@/views/ydhy/groupProfile/readingMession'),
+            component: () => import('@/views/ydhy/groupProfile/readingMession/pieChart'),
             name: 'ReadingMession',
-            meta: { title: '班级用户阅读任务' },
-            children: [{
-              path: 'pieChart',
-              meta: { title: '班级用户阅读任务' },
-              component: () => import('@/views/ydhy/groupProfile/readingMession/pieChart')
-            }]
+            meta: { title: '班级用户阅读任务' }
           },
           {
             path: 'interestStatistics',
-            meta: { title: '班级阅读兴趣统计' },
-            component: () => import('@/views/ydhy/groupProfile/interestStatistics/index'),
-            children: [{
-              path: 'areaChart',
-              meta: { title: '班级阅读兴趣统计' },
-              component: () => import('@/views/ydhy/groupProfile/interestStatistics/areaChart')
-            }]
+            component: () => import('@/views/ydhy/groupProfile/interestStatistics/areaChart'),
+            name: 'InterestStatistics',
+            meta: { title: '班级阅读兴趣统计' }
+
           },
           {
             path: 'linearRegmession',
-            meta: { title: '学校阅读兴趣统计' },
-            component: () => import('@/views/ydhy/groupProfile/linearRegmession/index'),
-            children: [{
-              path: 'linear',
-              meta: { title: '学校阅读兴趣统计' },
-              component: () => import('@/views/ydhy/groupProfile/linearRegmession/linear')
-            }]
+            component: () => import('@/views/ydhy/groupProfile/linearRegmession/linear'),
+            name: 'LinearRegmession',
+            meta: { title: '学校阅读兴趣统计' }
           }
         ]
       },

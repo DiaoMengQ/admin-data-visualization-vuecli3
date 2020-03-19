@@ -1,16 +1,37 @@
 <template>
-  <div class="picker">
-    <div class="block">
-      <span class="demonstration">年级范围</span>
-      <el-slider v-model="grades" range show-stops :max="9" :step="1" @change="getClassList" />
-    </div>
-    <el-select v-model="classValue" placeholder="请选择班级" class="select">
-      <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-    </el-select>
+  <div>
+    <el-form>
+      <el-row>
+        <!-- 年级 -->
+        <el-col :xs="24" :lg="8" :xl="8">
+          <el-form-item label-width="100px" label="年级:" class="postInfo-container-item">
+            <el-select v-model="gradeId" placeholder="请选择" @change="getClassList">
+              <el-option
+                v-for="gra in grades"
+                :key="gra.gradeId"
+                :label="gra.gradeName"
+                :value="gra.gradeId"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+
+        <el-col :xs="24" :lg="8" :xl="8">
+          <el-form-item label-width="100px" label="班级:" class="postInfo-container-item">
+            <el-select v-model="classValue" placeholder="请选择班级" class="select">
+              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-form>
+
   </div>
 </template>
 <script>
 import { getYDHYClassInfo } from '@/api/ydhy'
+import { gradeList } from '@/utils/multiple'
+
 export default {
   name: 'ClassPicker',
   model: {
@@ -25,12 +46,13 @@ export default {
     schoolId: {
       type: [String, Number],
       required: false,
-      default: 4404001
+      default: null
     }
   },
   data() {
     return {
-      grades: [1, 9], // 年级范围
+      gradeId: null,
+      grades: [], // 年级范围
       classes: [], // 班级列表
       classValue: '' // 当前选中的班级的id
     }
@@ -48,38 +70,35 @@ export default {
         }
       })
     }
-    // 生成年级的标记
-    // marks() {
-    //   const arr = []
-    //   for (let i = 1; i <= 9; i++) {
-    //     const temp = {}
-    //     temp[i] = `${i}年级`
-    //     arr.push(temp)
-    //   }
-    //   return arr
-    // }
   },
   watch: {
+    schoolId() {
+      this.gradeId = null
+      this.classValue = null
+    },
     // 监听选中值的变化，告知父组件
     classValue(newVal) {
-      this.$emit('update', newVal)
+      if (newVal) { this.$emit('update', newVal) }
     },
-    schoolId() {
-      this.getClassList()
+    gradeId() {
+      if (this.gradeId && this.schoolId) { this.getClassList() }
     }
   },
   created() {
-    this.getClassList()
+    this.grades = gradeList()
   },
   methods: {
     // 获取班级列表
     getClassList() {
       const self = this
-      getYDHYClassInfo({
+      const para = {
         schoolId: this.schoolId,
-        startGradeId: this.grades[0],
-        endGradeId: this.grades[1]
-      }).then(res => {
+        startGradeId: this.gradeId,
+        endGradeId: this.gradeId
+      }
+      // console.log('参数', para)
+      getYDHYClassInfo(para).then(res => {
+        // console.log('班级数据', res.data.data)
         self.classes = res.data.data
         // 如果班级不为空就帮用户选第一个
         self.classes.length && (self.classValue = self.classes[0].classId)
@@ -89,17 +108,4 @@ export default {
 }
 </script>
 <style scoped>
-.picker {
-  width: 100%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: space-around;
-}
-.select{
-  flex: 1;
-}
-.block{
-  flex: 1;
-  margin-right: 20px;
-}
 </style>

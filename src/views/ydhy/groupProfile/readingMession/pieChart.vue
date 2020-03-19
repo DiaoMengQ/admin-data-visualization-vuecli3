@@ -1,9 +1,7 @@
 <template>
   <div id="app">
     <school-picker v-model="schoolId" />
-    <div class="nav">
-      <YDHYClassPicker v-model="classId" :school-id="schoolId" class="class-picker" @update="getData" />
-    </div>
+    <YDHYClassPicker v-model="classId" :school-id="schoolId" class="class-picker" @update="getData" />
     <!-- 显示可视化图表 -->
     <div ref="chart" style="width:90%;height:90%;margin:0 auto;min-height:500px;min-width:800px;" />
   </div>
@@ -61,6 +59,7 @@ export default {
   watch: {},
   mounted() {},
   methods: {
+    // 获取子组件传入的classId
     getData() {
       getReadingMessionByClass(this.classId).then(res => {
         this.data = res.data.data
@@ -128,19 +127,11 @@ export default {
 
 <style scoped>
 #app {
+  padding: 1.8em;
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-}
-.nav {
-  width: 100%;
-  display: inline-flex;
-  justify-content: center;
-  align-items: space-around;
-  box-sizing: border-box;
-  padding: 20px;
 }
 .class-picker {
   flex: 2;
