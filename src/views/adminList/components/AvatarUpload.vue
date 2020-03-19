@@ -89,6 +89,7 @@ export default {
       // 创建axios实例
       const service = axios.create({
         baseURL: process.env.VUE_APP_BASE_API,
+        // headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
         headers: { 'Content-Type': 'multipart/form-data;charset=UTF-8' },
         transformRequest: [function(data) {
           let res4format = ''
@@ -101,12 +102,6 @@ export default {
         timeout: 4 * 1000 // 请求超时
       })
 
-      //   service.interceptors.request.use(config => {
-      //     console.log(config.headers)
-      //     return config
-      //   }, error => {
-      //     return Promise.reject(error)
-      //   })
       service.interceptors.response.use(response => {
         const res = response.data
         console.log('返回的数据： ', res)
@@ -114,8 +109,13 @@ export default {
       }, error => {
         return Promise.reject(error)
       })
-
-      //   this.$refs.upload.submit()
+      // const data = { username: 'superadmin', password: 'e10adc3949ba59abbe56e057f20f883e' }
+      // const res = service({
+      //   url: '/user/login',
+      //   method: 'post',
+      //   data
+      // })
+      // console.log(res)
 
       const avatorUploadInfo = new FormData()
       createUploadHeadImgOss().then((result) => {
@@ -140,9 +140,9 @@ export default {
           avatorUploadInfo.append('file', imgBuffer)
 
           const res = service({
-            url: process.env.VUE_APP_HEADIMG_API,
+            url: 'http://bdps.dwllm.top',
             method: 'post',
-            body: avatorUploadInfo
+            avatorUploadInfo
           })
           console.log(res)
 
