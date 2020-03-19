@@ -83,7 +83,7 @@ export const constantRoutes = [
             path: 'linearRegression',
             component: () => import('@/views/qcpj/groupProfile/LinearRegression'), // Parent router-view
             name: 'LinearRegression',
-            meta: { title: '群体线性回归分析' }
+            meta: { title: '评价积分线性回归分析' }
           }
         ]
       },
