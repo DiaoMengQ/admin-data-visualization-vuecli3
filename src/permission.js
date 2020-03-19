@@ -32,25 +32,16 @@ router.beforeEach(async(to, from, next) => {
       // 进度条加载完成动画
       NProgress.done()
     } else {
-      const hasGetUserInfo = store.getters.name
-      if (hasGetUserInfo) {
+      try {
+        // 同步获取用户信息
+        await store.dispatch('user/getUserInfo')
         next()
-      } else {
-        try {
-          // 刷新token
-          // await store.dispatch('user/updateToken')
-          // 同步获取用户信息
-          await store.dispatch('user/getUserInfo')
-          next()
-        } catch (error) {
-          console.log('permission.js ' + error)
-          // 如果获取错误,则删除token,进入登录页面重新登录
-          store.dispatch('user/resetToken')
-          // Message.error(error || 'token获取失败')
-          Message.error('token已过期,请重新登录')
-          next(`/login?redirect=${to.path}`)
-          NProgress.done()
-        }
+      } catch (error) {
+        // 如果获取错误,则删除token,进入登录页面重新登录
+        store.dispatch('user/resetToken')
+        Message.error('token已过期,请重新登录')
+        next(`/login?redirect=${to.path}`)
+        NProgress.done()
       }
     }
   } else {

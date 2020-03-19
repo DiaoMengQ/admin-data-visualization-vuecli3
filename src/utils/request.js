@@ -56,81 +56,77 @@ service.interceptors.request.use(
 )
 
 // 响应拦截器
-service.interceptors.response.use(
-  /**
-   * 通过返回的代码确定请求状态
-   */
-  response => {
-    const res = response.data
-    // console.log('返回的数据： ')
-    // console.log(res)
+service.interceptors.response.use(response => {
+  // console.log('返回的数据： ', response)
+  const res = response.data
 
-    // 如果返回码不是200，则提示错误
-    if (res.code !== 200) {
+  // 如果返回码不是200，则提示错误
+  // 当 token 过期时导致网络请求错误时,这里没办法获取到 response.status 的值,实在不知道怎么改了..
+  if (response.status !== 200) {
+    Message({
+      message: response.status || '发生错误',
+      type: 'error',
+      duration: 5 * 1000
+    })
+
+    // 400: 参数错误
+    if (response.status === 400) {
       Message({
-        message: res.code || '发生错误',
+        message: '请检查输入的参数',
         type: 'error',
-        duration: 5 * 1000
+        duration: 3 * 1000
       })
+    }
 
-      // 400: 参数错误
-      if (res.code === 400) {
-        Message({
-          message: '请检查输入的参数',
-          type: 'error',
-          duration: 3 * 1000
-        })
-      }
+    // 401: token过期
+    if (response.status === 401) {
+      Message({
+        message: 'Token已过期,正在为您重新登录',
+        type: 'error',
+        duration: 3 * 1000
+      })
+      store.dispatch('user/updateToken')
+    }
 
-      // 401: token过期
-      if (res.code === 401) {
-        Message({
-          message: 'Token已过期,正在为您重新登录',
-          type: 'error',
-          duration: 3 * 1000
+    // 500: 服务器错误
+    if (response.status === 500) {
+      Message({
+        message: '服务器错误' + res,
+        type: 'error',
+        duration: 3 * 1000
+      })
+    }
+    // 508: 非法token; 512: 账号在其他端登入; 514: Token expired;
+    if (response.status === 508 || response.status === 512 || response.status === 514) {
+      // 跳转 重新登录
+      MessageBox.confirm('您已注销，您可以取消以停留在此页，或重新登录', '确定', {
+        confirmButtonText: '重新登录',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        store.dispatch('user/resetToken').then(() => {
+          location.reload()
         })
-        store.dispatch('user/updateToken')
-      }
-
-      // 500: 服务器错误
-      if (res.code === 500) {
-        Message({
-          message: '服务器错误' + res,
-          type: 'error',
-          duration: 3 * 1000
-        })
-      }
-      // 508: 非法token; 512: 账号在其他端登入; 514: Token expired;
-      if (res.code === 508 || res.code === 512 || res.code === 514) {
-        // 跳转 重新登录
-        MessageBox.confirm('您已注销，您可以取消以停留在此页，或重新登录', '确定', {
-          confirmButtonText: '重新登录',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          store.dispatch('user/resetToken').then(() => {
-            location.reload()
-          })
-        })
-      }
-      return Promise.reject(new Error(res.message || '发生错误'))
-    } else {
-      /**
+      })
+    }
+    return Promise.reject(new Error(res.message || '发生错误'))
+  } else {
+    /**
        * 如果要获取headers or status等http状态信息
        * 则返回 response
        */
-      return response
-    }
-  },
-  error => {
-    console.log('service.interceptors.response: ', error) // for debug
-    Message({
-      message: error,
-      type: 'error',
-      duration: 3 * 1000
-    })
-    return Promise.reject(error)
+    return response
   }
+},
+error => {
+  console.log('response error: ', error) // for debug
+  Message({
+    message: '发生错误，请刷新重试',
+    type: 'error',
+    duration: 3 * 1000
+  })
+  return Promise.reject(error)
+}
 )
 
 export default service
