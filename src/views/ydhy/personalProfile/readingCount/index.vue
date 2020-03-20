@@ -166,7 +166,8 @@ export default {
       //   历史成绩
       historyscore: [],
       //   各科成绩
-      bookScore: []
+      bookScore: [],
+      dataset: []
     }
   },
   computed: {
@@ -323,29 +324,49 @@ export default {
         .then(res => {
         //   console.log(res.data.data)
           const data = res.data.data
-          console.log(data)
+          // console.log(data)
           for (let i = 0; i < data.length; i++) {
             this.bookType[i] = data[i].bookType
             this.score[i] = data[i].score
             this.historyscore[i] = data[i].historyScore.replace([], '')
           }
-          console.log(this.historyscore[0])
-          console.log(this.bookType)
+          // console.log(this.historyscore)
+          // console.log(this.bookType)
           var a = []
           var b = []
-          for (var n = 1; n <= this.historyscore[0].split(',').length; n++) {
-            b[n] = n
+          // 获取到横坐标的长度
+          for (var n = 0; n < this.historyscore[0].split(',').length; n++) {
+            b[n] = JSON.stringify(n + 1)
           }
-          a[0] = '[' + '"product"' + b + ']'
-          for (var j = 1; j <= this.historyscore.length; j++) {
-            a[j ] = '[' + '"' + this.bookType[j - 1] + '",' + this.historyscore[j - 1].replace(/\[|]/g, '') + ']'
+          b.unshift('product')
+          console.log(b)
+          // 去掉历史成绩的括号
+          for (var j = 0; j < this.historyscore.length; j++) {
+            a[j] = this.historyscore[j].replace(/\[|]/g, '')
           }
+          console.log(b)
 
-          console.log(a)
-          this.drawMyChart()
+          var d = []
+          for (var m = 0; m < a.length; m++) {
+            var st = []
+            const s = a[m].split(',')
+            for (var k = 0; k < s.length; k++) {
+              st.push(parseFloat(s[k]))
+            }
+            d.push(st)
+            // console.log(s)
+          }
+          console.log(d)
+          d.forEach((item, index) => {
+            item.unshift(this.bookType[index])
+          })
+          console.log(d)
+          // 将横坐标添加到最前方
+          d.unshift(b)
+          this.drawMyChart(d)
         })
     },
-    drawMyChart() {
+    drawMyChart(c) {
       const myChart = echarts.init(this.$refs.chart, 'macarons')
       myChart.clear()
       myChart.setOption({
@@ -355,13 +376,7 @@ export default {
           showContent: false
         },
         dataset: {
-          source: [
-            ['product', '2012', '2013', '2014', '2015', '2016', '2017'],
-            ['Matcha Latte', 41.1, 30.4, 65.1, 53.3, 83.8, 98.7],
-            ['Milk Tea', 86.5, 92.1, 85.7, 83.1, 73.4, 55.1],
-            ['Cheese Cocoa', 24.1, 67.2, 79.5, 86.4, 65.2, 82.5],
-            ['Walnut Brownie', 55.2, 67.1, 69.2, 72.4, 53.9, 39.1]
-          ]
+          source: c
         },
         xAxis: { type: 'category' },
         yAxis: { gridIndex: 0 },
@@ -377,12 +392,12 @@ export default {
             radius: '30%',
             center: ['50%', '25%'],
             label: {
-              formatter: '{b}: {@2012} ({d}%)'
+              formatter: '{b}: {@1} ({d}%)'
             },
             encode: {
               itemName: 'product',
-              value: '2012',
-              tooltip: '2012'
+              value: '1',
+              tooltip: '1'
             }
           }
         ]
