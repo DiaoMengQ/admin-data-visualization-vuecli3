@@ -1,9 +1,15 @@
 <template>
-  <div class="picker">
-    <el-select v-model="typeValue" placeholder="请选择书籍类型" class="select">
-      <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-    </el-select>
-  </div>
+  <el-form>
+    <el-row>
+      <el-col :xs="24" :lg="8" :xl="8">
+        <el-form-item label-width="100px" label="书籍类型:">
+          <el-select v-model="typeValue" placeholder="请选择书籍类型">
+            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+        </el-form-item>
+      </el-col>
+    </el-row>
+  </el-form>
 </template>
 <script>
 import { getBookTypes } from '@/api/ydhy'
@@ -54,16 +60,6 @@ export default {
         })
       }
     }
-    // 生成年级的标记
-    // marks() {
-    //   const arr = []
-    //   for (let i = 1; i <= 9; i++) {
-    //     const temp = {}
-    //     temp[i] = `${i}年级`
-    //     arr.push(temp)
-    //   }
-    //   return arr
-    // }
   },
   watch: {
     // 监听选中值的变化，告知父组件
@@ -80,25 +76,11 @@ export default {
       const self = this
       getBookTypes().then(res => {
         self.bookTypes = res.data.data
-        // 如果班级不为空就帮用户选第一个
-        self.bookTypes.length && (self.typeValue = self.bookTypes[0])
       })
     }
   }
 }
 </script>
 <style scoped>
-.picker {
-  width: 100%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: space-around;
-}
-.select{
-  flex: 1;
-}
-.block{
-  flex: 1;
-  margin-right: 20px;
-}
+
 </style>

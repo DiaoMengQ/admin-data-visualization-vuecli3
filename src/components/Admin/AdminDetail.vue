@@ -152,18 +152,18 @@
           </el-col>
 
           <!-- 用户头像操作区域 -->
-          <el-col id="admin-avatar" :xs="24" :sm="6">
-            <div class="avatar-img">
+          <el-col :xs="24" :sm="6">
+            <div id="admin-avatar">
               <!-- 若头像不显示,请使用 npm i element-ui 重新安装 -->
               <el-avatar
                 shape="square"
                 :size="100"
-                src="https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png?imageView2/1/w/80/h/80"
+                :src="adminInfo.headImg"
               >
-                <img src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png">
+                <img src="https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png?imageView2/1/w/80/h/80">
               </el-avatar>
             </div>
-            <el-button v-loading="loading" :disabled="disableChangeInfo" size="medium" type="primary">上传头像</el-button>
+            <el-button v-if="ifEditAvator" v-loading="loading" :disabled="disableChangeInfo" size="medium" type="primary" @click="dialogFormVisible=true">上传头像</el-button>
           </el-col>
         </el-row>
 
@@ -175,6 +175,10 @@
         </el-row>
       </div>
     </el-form>
+
+    <el-dialog width="48%" title="头像上传" :visible.sync="dialogFormVisible">
+      <avatar-upload />
+    </el-dialog>
   </div>
 </template>
 
@@ -182,6 +186,7 @@
 import { addAuth } from '@/api/user'
 import { getUserInfo, updateAdminInfo, getUserManaRange } from '@/api/user'
 import GrantAuth from '@/components/Grantauthorization'
+import AvatarUpload from './AvatarUpload'
 import { Message, MessageBox } from 'element-ui'
 
 // 此处仅作为结构展示
@@ -205,9 +210,9 @@ const defaultForm = {
 
 export default {
   name: 'AdminDetail',
-  components: { GrantAuth },
+  components: { GrantAuth, AvatarUpload },
   props: {
-    isEdit: {
+    ifEditAvator: {
       type: Boolean,
       default: false
     }
@@ -216,6 +221,8 @@ export default {
 
   data() {
     return {
+      dialogFormVisible: false,
+
       disableChangeInfo: true,
       authRange: '',
       ifShowAuthRange: false, // 是否显示权限范围
@@ -258,13 +265,10 @@ export default {
     }
   },
   created() {
-    if (this.isEdit) {
-      // 接收传入的ID
-      const id = this.$route.params && this.$route.params.id
-      // console.log(id)
-      this.fetchData(id)
-      this.getUserManaRange(id)
-    }
+    // 接收传入的ID
+    const id = this.$route.params && this.$route.params.id
+    // console.log(id)
+    this.fetchData(id)
 
     // 在这里复制this.$route
     // 当进入此页并快速切换标记，可能使在执行setTagsViewTitle函数时，this.$route不再指向当前页
@@ -351,8 +355,11 @@ export default {
       getUserInfo({ userId: id })
         .then(response => {
           this.adminInfo = response.data.data
-          // // `${XXX.xx}` 与 XXX['xx'] 用法相同
-          console.log('用户信息', this.adminInfo)
+          // `${XXX.xx}` 与 XXX['xx'] 用法相同
+          // console.log('用户信息', this.adminInfo)
+
+          // 如果头像路径存在则在头像路径前加上请求头像地址
+          this.adminInfo.headImg = this.adminInfo.headImg && `${process.env.VUE_APP_HEADIMG_API}${this.adminInfo.headImg}`
 
           switch (this.adminInfo.sex) {
             case 1:
@@ -374,6 +381,9 @@ export default {
           }
 
           switch (this.adminInfo.roleType) {
+            case 'SUPER_ADMIN':
+              this.adminInfo.roleTypeLabel = '超级管理员'
+              break
             case 'CITY_ADMIN':
               this.adminInfo.roleTypeLabel = '市级管理员'
               break
@@ -383,6 +393,7 @@ export default {
             default:
               break
           }
+          this.getUserManaRange(id)
         })
         .catch(err => {
           console.log(err)
@@ -518,9 +529,11 @@ export default {
 .el-button{
   margin: 0 5px
 }
+/deep/ .el-dialog{
+  min-inline-size: 300px;
+}
 #admin-avatar {
-  // text-align: center;
-  margin: 0 0 0 5em;
+  margin: 0 5px
 }
 
 /*  因子组件中使用了 Element UI 的标签，vue-loader无法识别 el-input标签

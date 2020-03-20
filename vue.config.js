@@ -24,8 +24,9 @@ module.exports = {
    * In most cases please use '/' !!!
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
-  // publicPath: process.env.NODE_ENV === 'production' ? '/你在Tomcat新建的文件夹名称/' : '/',
-  publicPath: process.env.NODE_ENV === 'production' ? '/admin-data-visualization-vue/' : '/',
+  // publicPath: process.env.NODE_ENV === 'production' ? '/Tomcat的项目文件夹名称/' : '/',
+  // 此处的服务器名无法使用环境变量进行设置
+  publicPath: process.env.NODE_ENV === 'production' ? 'http://bdps.dwllm.top/admin/' : '/',
   outputDir: 'dist',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',

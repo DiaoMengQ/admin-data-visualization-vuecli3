@@ -1,9 +1,7 @@
 <template>
   <div id="app">
-    <div class="nav">
-      <school-picker v-model="schoolId" class="item" @update="getData" />
-      <book-type-picker v-model="bookType" class="item" @update="getData" />
-    </div>
+    <school-picker v-model="schoolId" @update="getData" />
+    <book-type-picker v-model="bookType" @update="getData" />
     <!-- 显示可视化图表 -->
     <div ref="chart" style="width:90%;height:90%;margin:0 auto;min-height:500px;min-width:800px;" />
   </div>
@@ -135,19 +133,7 @@ export default {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-}
-.nav {
-  width: 100%;
-  display: inline-flex;
-  justify-content: center;
-  align-items: space-around;
-  box-sizing: border-box;
-  padding: 20px;
-}
-.item {
-    flex: 1;
-    margin: 20px 20px;
+  margin: 1.8em;
 }
 </style>

@@ -1,9 +1,9 @@
 <template>
-  <admin-detail :is-edit="true" />
+  <admin-detail :if-edit-avator="false" />
 </template>
 
 <script>
-import AdminDetail from './components/AdminDetail'
+import AdminDetail from '@/components/Admin/AdminDetail'
 
 export default {
   /**

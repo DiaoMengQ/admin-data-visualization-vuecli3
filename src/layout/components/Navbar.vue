@@ -11,7 +11,7 @@
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
-          <router-link to="/">
+          <router-link :to="'/personalInfo/'+this.$store.state.user['userid']">
             <el-dropdown-item>
               个人信息
             </el-dropdown-item>

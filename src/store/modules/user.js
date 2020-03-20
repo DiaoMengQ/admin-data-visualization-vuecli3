@@ -113,8 +113,8 @@ const actions = {
           commit('SET_ROLES', data['roleType'])
           commit('SET_NAME', data['nickname'])
           commit('SET_USERID', data['userId'])
-          // commit('SET_AVATAR', data['headImg'])
-          commit('SET_AVATAR', 'http://172.20.13.20/default.jpg')
+          commit('SET_AVATAR', process.env.VUE_APP_HEADIMG_API + data['headImg'])
+          // commit('SET_AVATAR', 'http://172.20.13.20/default.jpg')
 
           switch (data.roleType) {
             case 'SUPER_ADMIN':
@@ -166,8 +166,8 @@ const actions = {
         commit('SET_NAME', data['nickname'])
         commit('SET_USERID', data['userId'])
         if (data['headImg'] !== '') {
-          // commit('SET_AVATAR', process.env.VUE_APP_HEADIMG_API + data['headImg'])
-          commit('SET_AVATAR', 'http://172.20.13.20/default.jpg')
+          commit('SET_AVATAR', process.env.VUE_APP_HEADIMG_API + data['headImg'])
+          // commit('SET_AVATAR', 'http://172.20.13.20/default.jpg')
         }
 
         switch (data.roleType) {

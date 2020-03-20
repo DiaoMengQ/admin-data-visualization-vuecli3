@@ -3,7 +3,7 @@
     <el-form>
       <el-row>
         <!-- 省份 -->
-        <el-col :xs="24" :lg="8" :xl="8">
+        <el-col :xs="24" :sm="12" :lg="8" :xl="8">
           <el-form-item label-width="100px" label="省份:" class="postInfo-container-item">
             <el-select v-model="provinceId" :disabled="ifProvinceChangeDisabled" placeholder="请选择">
               <el-option
@@ -17,7 +17,7 @@
         </el-col>
 
         <!-- 市 -->
-        <el-col :xs="24" :lg="8" :xl="8">
+        <el-col :xs="24" :sm="12" :lg="8" :xl="8">
           <el-form-item label-width="100px" label="市:" class="postInfo-container-item">
             <el-select v-model="areaCode" :disabled="ifCityChangeDisabled" placeholder="请选择">
               <el-option
@@ -31,21 +31,21 @@
         </el-col>
 
         <!-- 学校 -->
-        <el-col :xs="24" :lg="8" :xl="8">
+        <el-col :xs="24" :sm="12" :lg="8" :xl="8">
           <el-form-item label-width="100px" label="学校:" class="postInfo-container-item">
             <el-select v-model="schoolId" placeholder="请选择" @change="handleSchSelected">
               <el-option
                 v-for="sch in schoolList"
-                :key="sch.qcpjSchoolId"
+                :key="sch.schoolId"
                 :label="sch['schoolName']"
-                :value="sch.qcpjSchoolId"
+                :value="sch.schoolId"
               />
             </el-select>
           </el-form-item>
         </el-col>
 
         <!-- 课程 -->
-        <el-col :xs="24" :lg="8" :xl="8">
+        <el-col :xs="24" :sm="12" :lg="8" :xl="8">
           <el-form-item label-width="100px" label="课程:" class="postInfo-container-item">
             <el-select v-model="subjectLabel" placeholder="请选择">
               <el-option
@@ -59,7 +59,7 @@
         </el-col>
 
         <!-- 年级 -->
-        <el-col :xs="24" :lg="8" :xl="8">
+        <el-col :xs="24" :sm="12" :lg="8" :xl="8">
           <el-form-item label-width="100px" label="年级:" class="postInfo-container-item">
             <el-select v-model="gradeId" clearable placeholder="请选择" @change="handleGradeSelected">
               <el-option
@@ -73,7 +73,7 @@
         </el-col>
 
         <!-- 班级 -->
-        <el-col :xs="24" :lg="8" :xl="8">
+        <el-col :xs="24" :sm="12" :lg="8" :xl="8">
           <el-form-item label-width="100px" label="班级:" class="postInfo-container-item">
             <el-select v-model="classId" clearable placeholder="请选择">
               <el-option
@@ -87,7 +87,7 @@
         </el-col>
 
         <!-- 学期范围 -->
-        <el-col :xs="24" :lg="8" :xl="8">
+        <el-col :xs="24" :sm="12" :lg="8" :xl="8">
           <el-form-item label-width="100px" label="学期范围:" class="postInfo-container-item">
             <el-select v-model="weekRange" placeholder="请选择">
               <el-option
@@ -104,7 +104,7 @@
 
       <!-- 斜率范围 -->
       <el-row>
-        <el-col :lg="12" :xl="8">
+        <el-col :sm="20" :md="20" :lg="12" :xl="8">
           <el-form-item label-width="100px" label="系数范围:" class="postInfo-container-item">
             <el-slider
               v-model="coef"
@@ -120,7 +120,7 @@
 
       <!-- 数据相关度 -->
       <el-row>
-        <el-col :lg="12" :xl="8">
+        <el-col :sm="20" :md="20" :lg="12" :xl="8">
           <el-form-item label-width="100px" label="数据相关度:" class="postInfo-container-item">
             <el-slider
               v-model="modelScore"
@@ -407,25 +407,25 @@ export default {
 
     // 获取QCPJ学校科目线性回归相关数据
     getQcpjEvaStat() {
-      // const para = {
-      //   schoolId: this.schoolId,
-      //   gradeId: this.gradeId,
-      //   startCoef: this.coef[0], // 系数范围
-      //   endCoef: this.coef[1], // 系数范围
-      //   modelScore: this.modelScore, // 线性回归模型的拟合度得分
-      //   subject: this.subjectLabel, // 科目
-      //   weekRange: this.weekRange // 可选周数: 1-9/9-18/1-18
-      // }
-
       const para = {
-        schoolId: 1100002,
-        gradeId: 4,
+        schoolId: this.schoolId,
+        gradeId: this.gradeId,
         startCoef: this.coef[0], // 系数范围
         endCoef: this.coef[1], // 系数范围
         modelScore: this.modelScore, // 线性回归模型的拟合度得分
-        subject: '数学', // 科目
+        subject: this.subjectLabel, // 科目
         weekRange: this.weekRange // 可选周数: 1-9/9-18/1-18
       }
+
+      // const para = {
+      //   schoolId: 1100002,
+      //   gradeId: 4,
+      //   startCoef: this.coef[0], // 系数范围
+      //   endCoef: this.coef[1], // 系数范围
+      //   modelScore: this.modelScore, // 线性回归模型的拟合度得分
+      //   subject: '数学', // 科目
+      //   weekRange: this.weekRange // 可选周数: 1-9/9-18/1-18
+      // }
       //   console.log('线性回归请求参数', para)
 
       if (this.classId === null) {

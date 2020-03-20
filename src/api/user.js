@@ -127,21 +127,6 @@ export function getAdminList(para) {
 }
 
 /**
- * 冻结管理员账户
- *
- * @export
- * @param {userid} adminId
- * @returns
- */
-export function deleteAdminAccount(adminId) {
-  return request({
-    url: '',
-    method: 'GET',
-    params: adminId
-  })
-}
-
-/**
  * 修改管理员账户信息
  *
  * @export
@@ -166,5 +151,18 @@ export function updateToken() {
   return request({
     url: '/user/updateToken',
     method: 'post'
+  })
+}
+
+/**
+ * oss生成头像上传表单
+ *
+ * @export
+ * @returns
+ */
+export function createUploadHeadImgOss() {
+  return request({
+    url: '/user/createUploadHeadImgOss',
+    method: 'GET'
   })
 }

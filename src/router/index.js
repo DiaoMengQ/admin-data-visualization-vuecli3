@@ -50,12 +50,19 @@ export const constantRoutes = [
   {
     path: '/', // Url相对根路径路径
     component: Layout,
-    redirect: '/home', // 重定向路径（可以直接写路径，也可以写成“ redirect:{ name:'foo'} ”）
+    redirect: '/home', // 点击父级目录的重定向路径（可以直接写路径，也可以写成“ redirect:{ name:'foo'} ”）
     children: [{
       path: 'home', // url显示的路径
       name: 'home', // 用于路由间的调用
       component: () => import('@/views/home/index'),
       meta: { title: '首页', icon: 'home' }
+    },
+    {
+      path: 'personalInfo/:id(\\d+)',
+      name: 'personalInfo',
+      component: () => import('@/views/home/personalInfo'),
+      meta: { title: '个人资料' },
+      hidden: true
     }]
   },
 
@@ -65,13 +72,13 @@ export const constantRoutes = [
     path: '/qcpj',
     component: Layout,
     meta: { title: '七彩评价', icon: 'qcpj' },
-    redirect: '/qcpj/teaEvaAvg', // 点击父级目录'七彩评价'的默认路径
+    redirect: '/qcpj/teaEvaAvg',
     children: [
       {
         path: 'groupProfile',
         component: () => import('@/views/qcpj/groupProfile/index'), // Parent router-view
         name: 'qcpjGroupProfile',
-        meta: { title: '群体评价积分' },
+        meta: { title: '群体评价积分', icon: 'group' },
         children: [
           {
             path: 'teaEvaAvg',
@@ -83,7 +90,7 @@ export const constantRoutes = [
             path: 'linearRegression',
             component: () => import('@/views/qcpj/groupProfile/LinearRegression'), // Parent router-view
             name: 'LinearRegression',
-            meta: { title: '群体线性回归分析' }
+            meta: { title: '评价积分线性回归分析' }
           }
         ]
       },
@@ -91,7 +98,7 @@ export const constantRoutes = [
         path: 'personalProfile',
         component: () => import('@/views/qcpj/personalProfile/index'), // Parent router-view
         name: 'personalProfile',
-        meta: { title: '学生评价积分' },
+        meta: { title: '学生评价积分', icon: 'person' },
         children: [
           {
             path: 'totalPoints',
@@ -162,39 +169,28 @@ export const constantRoutes = [
       {
         path: 'groupProfile',
         component: () => import('@/views/ydhy/groupProfile/index'), // Parent router-view
+        redirect: '/ydhy/groupProfile/readingMession',
         name: 'RoGroupProfile',
-        meta: { title: '群体阅读数据' },
+        meta: { title: '群体阅读数据', icon: 'group' },
         children: [
           {
             path: 'readingMession',
-            component: () => import('@/views/ydhy/groupProfile/readingMession'),
+            component: () => import('@/views/ydhy/groupProfile/readingMession/pieChart'),
             name: 'ReadingMession',
-            meta: { title: '班级用户阅读任务' },
-            children: [{
-              path: 'pieChart',
-              meta: { title: '班级用户阅读任务' },
-              component: () => import('@/views/ydhy/groupProfile/readingMession/pieChart')
-            }]
+            meta: { title: '班级用户阅读任务' }
           },
           {
             path: 'interestStatistics',
-            meta: { title: '班级阅读兴趣统计' },
-            component: () => import('@/views/ydhy/groupProfile/interestStatistics/index'),
-            children: [{
-              path: 'areaChart',
-              meta: { title: '班级阅读兴趣统计' },
-              component: () => import('@/views/ydhy/groupProfile/interestStatistics/areaChart')
-            }]
+            component: () => import('@/views/ydhy/groupProfile/interestStatistics/areaChart'),
+            name: 'InterestStatistics',
+            meta: { title: '班级阅读兴趣统计' }
+
           },
           {
             path: 'linearRegmession',
-            meta: { title: '学校阅读兴趣统计' },
-            component: () => import('@/views/ydhy/groupProfile/linearRegmession/index'),
-            children: [{
-              path: 'linear',
-              meta: { title: '学校阅读兴趣统计' },
-              component: () => import('@/views/ydhy/groupProfile/linearRegmession/linear')
-            }]
+            component: () => import('@/views/ydhy/groupProfile/linearRegmession/linear'),
+            name: 'LinearRegmession',
+            meta: { title: '学校阅读兴趣统计' }
           }
         ]
       },
@@ -202,7 +198,7 @@ export const constantRoutes = [
         path: 'personalReadingProf',
         component: () => import('@/views/ydhy/personalProfile/index'), // Parent router-view
         name: 'personalReadingProf',
-        meta: { title: '学生阅读数据' },
+        meta: { title: '学生阅读数据', icon: 'person' },
         children: [
           {
             path: 'readingCount',
@@ -284,19 +280,19 @@ export const constantRoutes = [
       path: 'adminEdit/:id(\\d+)',
       name: 'adminEdit',
       component: () => import('@/views/adminList/edit'),
-      meta: { title: '账户信息编辑', noCache: true },
+      meta: { title: '账户信息', noCache: true },
       hidden: true
     }
     ]
   },
 
-  // 404页必须放在末尾！！
+  // 此处是所有路由地址都找不到后的最后路径,必须放在末尾
   { path: '*', redirect: '/404', hidden: true }
 ]
 
 const createRouter = () => new Router({
   mode: 'history', // 需要服务器支持
-  base: process.env.NODE_ENV === 'production' ? '/admin-data-visualization-vue/' : '/', // 部署到Tomcat必须写
+  base: process.env.NODE_ENV === 'production' ? '/admin/' : '/', // 部署到Tomcat必须写
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })
