@@ -4,46 +4,52 @@
  * @version 0.0.1
  */
 
+// 参考文档: https://www.npmjs.com/package/vue-cookies
+import cookies from 'vue-cookies'
+cookies.config('2h') // 配置cookie过期时间
+
 const TokenKey = 'user-token'
 const userIDKey = 'user-id'
 const userManaRangeKey = 'user-manager-range'
 
 // setter: userid & token
 export function setUserInfo(userInfo) {
-  localStorage.setItem(TokenKey, userInfo['token'])
-  localStorage.setItem(userIDKey, userInfo['userid'])
+  cookies.set(TokenKey, userInfo['token'])
+  cookies.set(userIDKey, userInfo['userid'])
 }
 
 // getter: token
 export function getToken() {
-  return localStorage.getItem(TokenKey)
+  return cookies.get(TokenKey)
 }
 
 // clean token
 export function removeToken() {
-  localStorage.removeItem(TokenKey)
+  cookies.remove(TokenKey)
+  cookies.remove(userIDKey)
+  cookies.remove(userManaRangeKey)
 }
 
 // getter: userID
 export function getUserID() {
-  return localStorage.getItem(userIDKey)
+  return cookies.get(userIDKey)
 }
 
 // setter: 用户权限
 export function setUserManaRange(roleType, permDetail) {
   switch (roleType) {
     case 'SUPER_ADMIN':
-      localStorage.setItem(userManaRangeKey, permDetail)
+      cookies.set(userManaRangeKey, permDetail)
       break
     default:
-      localStorage.setItem(userManaRangeKey, JSON.stringify(permDetail))
+      cookies.set(userManaRangeKey, JSON.stringify(permDetail))
       break
   }
 }
 
 // getter: 用户权限
 export function getUserManaRange(roleType) {
-  const manaRange = localStorage.getItem(userManaRangeKey)
+  const manaRange = cookies.get(userManaRangeKey)
   let manaRangeList = []
   switch (roleType) {
     case 'SUPER_ADMIN':
