@@ -40,6 +40,7 @@ router.beforeEach(async(to, from, next) => {
         // 如果获取错误,则删除token,进入登录页面重新登录
         console.log(error)
         store.dispatch('user/resetToken')
+        Message.error('token已过期,请重新登录')
         next(`/login?redirect=${to.path}`)
         NProgress.done()
       }
@@ -52,7 +53,6 @@ router.beforeEach(async(to, from, next) => {
     } else {
       // 没有访问权限的其他页面被重定向到登录页面。
       next(`/login?redirect=${to.path}`)
-      Message.error('token已过期,请重新登录')
       NProgress.done()
     }
   }
