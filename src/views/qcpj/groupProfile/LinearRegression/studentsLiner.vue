@@ -39,7 +39,7 @@
       <!-- 斜率范围 -->
       <el-row>
         <el-col :sm="20" :md="20" :lg="12" :xl="8">
-          <el-form-item label-width="100px" label="系数范围:" class="postInfo-container-item">
+          <el-form-item label-width="100px" label="斜率范围:" class="postInfo-container-item">
             <el-slider
               v-model="coef"
               range
@@ -190,7 +190,7 @@ export default {
 
       ifShowChart: true, // 是否显示图表
 
-      modelScore: 0.5,
+      modelScore: 0,
       modelScoreStep: 0.1,
       coef: [0, 180],
       coefRange: [-180, 180],
@@ -210,8 +210,8 @@ export default {
     //   const para = {
     //     schoolId: this.schoolId,
     //     gradeId: this.gradeId,
-    //     startCoef: this.coef[0], // 系数范围
-    //     endCoef: this.coef[1], // 系数范围
+    //     startCoef: this.coef[0], // 斜率范围
+    //     endCoef: this.coef[1], // 斜率范围
     //     modelScore: this.modelScore, // 线性回归模型的拟合度得分
     //     subject: this.subjectLabel, // 科目
     //     weekRange: this.weekRange // 可选周数: 1-9/9-18/1-18
@@ -221,8 +221,8 @@ export default {
       const para = {
         schoolId: 1100002,
         gradeId: 4,
-        startCoef: this.coef[0], // 系数范围
-        endCoef: this.coef[1], // 系数范围
+        startCoef: this.coef[0], // 斜率范围
+        endCoef: this.coef[1], // 斜率范围
         modelScore: this.modelScore, // 线性回归模型的拟合度得分
         subject: '数学', // 科目
         weekRange: this.weekRange // 可选周数: 1-9/9-18/1-18
@@ -307,7 +307,7 @@ export default {
       for (let i = 0; i < data.length; i++) {
         const score = JSON.parse(data[i].score)
         for (let j = 0; j < score.length; j++) {
-          if (score[j].score !== 0) { scoreList.push([score[j].week, score[j].score]) }
+          scoreList.push([score[j].week, score[j].score])
         }
       }
       // console.log('处理后', scoreList)
