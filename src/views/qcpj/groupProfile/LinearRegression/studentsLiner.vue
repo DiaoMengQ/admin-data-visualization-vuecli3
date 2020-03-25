@@ -71,8 +71,7 @@
       </el-row>
     </el-form>
 
-    <div v-if="ifShowChart" id="chart-main" ref="chart" style="width:800px;height:600px;margin:0 auto;" />
-
+    <div v-if="ifShowChart" id="chart-main" ref="chart" :style="[{ 'height': chartHeight + 'px' },{'width':'100%'}]" />
   </div>
 </template>
 
@@ -92,66 +91,93 @@ export default {
   components: { AuthJudge, ClassPicker, SchoolPicker },
   data() {
     return {
-      chartData: [],
+      chartHeight: 600,
+
+      chartData: [
+        [
+          [10.0, 8.04],
+          [8.0, 6.95],
+          [13.0, 7.58],
+          [9.0, 8.81],
+          [11.0, 8.33],
+          [14.0, 9.96],
+          [6.0, 7.24],
+          [4.0, 4.26],
+          [12.0, 10.84],
+          [7.0, 4.82],
+          [7.0, 2]
+        ],
+        [
+          [10.0, 9.14],
+          [8.0, 8.14],
+          [13.0, 8.74],
+          [9.0, 8.77],
+          [11.0, 9.26],
+          [14.0, 8.10],
+          [6.0, 6.13],
+          [4.0, 3.10],
+          [12.0, 9.13],
+          [7.0, 7.26],
+          [5.0, 4.74]
+        ],
+        [
+          [10.0, 7.46],
+          [8.0, 6.77],
+          [13.0, 12.74],
+          [9.0, 7.11],
+          [11.0, 7.81],
+          [14.0, 8.84],
+          [6.0, 6.08],
+          [4.0, 5.39],
+          [12.0, 8.15],
+          [7.0, 6.42],
+          [5.0, 5.73]
+        ],
+        [
+          [8.0, 6.58],
+          [8.0, 5.76],
+          [8.0, 7.71],
+          [8.0, 8.84],
+          [8.0, 8.47],
+          [8.0, 7.04],
+          [8.0, 5.25],
+          [19.0, 12.50],
+          [8.0, 5.56],
+          [8.0, 7.91],
+          [8.0, 6.89]
+        ]
+      ],
+
       option: {
         title: {
-          text: '群体线性回归分析',
-          left: 'center'
+          text: 'Anscombe\'s quartet',
+          left: 'center',
+          top: 0
         },
-        xAxis: {
-          type: 'value',
-          splitLine: {
-            lineStyle: {
-              type: 'dashed'
-            }
-          }
+        grid: [
+          { x: '7%', y: '7%', width: '38%', height: '38%' }
+        ],
+        tooltip: {
+          formatter: 'Group {a}: ({c})'
         },
-        yAxis: {
-          type: 'value',
-          min: 1.5,
-          splitLine: {
-            lineStyle: {
-              type: 'dashed'
-            }
+        xAxis: [
+          { gridIndex: 0, name: '1', nameGap: 25, nameLocation: 'middle' }
+        ],
+        yAxis: [
+          { gridIndex: 0 }
+        ],
+        series: [
+          {
+            name: 'I',
+            type: 'scatter',
+            xAxisIndex: 0,
+            yAxisIndex: 0,
+            // data: this.chartData[0],
+            data: null,
+            // markLine: markLineOpt
+            markLine: null
           }
-        },
-        series: [{
-          name: 'scatter',
-          type: 'scatter',
-          emphasis: {
-            label: {
-              show: true,
-              position: 'left',
-              color: ' #0071e6',
-              fontSize: 16
-            }
-          },
-          //   data: chartData
-          data: null
-        }, {
-          name: 'line',
-          type: 'line',
-          showSymbol: false,
-          //   data: myRegression.points,
-          data: null,
-          markPoint: {
-            itemStyle: {
-              color: 'transparent'
-            },
-            label: {
-              show: true,
-              position: 'left',
-              //   formatter: myRegression.expression,
-              formatter: null,
-              color: '#333',
-              fontSize: 14
-            },
-            data: [{
-            //   coord: myRegression.points[myRegression.points.length - 1]
-              coord: null
-            }]
-          }
-        }]
+        ]
       },
 
       areaCode: null,
@@ -166,7 +192,7 @@ export default {
 
       modelScore: 0.5,
       modelScoreStep: 0.1,
-      coef: [-180, 180],
+      coef: [0, 180],
       coefRange: [-180, 180],
       coefStep: 10,
 
@@ -181,32 +207,31 @@ export default {
   methods: {
     // 获取QCPJ学校科目线性回归相关数据
     getQcpjEvaStat() {
+    //   const para = {
+    //     schoolId: this.schoolId,
+    //     gradeId: this.gradeId,
+    //     startCoef: this.coef[0], // 系数范围
+    //     endCoef: this.coef[1], // 系数范围
+    //     modelScore: this.modelScore, // 线性回归模型的拟合度得分
+    //     subject: this.subjectLabel, // 科目
+    //     weekRange: this.weekRange // 可选周数: 1-9/9-18/1-18
+    //   }
+
+      // 测试数据
       const para = {
-        schoolId: this.schoolId,
-        gradeId: this.gradeId,
+        schoolId: 1100002,
+        gradeId: 4,
         startCoef: this.coef[0], // 系数范围
         endCoef: this.coef[1], // 系数范围
         modelScore: this.modelScore, // 线性回归模型的拟合度得分
-        subject: this.subjectLabel, // 科目
+        subject: '数学', // 科目
         weekRange: this.weekRange // 可选周数: 1-9/9-18/1-18
       }
-      console.log('线性回归请求参数', para)
-
-      // 测试数据
-      // const para = {
-      //   schoolId: 1100002,
-      //   gradeId: 4,
-      //   startCoef: this.coef[0], // 系数范围
-      //   endCoef: this.coef[1], // 系数范围
-      //   modelScore: this.modelScore, // 线性回归模型的拟合度得分
-      //   subject: '数学', // 科目
-      //   weekRange: this.weekRange // 可选周数: 1-9/9-18/1-18
-      // }
 
       if (this.classId === null || this.classId === '') {
         schoolSubLinearRegress(para).then((result) => {
-          // console.log('线性回归返回数据', result.data.data)
-          this.dataProcess(result.data.data)
+        //   console.log('线性回归返回数据', result.data.data)
+        //   this.dataProcess(result.data.data)
           this.drawChart()
         }).catch((err) => {
           console.log(err)
@@ -233,6 +258,7 @@ export default {
 
       // 绘制图表
       if (this.option && typeof this.option === 'object') {
+        console.log(this.option)
         clusterChart.setOption(this.option, true)
       }
     },
@@ -240,20 +266,43 @@ export default {
     // chart配置项处理
     chartOptionAssignment() {
       // See https://github.com/ecomfe/echarts-stat
-      const myRegression = ecStat.regression('linear', this.chartData)
+      const myRegression = ecStat.regression('linear', this.chartData[0])
       myRegression.points.sort(function(a, b) {
         return a[0] - b[0]
       })
 
-      this.option.series[0].data = this.chartData
+      const markLineOpt = {
+        animation: true,
+        label: {
+          formatter: myRegression.expression,
+          align: 'right'
+        },
+        lineStyle: {
+          type: 'solid'
+        },
+        tooltip: {
+          formatter: myRegression.expression
+        },
+        data: [
+          [{
+            coord: myRegression.points[0],
+            symbol: 'none'
+          },
+          {
+            coord: myRegression.points[myRegression.points.length - 1],
+            symbol: 'none'
+          }]
+        ]
+      }
 
-      this.option.series[1].data = myRegression.points
-      this.option.series[1].markPoint.label.formatter = myRegression.expression
-      this.option.series[1].markPoint.data[0].coord = myRegression.points[myRegression.points.length - 1]
+      this.option.series[0].data = this.chartData[0]
+
+      this.option.series[0].markLine = markLineOpt
     },
 
     // 数据处理
     dataProcess(data) {
+      console.log('处理前数据', data)
       const scoreList = []
       for (let i = 0; i < data.length; i++) {
         const score = JSON.parse(data[i].score)
@@ -267,7 +316,6 @@ export default {
 
     // 获取子组件传入的学校
     getSelectedSch(data) {
-    //   console.log(data)
       this.schoolId = data
       this.gradeId = null
       this.classId = null
@@ -286,7 +334,6 @@ export default {
 
     // 获取子组件传入的年级和班级
     getSelectedClass(data) {
-    //   console.log(data)
       this.gradeId = data.gradeId
       this.classId = data.classId
     },
