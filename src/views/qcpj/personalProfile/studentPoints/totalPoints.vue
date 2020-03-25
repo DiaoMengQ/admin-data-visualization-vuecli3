@@ -118,8 +118,6 @@
                   :label="stu.name"
                 />
               </el-select>
-              <!-- 按钮 -->
-              <el-button plain type="primary" size="small" style="height:40px" @click="barCharts(stunum,findweek)">查看评价积分统计</el-button>
             </el-form-item>
 
           </el-form>
@@ -130,7 +128,7 @@
       <div v-show="sw">
         <span><font>选择周次：</font></span>
         <div>
-          <el-slider v-model="findweek" show-input :max="maxweek" :min="1" style="width:60%" @change="barCharts(stunum,findweek)" />
+          <el-slider v-model="findweek" show-input :max="maxweek" :min="1" style="width:60%" @change="StuChange(stunum)" />
         </div>
       </div>
     </div>
@@ -147,7 +145,7 @@ import { provinceList } from '@/utils/multiple'
 import store from '@/store/index.js'
 import echarts from 'echarts'
 import 'echarts/theme/macarons'
-import { getClassinGrade, getStuinClass, getStuSemester, getSchoolInfo } from '@/api/qcpj'
+import { getClassinGrade, getStuinClass, getStuSemester, getSchoolInfo, getSchoolCoins } from '@/api/qcpj'
 export default {
   data() {
     return {
@@ -170,15 +168,19 @@ export default {
       // 该班级的学生人数
       stunum: '',
       // 查询周次
-      findweek: '',
+      findweek: 1,
       // 使点击各周按钮时时间轴会显示出来
       sw: false,
       // 点击显示或隐藏多名学生按钮
       ms: false,
       // 获取所选中学生当前有多少周成绩
-      maxweek: '7',
+      maxweek: '',
       // 获取所选中的学生名字
-      nowStuName: ''
+      nowStuName: '',
+      weekArr: [],
+      nowWeek: [],
+      subType: [],
+      echartService: []
     }
   },
   computed: {
@@ -323,6 +325,22 @@ export default {
 
           // console.log(store.state.Grade[0].className)
         })
+
+      // 获取学校id的同时获取该学校的素养类型
+      var sId = ''
+      sId = parseInt(this.schoolId)
+      getSchoolCoins(sId)
+        .then(res => {
+          // console.log(res.data.data)
+          const sub = res.data.data
+          // 每次获取都将subtype重置以免堆积好几个学校的subtype
+          this.subType = []
+          this.findweek = 1
+          for (var i = 0; i < sub.length; i++) {
+            this.subType.push(sub[i].name)
+          }
+          // console.log(this.subType)
+        })
     },
     // 班级改变，获取该班级的Id,同时获取该班级的学生
     ClassChange(claId) {
@@ -342,15 +360,53 @@ export default {
         .then(res => {
         // console.log(res.data.data[0].subType)
           const sub = res.data.data
-          store.commit('setStu', sub)
-          console.log(store.state.Stu)
-          this.maxweek = sub.length
+          // console.log(store.state.Stu)
+          this.maxweek = parseInt(sub.length)
           this.nowStuName = sub[0].name
+
+          this.nowWeek = []
+          // 将周次获取处理为横坐标
+          for (var i = 0; i < this.findweek; i++) {
+            this.nowWeek.push(i + 1)
+          }
+          var test = []
+          this.echartService = []
+
+          // 处理subtype
+          for (var j = 0; j < this.subType.length; j++) {
+            var subType = this.subType[j]
+            // console.log(typeof (subType)) //string
+            test = []
+            // 遍历本学期每个科目的成绩
+            for (var n = 0; n < this.findweek; n++) {
+              const obj = JSON.parse(sub[n].subType)
+              if (obj[subType] == null) {
+                test[n] = parseInt('0')
+              } else {
+                test[n] = parseInt(obj[subType])
+              }
+              // console.log(obj[subType ])
+            }
+            // 将对应科目的成绩按照echats折线的格式放入series中
+            this.echartService[j] = {
+              name: subType,
+              type: 'bar',
+              stack: '总量',
+              label: {
+                normal: {
+                  show: true,
+                  position: 'insideRight'
+                }
+              },
+              data: test
+            }
+          }
+          this.barCharts(Stu)
           // console.log(sub[0].name)
         })
     },
     // 柱状图获取各周单科成绩
-    barCharts(Stu, getweek) {
+    barCharts(Stu) {
       // 未选择学生弹框提示先选择学生
       if (Stu.length <= 0) {
         this.$alert('请先选择学生', '错误！未选择学生', {
@@ -378,7 +434,7 @@ export default {
             }
           },
           legend: {
-            data: ['人文', '实践', '科学']
+            data: this.subType
           },
           grid: {
             left: '3%',
@@ -394,106 +450,13 @@ export default {
           },
           series: []
         })
-        getStuSemester({ 'studentId': Stu, 'week': getweek })
-          .then(res => {
-          // 定义学生人文成绩
-            const objData = []
-            // 定义实践成绩
-            const objSj = []
-            // 定义科学成绩
-            const objKx = []
-            // 定义用来存存储周次的数据，在后面setOption出将其传入x轴作为x轴的data
-            const weekArr = []
-
-            // 将获取到的学生成绩存储到sessionStorage中
-            const sub = res.data.data
-            sessionStorage.setItem('sub', JSON.stringify(sub))
-
-            // 有几周成绩，同时将获取到的字符串转换为obj，没有成绩的赋值为0
-            for (var i = 0; i < sub.length; i++) {
-              console.log(sub[i].subType)
-              /** 人文 */
-              // 将获取到的字符串转为obj
-              const obj = JSON.parse(sub[i].subType)
-              if (obj['人文'] == null) {
-                objData[i] = parseInt('0')
-              } else {
-              // 同时将获取到的每周人文转换为int，方便下方传入到图中data
-                objData[i] = parseInt(obj['人文'])
-              }
-              console.log(obj['人文'])
-
-              /** 实践 */
-              if (obj['实践'] == null) {
-                objSj[i] = parseInt('0')
-              } else {
-                // 同时将获取到的每周实践转换为int，方便下方传入到图中data
-                objSj[i] = parseInt(obj['实践'])
-              }
-
-              /** 科学 */
-              if (obj['科学'] == null) {
-                objKx[i] = parseInt('0')
-              } else {
-                // 同时将获取到的每周科学转换为int，方便下方传入到图中data
-                objKx[i] = parseInt(obj['科学'])
-              }
-              // 将周次传入到weekArr数组中，以便将周次实时同步
-              weekArr[i] = ['第' + (i + 1) + '周']
-            }
-
-            // console.log(weekArr)
-            // console.log(objData)
-
-            // 此位置将获取到数据显示到图上
-            barChart.setOption({
-              series: [
-                {
-                  name: '人文',
-                  type: 'bar',
-                  stack: '总量',
-                  label: {
-                    normal: {
-                      show: true,
-                      position: 'insideRight'
-                    }
-                  },
-                  data: objData
-                },
-                {
-                  name: '实践',
-                  type: 'bar',
-                  stack: '总量',
-                  label: {
-                    normal: {
-                      show: true,
-                      position: 'insideRight'
-                    }
-                  },
-                  data: objSj
-                },
-                {
-                  name: '科学',
-                  type: 'bar',
-                  stack: '总量',
-                  label: {
-                    normal: {
-                      show: true,
-                      position: 'insideRight'
-                    }
-                  },
-                  data: objKx
-                }
-              ],
-              yAxis: {
-                data: weekArr
-              }
-            })
-          })
-          .catch(res => {
-            console.log('Error：出错了！')
-            console.log(res)
-          })
+        // 此位置将获取到数据显示到图上
+        barChart.setOption({
+          series: this.echartService,
+          yAxis: {
+            data: this.nowWeek
+          }
+        })
       }
     }
   }

@@ -192,3 +192,10 @@ export function getstudentSubLinearRegress(para) {
     params: para
   })
 }
+
+export function getSchoolCoins(para) {
+  return request({
+    url: '/qcpj/subject/getSchoolCoins/' + para,
+    method: 'GET'
+  })
+}

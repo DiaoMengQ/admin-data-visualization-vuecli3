@@ -145,7 +145,7 @@ import { provinceList } from '@/utils/multiple'
 import store from '@/store/index.js'
 import echarts from 'echarts'
 import 'echarts/theme/macarons'
-import { getClassinGrade, getStuinClass, getStuSemester, getSchoolInfo } from '@/api/qcpj'
+import { getClassinGrade, getStuinClass, getStuSemester, getSchoolInfo, getSchoolCoins } from '@/api/qcpj'
 export default {
   data() {
     return {
@@ -174,7 +174,10 @@ export default {
       // 获取所选中的学生名字
       nowStuName: '',
       // 点击显示或隐藏多名学生按钮
-      ms: false
+      ms: false,
+      weekArr: [],
+      subType: [],
+      echartService: []
     }
   },
   computed: {
@@ -319,8 +322,21 @@ export default {
           const grade = res.data.data
           store.commit('setGrade', grade)
           console.log(store.state.Grade)
-
           // console.log(store.state.Grade[0].className)
+        })
+      // 获取学校id的同时获取该学校的素养类型
+      var sId = ''
+      sId = parseInt(this.schoolId)
+      getSchoolCoins(sId)
+        .then(res => {
+          // console.log(res.data.data)
+          const sub = res.data.data
+          // 每次获取都将subtype重置以免堆积好几个学校的subtype
+          this.subType = []
+          for (var i = 0; i < sub.length; i++) {
+            this.subType.push(sub[i].name)
+          }
+          // console.log(this.subType)
         })
     },
     // 班级改变，获取该班级的Id,同时获取该班级的学生
@@ -341,10 +357,46 @@ export default {
         .then(res => {
         // console.log(res.data.data[0].subType)
           const sub = res.data.data
-          store.commit('setStu', sub)
-          console.log(store.state.Stu)
+          console.log(sub)
           this.maxweek = sub.length
+          this.weekArr = []
+
+          // 将周次获取处理为横坐标
+          for (var i = 0; i < this.maxweek; i++) {
+            this.weekArr.push(i + 1)
+          }
+          var test = []
+          this.echartService = []
+
+          // 处理subtype
+          for (var j = 0; j < this.subType.length; j++) {
+            var subType = this.subType[j]
+            // console.log(typeof (subType)) //string
+            test = []
+            // 遍历本学期每个科目的成绩
+            for (var n = 0; n < this.maxweek; n++) {
+              const obj = JSON.parse(sub[n].subType)
+              if (obj[subType] == null) {
+                test[n] = parseInt('0')
+              } else {
+                test[n] = parseInt(obj[subType])
+              }
+              // console.log(obj[subType ])
+            }
+            // 将对应科目的成绩按照echats折线的格式放入series中
+            this.echartService[j] = {
+              name: subType,
+              type: 'line',
+              areaStyle: {},
+              data: test
+            }
+          }
+          // console.log(this.weekArr)
+          // console.log(this.echartService)
+
+          // 获取学生姓名
           this.nowStuName = sub[0].name
+
           // console.log(sub[0].name)
         })
     },
@@ -397,96 +449,23 @@ export default {
             type: 'value'
           },
           legend: {
-            data: ['人文', '实践', '科学']
+            data: this.subType
           },
           series: []
         })
-        getStuSemester({ 'studentId': Stu })
-          .then(res => {
-          // 定义学生人文成绩
-            const objData = []
-            // 定义实践成绩
-            const objSj = []
-            // 定义科学成绩
-            const objKx = []
-            // 定义用来存存储周次的数据，在后面setOption出将其传入x轴作为x轴的data
-            const weekArr = []
 
-            // 将获取到的学生成绩存储到sessionStorage中
-            const sub = res.data.data
-            sessionStorage.setItem('sub', JSON.stringify(sub))
-
-            // 有几周成绩，同时将获取到的字符串转换为obj，没有成绩的赋值为0
-            for (var i = 0; i < sub.length; i++) {
-              console.log(sub[i].subType)
-              /** 人文 */
-              // 将获取到的字符串转为obj
-              const obj = JSON.parse(sub[i].subType)
-              if (obj['人文'] == null) {
-                objData[i] = parseInt('0')
-              } else {
-              // 同时将获取到的每周人文转换为int，方便下方传入到图中data
-                objData[i] = parseInt(obj['人文'])
-              }
-              console.log(obj['人文'])
-
-              /** 实践 */
-              if (obj['实践'] == null) {
-                objSj[i] = parseInt('0')
-              } else {
-                // 同时将获取到的每周实践转换为int，方便下方传入到图中data
-                objSj[i] = parseInt(obj['实践'])
-              }
-
-              /** 科学 */
-              if (obj['科学'] == null) {
-                objKx[i] = parseInt('0')
-              } else {
-                // 同时将获取到的每周科学转换为int，方便下方传入到图中data
-                objKx[i] = parseInt(obj['科学'])
-              }
-              // 将周次传入到weekArr数组中，以便将周次实时同步
-              weekArr[i] = ['第' + (i + 1) + '周']
-            }
-
-            // console.log(weekArr)
-            // console.log(objData)
-
-            // 此位置将获取到数据显示到图上
-            myChart.setOption({
-              series: [
-                {
-                  name: '人文',
-                  type: 'line',
-                  areaStyle: {},
-                  data: objData
-                },
-                {
-                  name: '实践',
-                  type: 'line',
-                  areaStyle: {},
-                  data: objSj
-                },
-                {
-                  name: '科学',
-                  type: 'line',
-                  areaStyle: {},
-                  data: objKx
-                }
-              ],
-              xAxis: {
-                data: weekArr
-              }
-            })
-          })
-          .catch(res => {
-            console.log('Error：出错了！')
-            console.log(res)
-          })
+        // 此位置将获取到数据显示到图上
+        myChart.setOption({
+          series: this.echartService,
+          xAxis: {
+            data: this.weekArr
+          }
+        })
       }
     }
   }
 }
+
 </script>
 
 <style scoped>
