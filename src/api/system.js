@@ -99,6 +99,21 @@ export function QCPJequipmentCount(para) {
 }
 
 /**
+ * 阅读海洋获取访问设备统计信息
+ *
+ * @export
+ * @param {date} para //若 data 为空则默认为全部
+ * @returns
+ */
+export function YDHYequipmentCount(para) {
+  return request({
+    url: '/ro/log/equipmentCount',
+    method: 'GET',
+    params: para
+  })
+}
+
+/**
  * 七彩评价获取响应状态码统计信息
  *
  * @export
