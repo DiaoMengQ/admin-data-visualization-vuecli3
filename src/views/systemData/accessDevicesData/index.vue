@@ -17,7 +17,7 @@
 
         <el-button-group>
           <el-button type="primary" :plain="QCPJplain" @click="getQCPJdevicesData">七彩评价</el-button>
-          <el-button type="primary" disabled :plain="YDHYplain" @click="getYDHYdevicesData">阅读海洋</el-button>
+          <el-button type="primary" :plain="YDHYplain" @click="getYDHYdevicesData">阅读海洋</el-button>
         </el-button-group>
       </div>
     </div>
@@ -32,7 +32,7 @@ import 'echarts/theme/macarons'
 require('echarts/lib/component/tooltip')
 require('echarts/lib/component/title')
 
-import { QCPJequipmentCount } from '@/api/system'
+import { QCPJequipmentCount, YDHYequipmentCount } from '@/api/system'
 
 export default {
   data() {
@@ -112,12 +112,26 @@ export default {
     }
   },
   methods: {
-    // 获取阅读海洋地区访问统计数值(目前未提供接口,备用)
+    // 获取阅读海洋地区访问统计数值
     getYDHYdevicesData() {
-      this.drawChinaMap()
-
       this.QCPJplain = true
       this.YDHYplain = false
+
+      if (this.selectedDate.length === 0 || this.selectedDate.length === null) {
+        YDHYequipmentCount().then((result) => {
+          this.dataHandle(result.data.data)
+          this.drawChinaMap()
+        }).catch((err) => {
+          console.log(err)
+        })
+      } else {
+        YDHYequipmentCount({ sDate: this.selectedDate[0], eDate: this.selectedDate[1] }).then((result) => {
+          this.dataHandle(result.data.data)
+          this.drawChinaMap()
+        }).catch((err) => {
+          console.log(err)
+        })
+      }
     },
     // 获取七彩评价地区访问统计数值
     getQCPJdevicesData() {

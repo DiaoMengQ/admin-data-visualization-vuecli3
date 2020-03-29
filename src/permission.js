@@ -38,6 +38,7 @@ router.beforeEach(async(to, from, next) => {
         next()
       } catch (error) {
         // 如果获取错误,则删除token,进入登录页面重新登录
+        console.log(error)
         store.dispatch('user/resetToken')
         Message.error('token已过期,请重新登录')
         next(`/login?redirect=${to.path}`)

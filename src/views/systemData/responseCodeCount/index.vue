@@ -105,7 +105,7 @@ export default {
             type: 'pie',
             id: 'pie',
             radius: '30%',
-            center: ['50%', '25%'],
+            center: ['50%', '31%'],
             label: {
               formatter: '{b}: {@2012} ({d}%)'
             },
@@ -173,7 +173,7 @@ export default {
               const codePos = this.responseCodeList[parseInt(data[di].code)]
               this.chartOption.dataset.source[codePos][i + 1] = parseInt(data[di].count)
             }
-            this.drawChinaMap()
+            this.drawChart()
           }).catch((err) => {
             console.log(err)
           })
@@ -195,7 +195,7 @@ export default {
       if (this.selectedDate && this.selectedDate !== null) {
         // 请求每一天的统计数据
         for (let i = 0; i < this.dateList.length; i++) {
-        //  单天数据填充0
+          // 单天数据填充0
           for (let ci = 1; ci < codeList.length + 1; ci++) {
             this.chartOption.dataset.source[ci].push(0)
           }
@@ -209,8 +209,8 @@ export default {
               this.chartOption.dataset.source[codePos][i + 1] = parseInt(data[di].count)
             }
             // 注意:这里的网络请都是异步操作
-            // 画图操作放到外层,数据只有空数据;放里层绘制多次浪费资源
-            this.drawChinaMap()
+            // 画图操作放到外层,数据只有空数据;放里层绘制多次浪费资源(待修复)
+            this.drawChart()
           }).catch((err) => {
             console.log(err)
           })
@@ -223,7 +223,7 @@ export default {
         })
       }
     },
-    drawChinaMap() {
+    drawChart() {
       var myChart = echarts.init(document.getElementById('chart-main'), 'macarons')
 
       myChart.on('updateAxisPointer', function(event) {
@@ -244,7 +244,6 @@ export default {
           })
         }
       })
-
       myChart.setOption(this.chartOption)
     },
     // 初始化数据

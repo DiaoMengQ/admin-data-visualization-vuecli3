@@ -14,8 +14,6 @@ import Cookies from 'js-cookie'
 import { type } from 'os'
 import { parse } from 'querystring'
 
-const TokenKey = 'user-token'
-
 // 创建axios实例
 const service = axios.create({
   // 请求的基础路径 base_url
@@ -120,11 +118,7 @@ service.interceptors.response.use(response => {
 },
 error => {
   console.log('response error: ', error) // for debug
-  Message({
-    message: '发生错误，请刷新重试',
-    type: 'error',
-    duration: 3 * 1000
-  })
+  // Message.error('发生错误，请刷新重试')
   return Promise.reject(error)
 }
 )

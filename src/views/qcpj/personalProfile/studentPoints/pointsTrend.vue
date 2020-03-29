@@ -127,7 +127,7 @@
       <el-row>
         <el-col :lg="12" :xl="8">
           <el-form>
-            <el-form-item label-width="100px" label="系数范围：" class="posiInfo-container-item">
+            <el-form-item label-width="100px" label="斜率范围：" class="posiInfo-container-item">
               <el-slider v-model="coef" range show-stops :min="coefRange[0]" :max="coefRange[1]" :step="coefStep" @change="getSubLinearRegress()" />
             </el-form-item>
           </el-form>
@@ -211,9 +211,9 @@ export default {
       // 默认科目
       book: '数学',
       // 默认数据相关度
-      modelScore: 0.7457315232377556,
+      modelScore: 0,
       modelScoreStep: 0.1,
-      // 默认系数范围
+      // 默认斜率范围
       coef: [-180, 180],
       coefRange: [-180, 180],
       coefStep: 10,
@@ -471,7 +471,6 @@ export default {
         },
         yAxis: {
           type: 'value',
-          min: 1.5,
           splitLine: {
             lineStyle: {
               type: 'dashed'

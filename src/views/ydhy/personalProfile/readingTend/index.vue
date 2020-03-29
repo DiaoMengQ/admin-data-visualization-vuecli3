@@ -409,7 +409,6 @@ export default {
         },
         yAxis: {
           type: 'value',
-          min: 1.5,
           splitLine: {
             lineStyle: {
               type: 'dashed'

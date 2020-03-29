@@ -36,14 +36,9 @@ export default {
       selectedDate: '',
       pickerOptions: {
         disabledDate(time) {
-          return time.getTime() > Date.now()
+          return time.getTime() > Date.now() - 3600 * 1000 * 24
         },
         shortcuts: [{
-          text: '今天',
-          onClick(picker) {
-            picker.$emit('pick', new Date())
-          }
-        }, {
           text: '昨天',
           onClick(picker) {
             const date = new Date()
@@ -87,13 +82,13 @@ export default {
             show: true,
             realtime: true,
             start: 0,
-            end: 25
+            end: 100
           },
           {
             type: 'inside',
             realtime: true,
             start: 0,
-            end: 25
+            end: 100
           }
         ],
         xAxis: [
