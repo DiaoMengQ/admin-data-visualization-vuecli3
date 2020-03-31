@@ -330,8 +330,8 @@ export default {
             this.score[i] = data[i].score
             this.historyscore[i] = data[i].historyScore.replace([], '')
           }
-          // console.log(this.historyscore)
-          // console.log(this.bookType)
+          console.log(this.historyscore)
+          console.log(this.bookType)
           var a = []
           var b = []
           // 获取到横坐标的长度
@@ -357,14 +357,50 @@ export default {
             // console.log(s)
           }
           console.log(d)
+          console.log(typeof (this.bookType[1]))
           d.forEach((item, index) => {
-            item.unshift(this.bookType[index])
+            item.unshift(this.mapBookType(this.bookType[index]))
           })
           console.log(d)
           // 将横坐标添加到最前方
           d.unshift(b)
           this.drawMyChart(d)
         })
+    },
+    mapBookType(a) {
+      if (a === 'category_kexue') {
+        return '科学'
+      }
+      if (a === 'category_lishi') {
+        return '历史'
+      }
+      if (a === 'category_manhua') {
+        return '漫画'
+      }
+      if (a === 'category_mingren') {
+        return '名人'
+      }
+      if (a === 'category_mingzhu') {
+        return '名著'
+      }
+      if (a === 'category_parents') {
+        return '亲情'
+      }
+      if (a === 'category_shenhua') {
+        return '神话'
+      }
+      if (a === 'category_shuxue') {
+        return '数学'
+      }
+      if (a === 'category_teachers') {
+        return '教育'
+      }
+      if (a === 'category_tonghua') {
+        return '童话'
+      }
+      if (a === 'category_xiaoshuo') {
+        return '小说'
+      }
     },
     drawMyChart(c) {
       const myChart = echarts.init(this.$refs.chart, 'macarons')
