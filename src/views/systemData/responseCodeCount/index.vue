@@ -1,3 +1,4 @@
+<!-- 访问响应码统计 -->
 <template>
   <div id="app-container">
     <div style="margin:20px;text-align:center;">
@@ -16,8 +17,8 @@
       />
 
       <el-button-group>
-        <el-button type="primary" :plain="QCPJplain" @click="getQCPJdevicesData">七彩评价</el-button>
-        <el-button type="primary" :plain="YDHYplain" @click="getYDHYdevicesData">阅读海洋</el-button>
+        <el-button type="primary" :plain="QCPJplain" @click="getQCPJrespCode">七彩评价</el-button>
+        <el-button type="primary" :plain="YDHYplain" @click="getYDHYrespCode">阅读海洋</el-button>
       </el-button-group>
     </div>
     <div id="chart-main" style="width:100%; height:650px" />
@@ -157,7 +158,7 @@ export default {
       }
     },
     // 获取阅读海洋响应码统计数值
-    getYDHYdevicesData() {
+    getYDHYrespCode() {
       this.QCPJplain = true
       this.YDHYplain = false
 
@@ -192,7 +193,7 @@ export default {
       }
     },
     // 获取七彩评价响应码统计数值
-    getQCPJdevicesData() {
+    getQCPJrespCode() {
       this.QCPJplain = false
       this.YDHYplain = true
 
