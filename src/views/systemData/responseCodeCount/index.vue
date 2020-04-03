@@ -39,12 +39,16 @@ export default {
   data() {
     return {
       pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now() - 3600 * 1000 * 24
+        },
         shortcuts: [{
           text: '最近一周',
           onClick(picker) {
             const end = new Date()
             const start = new Date()
             start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+            end.setTime(end.getTime() - 3600 * 1000 * 24 * 1)
             picker.$emit('pick', [start, end])
           }
         }, {
@@ -53,6 +57,7 @@ export default {
             const end = new Date()
             const start = new Date()
             start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+            end.setTime(end.getTime() - 3600 * 1000 * 24 * 1)
             picker.$emit('pick', [start, end])
           }
         }, {
@@ -61,6 +66,7 @@ export default {
             const end = new Date()
             const start = new Date()
             start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+            end.setTime(end.getTime() - 3600 * 1000 * 24 * 1)
             picker.$emit('pick', [start, end])
           }
         }]
@@ -158,7 +164,6 @@ export default {
       const codeList = Object.keys(this.responseCodeList)
       if (this.selectedDate && this.selectedDate !== null) {
         // 请求每一天的统计数据
-        // TODO: 天数控制this.dateList.length
         for (let i = 0; i < this.dateList.length; i++) {
         //  单天数据填充0
           for (let ci = 1; ci < codeList.length + 1; ci++) {
