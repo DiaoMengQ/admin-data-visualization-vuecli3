@@ -123,22 +123,30 @@ export default {
     getQCPJTimeVisitCount() {
       this.QCPJplain = false
       this.YDHYplain = true
-      getQCPJTimeVisitCount({ date: this.selectedDate }).then((result) => {
-        this.dataHandle(result.data.data)
-        this.drawChart()
-      }).catch((err) => {
-        console.log(err)
-      })
+      if (this.selectedDate && this.selectedDate !== null) {
+        getQCPJTimeVisitCount({ date: this.selectedDate }).then((result) => {
+          this.dataHandle(result.data.data)
+          this.drawChart()
+        }).catch((err) => {
+          console.log(err)
+        })
+      } else {
+        this.$message.error('请先选择日期范围')
+      }
     },
     getYDHYTimeVisitCount() {
       this.QCPJplain = true
       this.YDHYplain = false
-      getYDHYTimeVisitCount({ date: this.selectedDate }).then((result) => {
-        this.dataHandle(result.data.data)
-        this.drawChart()
-      }).catch((err) => {
-        console.log(err)
-      })
+      if (this.selectedDate && this.selectedDate !== null) {
+        getYDHYTimeVisitCount({ date: this.selectedDate }).then((result) => {
+          this.dataHandle(result.data.data)
+          this.drawChart()
+        }).catch((err) => {
+          console.log(err)
+        })
+      } else {
+        this.$message.error('请先选择日期范围')
+      }
     },
     drawChart() {
       var myChart = echarts.init(document.getElementById('chart-main'), 'macarons')
