@@ -167,7 +167,9 @@ export default {
       historyscore: [],
       //   各科成绩
       bookScore: [],
-      dataset: []
+      dataset: [],
+      seriesData: [],
+      Source: []
     }
   },
   computed: {
@@ -334,19 +336,21 @@ export default {
           console.log(this.bookType)
           var a = []
           var b = []
+          var d = []
+          this.seriesData = []
+          this.Source = []
           // 获取到横坐标的长度
-          for (var n = 0; n < this.historyscore[0].split(',').length; n++) {
-            b[n] = JSON.stringify(n + 1)
+          for (var n = this.historyscore[0].split(',').length; n > 0; n--) {
+            b.push(JSON.stringify(n))
           }
           b.unshift('product')
-          console.log(b)
+          // console.log(b)
           // 去掉历史成绩的括号
           for (var j = 0; j < this.historyscore.length; j++) {
             a[j] = this.historyscore[j].replace(/\[|]/g, '')
           }
-          console.log(b)
+          // console.log(b)
 
-          var d = []
           for (var m = 0; m < a.length; m++) {
             var st = []
             const s = a[m].split(',')
@@ -356,15 +360,34 @@ export default {
             d.push(st)
             // console.log(s)
           }
-          console.log(d)
-          console.log(typeof (this.bookType[1]))
+          // console.log(d)
           d.forEach((item, index) => {
             item.unshift(this.mapBookType(this.bookType[index]))
           })
+          for (var x = 0; x < this.bookType.length; x++) {
+            this.seriesData[x] = { type: 'line', smooth: true, seriesLayoutBy: 'row' }
+          }
+          this.seriesData.push({
+            type: 'pie',
+            id: 'pie',
+            radius: '30%',
+            center: ['50%', '25%'],
+            label: {
+              formatter: '{b}: {@1} ({d}%)'
+            },
+            encode: {
+              itemName: 'product',
+              value: '1',
+              tooltip: '1'
+            }
+          })
+          console.log(this.seriesData)
+
           console.log(d)
           // 将横坐标添加到最前方
           d.unshift(b)
-          this.drawMyChart(d)
+          this.Source = d
+          this.drawMyChart()
         })
     },
     mapBookType(a) {
@@ -382,6 +405,9 @@ export default {
       }
       if (a === 'category_mingzhu') {
         return '名著'
+      }
+      if (a === 'category_shige') {
+        return '诗歌'
       }
       if (a === 'category_parents') {
         return '亲情'
@@ -412,31 +438,12 @@ export default {
           showContent: false
         },
         dataset: {
-          source: c
+          source: this.Source
         },
         xAxis: { type: 'category' },
         yAxis: { gridIndex: 0 },
         grid: { top: '55%' },
-        series: [
-          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
-          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
-          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
-          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
-          {
-            type: 'pie',
-            id: 'pie',
-            radius: '30%',
-            center: ['50%', '25%'],
-            label: {
-              formatter: '{b}: {@1} ({d}%)'
-            },
-            encode: {
-              itemName: 'product',
-              value: '1',
-              tooltip: '1'
-            }
-          }
-        ]
+        series: this.seriesData
       })
       myChart.on('updateAxisPointer', function(event) {
         var xAxisInfo = event.axesInfo[0]
