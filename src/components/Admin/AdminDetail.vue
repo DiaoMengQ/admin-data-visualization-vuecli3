@@ -292,6 +292,8 @@ export default {
     // 用户授权
     addAuth() {
       this.ifDataIsReady = true
+      this.disableChangeInfo = true
+      this.ifShowAddAuth = false
     },
     // 获取所查看用户的权限范围
     getUserManaRange(userId) {
