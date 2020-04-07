@@ -11,188 +11,171 @@
         <!-- row 内元素横向排列 -->
         <el-row>
           <!-- 用户信息操作区域 -->
-          <el-col id="admin-info" :xs="24" :sm="16">
-            <el-col :xs="24" :lg="24" :xl="24">
-              <el-form-item prop="roleType" label-width="170px" label="权限级别:" class="postInfo-container-item">
-                <el-select v-model="adminInfo.roleType" placeholder="请选择权限级别" @change="roleTypeChanged">
-                  <el-option
-                    v-for="role in roleTypeOptions"
-                    :key="role.roleKey"
-                    :label="role.roleLabel"
-                    :value="role.roleKey"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
+          <el-col :xs="24" :lg="24" :xl="24">
+            <el-form-item prop="roleType" label-width="170px" label="权限级别:" class="postInfo-container-item">
+              <el-select v-model="adminInfo.roleType" placeholder="请选择权限级别" @change="roleTypeChanged">
+                <el-option
+                  v-for="role in roleTypeOptions"
+                  :key="role.roleKey"
+                  :label="role.roleLabel"
+                  :value="role.roleKey"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
 
-            <el-col v-if="ifShowProvinceList" :xs="24" :lg="12" :xl="8">
-              <el-form-item prop="provinceId" label-width="170px" label="省份:" class="postInfo-container-item">
-                <el-select v-model="provinceId" placeholder="请选择省份">
-                  <el-option
-                    v-for="province in provinceList"
-                    :key="province.provinceId"
-                    :label="province.provinceName"
-                    :value="province.provinceId"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
+          <el-col v-if="ifShowProvinceList" :xs="24" :lg="12" :xl="8">
+            <el-form-item prop="provinceId" label-width="170px" label="省份:" class="postInfo-container-item">
+              <el-select v-model="provinceId" placeholder="请选择省份">
+                <el-option
+                  v-for="province in provinceList"
+                  :key="province.provinceId"
+                  :label="province.provinceName"
+                  :value="province.provinceId"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
 
-            <!-- 城市选择器 -->
-            <el-col v-if="ifShowCityList" :xs="24" :lg="12" :xl="8">
-              <el-form-item prop="areaCode" label-width="170px" label="市:" class="postInfo-container-item">
-                <el-select v-model="areaCode" placeholder="请选择">
-                  <el-option
-                    v-for="city in cityList"
-                    :key="city.areaCode"
-                    :label="city['cityName']"
-                    :value="city.areaCode"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <!-- 城市多选项 -->
-            <el-col v-if="ifShowCityTransfer" :xs="24">
-              <el-transfer
-                v-model="areaSelectedList"
-                :data="cityList"
-                :props="{
-                  key: 'areaCode',
-                  label: 'cityName'
-                }"
-                :titles="['可选城市', '已选城市']"
-              />
-            </el-col>
+          <!-- 城市选择器 -->
+          <el-col v-if="ifShowCityList" :xs="24" :lg="12" :xl="8">
+            <el-form-item prop="areaCode" label-width="170px" label="市:" class="postInfo-container-item">
+              <el-select v-model="areaCode" placeholder="请选择">
+                <el-option
+                  v-for="city in cityList"
+                  :key="city.areaCode"
+                  :label="city['cityName']"
+                  :value="city.areaCode"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <!-- 城市多选项 -->
+          <el-col v-if="ifShowCityTransfer" :xs="24">
+            <el-transfer
+              v-model="areaSelectedList"
+              :data="cityList"
+              :props="{
+                key: 'areaCode',
+                label: 'cityName'
+              }"
+              :titles="['可选城市', '已选城市']"
+            />
+          </el-col>
 
+          <!-- 学校列表 -->
+          <el-col :xs="20" :lg="20" :xl="20">
             <!-- 学校列表 -->
-            <el-col :xs="20" :lg="20" :xl="20">
-              <!-- 学校列表 -->
-              <el-table
-                v-if="ifShowSchoolList"
-                v-loading="listLoading"
-                max-height="350"
-                :data="schoolList"
-                border
-                fit
-                highlight-current-row
-                @selection-change="handleSchChange"
-              >
-                <el-table-column
-                  type="selection"
-                  width="35px"
-                />
+            <el-table
+              v-if="ifShowSchoolList"
+              v-loading="listLoading"
+              max-height="350"
+              :data="schoolList"
+              border
+              fit
+              highlight-current-row
+              @selection-change="handleSchChange"
+            >
+              <el-table-column
+                type="selection"
+                width="35px"
+              />
 
-                <el-table-column min-width="300px" label="学校列表">
-                  <template slot-scope="scope">
-                    <span>{{ scope.row['schoolName'] }}</span>
-                  </template>
-                </el-table-column>
+              <el-table-column min-width="300px" label="学校列表">
+                <template slot-scope="scope">
+                  <span>{{ scope.row['schoolName'] }}</span>
+                </template>
+              </el-table-column>
 
-                <el-table-column align="center" label="学校ID" width="80">
-                  <template slot-scope="scope">
-                    <span>{{ scope.row['schoolId'] }}</span>
-                  </template>
-                </el-table-column>
+              <el-table-column align="center" label="学校ID" width="80">
+                <template slot-scope="scope">
+                  <span>{{ scope.row['schoolId'] }}</span>
+                </template>
+              </el-table-column>
 
-              </el-table>
-
-            </el-col>
-
-            <!-- 账户名 -->
-            <el-col :xs="24" :lg="12" :xl="8" class="postInfo-container">
-              <el-form-item prop="username" label-width="170px" label="账户名（用于登录）:" class="postInfo-container-item">
-                <el-input
-                  v-model="adminInfo.username"
-                  remote
-                  placeholder="请输入账户名"
-                  style="max-width:200px"
-                />
-              </el-form-item>
-            </el-col>
-
-            <!-- 昵称 -->
-            <!-- row 中的组件必须包在 el-col 中，否则会导致 input 和 select 无法获取焦点 -->
-            <el-col :xs="24" :lg="12" :xl="8">
-              <el-form-item label-width="170px" label="昵称:" class="postInfo-container-item">
-                <el-input
-                  v-model="adminInfo.nickname"
-                  type="text"
-                  placeholder="请输入昵称"
-                  style="max-width:200px"
-                />
-              </el-form-item>
-            </el-col>
-
-            <!-- 密码 -->
-            <el-col :xs="24" :lg="12" :xl="8" class="postInfo-container">
-              <el-form-item prop="password" label-width="170px" label="密码:" class="postInfo-container-item">
-                <el-input
-                  v-model="adminInfo.password"
-                  show-password
-                  remote
-                  placeholder="请输入账户密码"
-                  style="max-width:200px"
-                />
-              </el-form-item>
-            </el-col>
-            <!-- 确认密码 -->
-            <el-col :xs="24" :lg="12" :xl="8" class="postInfo-container">
-              <el-form-item prop="passwordConfirm" label-width="170px" label="确认密码:" class="postInfo-container-item">
-                <el-input
-                  v-model="adminInfo.passwordConfirm"
-                  show-password
-                  remote
-                  placeholder="请再次确认密码"
-                  style="max-width:200px"
-                />
-              </el-form-item>
-            </el-col>
-
-            <!-- 性别 -->
-            <el-col :xs="24" :lg="12" :xl="8">
-              <el-form-item label-width="170px" label="性别:" class="postInfo-container-item">
-                <!-- el-option 中的 value 会与 el-select 中的 v-model 进行绑定 -->
-                <el-select v-model="adminInfo.sexLabel" placeholder="性别" @change="genderChanged">
-                  <el-option
-                    v-for="gender in genderOptions"
-                    :key="gender.genderKey"
-                    :label="gender.genderLabel"
-                    :value="gender.genderLabel"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-
-            <!-- 联系方式 -->
-            <el-col :xs="24" :lg="12" :xl="8">
-              <el-form-item label-width="170px" label="联系方式:" class="postInfo-container-item">
-                <el-input v-model="adminInfo.tel" style="max-width:200px" type="tel" placeholder="请输入联系方式" />
-              </el-form-item>
-            </el-col>
-
-            <!-- 邮箱 -->
-            <el-col :xs="24" :lg="12" :xl="8">
-              <el-form-item label-width="170px" label="邮箱:" class="postInfo-container-item">
-                <el-input v-model="adminInfo.tel" style="max-width:200px" type="email" placeholder="请输入邮箱地址" />
-              </el-form-item>
-            </el-col>
+            </el-table>
 
           </el-col>
 
-          <!-- 用户头像 -->
-          <el-col id="admin-avatar" :xs="24" :sm="6">
-            <div class="avatar-img">
-              <!-- 若头像不显示,请使用 npm i element-ui -S 重新安装 -->
-              <el-avatar
-                shape="square"
-                :size="100"
-                src="https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png?imageView2/1/w/80/h/80"
-              >
-                <img src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png">
-              </el-avatar>
-            </div>
-            <el-button v-loading="loading" size="medium" type="primary">上传头像</el-button>
+          <!-- 账户名 -->
+          <el-col :xs="24" :lg="12" :xl="8" class="postInfo-container">
+            <el-form-item prop="username" label-width="170px" label="账户名（用于登录）:" class="postInfo-container-item">
+              <el-input
+                v-model="adminInfo.username"
+                remote
+                placeholder="请输入账户名"
+                style="max-width:200px"
+              />
+            </el-form-item>
           </el-col>
+
+          <!-- 昵称 -->
+          <!-- row 中的组件必须包在 el-col 中，否则会导致 input 和 select 无法获取焦点 -->
+          <el-col :xs="24" :lg="12" :xl="8">
+            <el-form-item label-width="170px" label="昵称:" class="postInfo-container-item">
+              <el-input
+                v-model="adminInfo.nickname"
+                type="text"
+                placeholder="请输入昵称"
+                style="max-width:200px"
+              />
+            </el-form-item>
+          </el-col>
+
+          <!-- 密码 -->
+          <el-col :xs="24" :lg="12" :xl="8" class="postInfo-container">
+            <el-form-item prop="password" label-width="170px" label="密码:" class="postInfo-container-item">
+              <el-input
+                v-model="adminInfo.password"
+                show-password
+                remote
+                placeholder="请输入账户密码"
+                style="max-width:200px"
+              />
+            </el-form-item>
+          </el-col>
+          <!-- 确认密码 -->
+          <el-col :xs="24" :lg="12" :xl="8" class="postInfo-container">
+            <el-form-item prop="passwordConfirm" label-width="170px" label="确认密码:" class="postInfo-container-item">
+              <el-input
+                v-model="adminInfo.passwordConfirm"
+                show-password
+                remote
+                placeholder="请再次确认密码"
+                style="max-width:200px"
+              />
+            </el-form-item>
+          </el-col>
+
+          <!-- 性别 -->
+          <el-col :xs="24" :lg="12" :xl="8">
+            <el-form-item label-width="170px" label="性别:" class="postInfo-container-item">
+              <!-- el-option 中的 value 会与 el-select 中的 v-model 进行绑定 -->
+              <el-select v-model="adminInfo.sexLabel" placeholder="性别" @change="genderChanged">
+                <el-option
+                  v-for="gender in genderOptions"
+                  :key="gender.genderKey"
+                  :label="gender.genderLabel"
+                  :value="gender.genderLabel"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+          <!-- 联系方式 -->
+          <el-col :xs="24" :lg="12" :xl="8">
+            <el-form-item label-width="170px" label="联系方式:" class="postInfo-container-item">
+              <el-input v-model="adminInfo.tel" style="max-width:200px" type="tel" placeholder="请输入联系方式" />
+            </el-form-item>
+          </el-col>
+
+          <!-- 邮箱 -->
+          <el-col :xs="24" :lg="12" :xl="8">
+            <el-form-item label-width="170px" label="邮箱:" class="postInfo-container-item">
+              <el-input v-model="adminInfo.tel" style="max-width:200px" type="email" placeholder="请输入邮箱地址" />
+            </el-form-item>
+          </el-col>
+
         </el-row>
 
         <el-row class="admin-info-post-controler" type="flex" justify="end">
@@ -610,12 +593,6 @@ export default {
 
 .el-button{
   margin: 0 5px
-}
-#admin-avatar {
-  margin: 3em 0 2em 5em;
-  .el-button{
-    margin: 0
-  }
 }
 
 .createPost-container {
