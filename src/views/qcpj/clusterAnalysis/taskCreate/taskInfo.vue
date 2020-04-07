@@ -224,7 +224,7 @@ export default {
     taskName: {
       // getter
       get: function() {
-        return this.schoolName + ' ' + this.gradeLabel + this.classLabel
+        return `${this.schoolName} ${this.gradeLabel}${this.classLabel}`
       }
     },
     remarks: {
@@ -241,10 +241,10 @@ export default {
         }
 
         if (this.taskInfo.k !== '' && !isNaN(this.taskInfo.k)) {
-          tempRemark = tempRemark + '\n聚类样本数: ' + this.taskInfo.k
+          tempRemark = `${tempRemark}\n聚类样本数: ${this.taskInfo.k}`
         }
         if (this.taskInfo.week !== '' && !isNaN(this.taskInfo.week)) {
-          tempRemark = tempRemark + '\n数据截止至第:' + this.taskInfo.week + '周'
+          tempRemark = `${tempRemark}\n数据截止至第${this.taskInfo.week}周`
         }
         return tempRemark
       }
