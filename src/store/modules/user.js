@@ -142,7 +142,7 @@ const actions = {
 
           resolve()// 注意不能漏掉这句，这是告诉调用该方法的方法此异步方法已完成
         }).catch(error => {
-          console.log('请求错误 ' + error)
+          console.log('登录失败')
           reject(error)
         })
     })
