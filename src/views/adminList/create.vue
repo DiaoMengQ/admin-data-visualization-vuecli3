@@ -172,7 +172,7 @@
           <!-- 邮箱 -->
           <el-col :xs="24" :lg="12" :xl="8">
             <el-form-item label-width="170px" label="邮箱:" class="postInfo-container-item">
-              <el-input v-model="adminInfo.tel" style="max-width:200px" type="email" placeholder="请输入邮箱地址" />
+              <el-input v-model="adminInfo.email" style="max-width:200px" type="email" placeholder="请输入邮箱地址" />
             </el-form-item>
           </el-col>
 
