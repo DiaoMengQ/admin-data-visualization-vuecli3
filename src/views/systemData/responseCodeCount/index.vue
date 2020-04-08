@@ -95,10 +95,12 @@ export default {
 
       // example: https://www.echartsjs.com/examples/zh/editor.html?c=dataset-link
       chartOption: {
-        legend: {},
+        legend: {
+          selected: { '200': false }
+        },
         tooltip: {
           trigger: 'axis',
-          showContent: false
+          showContent: true
         },
         dataset: {
           source: [
@@ -108,6 +110,17 @@ export default {
         yAxis: { gridIndex: 0 },
         grid: { top: '55%' },
         series: [
+          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
+          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
+          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
+          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
+          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
+          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
+          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
+          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
+          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
+          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
+          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
           {
             type: 'pie',
             id: 'pie',
@@ -121,18 +134,7 @@ export default {
               value: '2012',
               tooltip: '2012'
             }
-          },
-          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
-          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
-          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
-          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
-          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
-          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
-          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
-          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
-          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
-          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
-          { type: 'line', smooth: true, seriesLayoutBy: 'row' }
+          }
         ]
       }
     }
@@ -148,9 +150,9 @@ export default {
       if (this.selectedDate && this.selectedDate !== null) {
         this.dateList = getMiddleDateList(this.selectedDate[0], this.selectedDate[1])
 
-        this.chartOption.series[0].label.formatter = '{b}: {@' + this.dateList[0] + '} ({d}%)'
-        this.chartOption.series[0].encode.value = this.dateList[0]
-        this.chartOption.series[0].encode.tooltip = this.dateList[0]
+        this.chartOption.series[11].label.formatter = '{b}: {@' + this.dateList[0] + '} ({d}%)'
+        this.chartOption.series[11].encode.value = this.dateList[0]
+        this.chartOption.series[11].encode.tooltip = this.dateList[0]
 
         for (let i = 0; i < this.dateList.length; i++) {
           this.chartOption.dataset.source[0].push(this.dateList[i])
