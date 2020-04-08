@@ -467,116 +467,121 @@ export default {
     UpdateAdminInfo(adminInfo) {
       this.$refs[adminInfo].validate(valid => {
         if (valid) {
-          this.loading = true
-          const schools2upload = []
-          let citys2upload = []
-          const adminInfo2upload = {
-            username: this.adminInfo.username,
-            password: this.adminInfo.password,
-            roleType: this.adminInfo.roleType
-          }
-          if (this.adminInfo.nickname !== null && this.adminInfo.nickname !== '') {
-            adminInfo2upload.nickname = this.adminInfo.nickname
-          }
-          if (this.adminInfo.tel !== null && this.adminInfo.tel !== '') {
-            adminInfo2upload.tel = this.adminInfo.tel
-          }
-          if (this.adminInfo.sex !== null && this.adminInfo.sex !== '') {
-            adminInfo2upload.sex = this.adminInfo.sex
-          }
-          if (this.adminInfo.email !== null && this.adminInfo.email !== '') {
-            adminInfo2upload.email = this.adminInfo.email
-          }
-          console.log('待提交用户信息', adminInfo2upload)
+          MessageBox.confirm('请确认账户信息是否正确', '确认', {
+            confirmButtonText: '确定',
+            type: 'warning '
+          }).then(() => {
+            this.loading = true
+            const schools2upload = []
+            let citys2upload = []
+            const adminInfo2upload = {
+              username: this.adminInfo.username,
+              password: this.adminInfo.password,
+              roleType: this.adminInfo.roleType
+            }
+            if (this.adminInfo.nickname !== null && this.adminInfo.nickname !== '') {
+              adminInfo2upload.nickname = this.adminInfo.nickname
+            }
+            if (this.adminInfo.tel !== null && this.adminInfo.tel !== '') {
+              adminInfo2upload.tel = this.adminInfo.tel
+            }
+            if (this.adminInfo.sex !== null && this.adminInfo.sex !== '') {
+              adminInfo2upload.sex = this.adminInfo.sex
+            }
+            if (this.adminInfo.email !== null && this.adminInfo.email !== '') {
+              adminInfo2upload.email = this.adminInfo.email
+            }
+            console.log('待提交用户信息', adminInfo2upload)
 
-          switch (this.adminInfo.roleType) {
-            case 'SCHOOL_ADMIN':
-              if (this.schSelectedList.length === 0) {
-                Message({
-                  message: '请选择所授权学校',
-                  type: 'error',
-                  duration: 3 * 1000
-                })
-                this.loading = false
-              } else {
-              // 提取学校列表里的学校ID
-                for (let i = 0; i < this.schSelectedList.length; i++) {
-                  schools2upload.push(this.schSelectedList[i].schoolId)
+            switch (this.adminInfo.roleType) {
+              case 'SCHOOL_ADMIN':
+                if (this.schSelectedList.length === 0) {
+                  Message({
+                    message: '请选择所授权学校',
+                    type: 'error',
+                    duration: 3 * 1000
+                  })
+                  this.loading = false
+                } else {
+                  // 提取学校列表里的学校ID
+                  for (let i = 0; i < this.schSelectedList.length; i++) {
+                    schools2upload.push(this.schSelectedList[i].schoolId)
+                  }
+                  const sch2upload = '[' + schools2upload + ']'
+                  addUser({ user: JSON.stringify(adminInfo2upload) }).then(response => {
+                    const data = response.data.data
+                    const userId = data.userId
+                    console.log('创建账户成功后返回信息', data)
+                    console.log(userId)
+
+                    addAuth({ manaRange: sch2upload, userId: userId }).then((result) => {
+                      MessageBox.confirm('创建账户完成', '完成', {
+                        confirmButtonText: '确定',
+                        type: 'success '
+                      }).then(() => {
+                        this.$router.push('/administration/adminList')
+                      })
+                    }).catch((err) => {
+                      MessageBox.confirm('已创建用户,授权失败,请稍后在账户列表重试', '失败', {
+                        confirmButtonText: '确定',
+                        type: 'error'
+                      }).then(() => {
+                        console.log(err)
+                        this.loading = false
+                        this.$router.push('/administration/adminList')
+                      })
+                    })
+                  }).catch(error => {
+                    this.loading = false
+                    console.log('添加用户失败', error)
+                  })
                 }
-                const sch2upload = '[' + schools2upload + ']'
-                addUser({ user: JSON.stringify(adminInfo2upload) }).then(response => {
-                  const data = response.data.data
-                  const userId = data.userId
-                  console.log('创建账户成功后返回信息', data)
-                  console.log(userId)
 
-                  addAuth({ manaRange: sch2upload, userId: userId }).then((result) => {
-                    MessageBox.confirm('创建账户完成', '完成', {
-                      confirmButtonText: '确定',
-                      type: 'success '
-                    }).then(() => {
-                      this.$router.push('/administration/adminList')
-                    })
-                  }).catch((err) => {
-                    MessageBox.confirm('已创建用户,授权失败,请稍后在账户列表重试', '失败', {
-                      confirmButtonText: '确定',
-                      type: 'error'
-                    }).then(() => {
-                      console.log(err)
-                      this.loading = false
-                      this.$router.push('/administration/adminList')
-                    })
+                break
+              case 'CITY_ADMIN':
+                console.log(this.areaSelectedList)
+                if (this.areaSelectedList.length === 0) {
+                  Message({
+                    message: '请选择所授权城市',
+                    type: 'error',
+                    duration: 3 * 1000
                   })
-                }).catch(error => {
-                  this.loading = false
-                  console.log('添加用户失败', error)
-                })
-              }
+                } else {
+                  citys2upload = '[' + this.areaSelectedList + ']'
 
-              break
-            case 'CITY_ADMIN':
-              console.log(this.areaSelectedList)
-              if (this.areaSelectedList.length === 0) {
-                Message({
-                  message: '请选择所授权城市',
-                  type: 'error',
-                  duration: 3 * 1000
-                })
-              } else {
-                citys2upload = '[' + this.areaSelectedList + ']'
+                  addUser({ user: JSON.stringify(adminInfo2upload) }).then(response => {
+                    const data = response.data.data
+                    const userId = data.userId
+                    console.log('创建账户成功后返回信息', data)
+                    console.log(userId)
 
-                addUser({ user: JSON.stringify(adminInfo2upload) }).then(response => {
-                  const data = response.data.data
-                  const userId = data.userId
-                  console.log('创建账户成功后返回信息', data)
-                  console.log(userId)
-
-                  addAuth({ manaRange: citys2upload, userId: userId }).then((result) => {
-                    MessageBox.confirm('创建账户完成', '完成', {
-                      confirmButtonText: '确定',
-                      type: 'success '
-                    }).then(() => {
-                      this.$router.push('/administration/adminList')
+                    addAuth({ manaRange: citys2upload, userId: userId }).then((result) => {
+                      MessageBox.confirm('创建账户完成', '完成', {
+                        confirmButtonText: '确定',
+                        type: 'success '
+                      }).then(() => {
+                        this.$router.push('/administration/adminList')
+                      })
+                    }).catch((err) => {
+                      MessageBox.confirm('已创建用户,授权失败,请稍后在账户列表重试', '失败', {
+                        confirmButtonText: '确定',
+                        type: 'error'
+                      }).then(() => {
+                        console.log(err)
+                        this.loading = false
+                        this.$router.push('/administration/adminList')
+                      })
                     })
-                  }).catch((err) => {
-                    MessageBox.confirm('已创建用户,授权失败,请稍后在账户列表重试', '失败', {
-                      confirmButtonText: '确定',
-                      type: 'error'
-                    }).then(() => {
-                      console.log(err)
-                      this.loading = false
-                      this.$router.push('/administration/adminList')
-                    })
+                  }).catch(error => {
+                    this.loading = false
+                    console.log('添加用户失败', error)
                   })
-                }).catch(error => {
-                  this.loading = false
-                  console.log('添加用户失败', error)
-                })
-              }
-              break
-          }
+                }
+                break
+            }
 
-          this.loading = false
+            this.loading = false
+          })
         }
       })
     }
