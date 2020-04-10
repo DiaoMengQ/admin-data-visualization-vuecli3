@@ -1,5 +1,5 @@
 /**
- * 七彩评价平台相关操作
+ * 系统数据相关接口
  * @author 刁梦齐 <dmq1212@qq.com>
  * @version 0.0.1
  * @last 刁梦齐 2020-02-21
@@ -174,6 +174,36 @@ export function getQCPJTimeVisitCount(para) {
 }
 
 /**
+ * 七彩评价获取某时间内的用户日访问统计
+ *
+ * @export
+ * @param {date} para 日期范围
+ * @returns
+ */
+export function getQCPJdayTimeVisitCount(para) {
+  return request({
+    url: '/qcpj/log/dayTimeVisitCount',
+    method: 'GET',
+    params: para
+  })
+}
+
+/**
+ * 七彩评价获取某时间内的用户月访问统计
+ *
+ * @export
+ * @param {date} para 月份范围
+ * @returns
+ */
+export function getQCPJmonthTimeVisitCount(para) {
+  return request({
+    url: '/qcpj/log/monthTimeVisitCount',
+    method: 'GET',
+    params: para
+  })
+}
+
+/**
  * 阅读海洋获取单天各时段访问统计
  *
  * @export
@@ -183,6 +213,36 @@ export function getQCPJTimeVisitCount(para) {
 export function getYDHYTimeVisitCount(para) {
   return request({
     url: '/ro/log/timeVisitCount',
+    method: 'GET',
+    params: para
+  })
+}
+
+/**
+ * 阅读海洋获取某时间内的用户日访问统计
+ *
+ * @export
+ * @param {date} para 日期范围
+ * @returns
+ */
+export function getYDHYdayTimeVisitCount(para) {
+  return request({
+    url: '/ro/log/dayTimeVisitCount',
+    method: 'GET',
+    params: para
+  })
+}
+
+/**
+ * 阅读海洋获取某时间内的用户月访问统计
+ *
+ * @export
+ * @param {date} para 月份范围
+ * @returns
+ */
+export function getYDHYmonthTimeVisitCount(para) {
+  return request({
+    url: '/ro/log/monthTimeVisitCount',
     method: 'GET',
     params: para
   })

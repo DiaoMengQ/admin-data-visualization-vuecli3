@@ -1,13 +1,22 @@
 <!-- 每日时段访问统计 -->
 <template>
   <div id="app-container" style="margin:20px;text-align:center;">
+    <el-radio-group v-model="selectedRangeType" style="margin:20px 0">
+      <el-radio label="date">分时统计</el-radio>
+      <el-radio label="daterange">日统计</el-radio>
+      <el-radio label="monthrange">月统计</el-radio>
+    </el-radio-group>
     <div>
+      <!-- 参考文档：https://element.eleme.cn/#/zh-CN/component/date-picker -->
       <el-date-picker
         v-model="selectedDate"
         align="right"
-        type="date"
+        :type="selectedRangeType"
         placeholder="选择日期"
-        value-format="yyyy-MM-dd"
+        :value-format="valueFormat"
+        :start-placeholder="startPlaceholder"
+        :end-placeholder="endPlaceholder"
+        range-separator="-"
         :picker-options="pickerOptions"
       />
       <el-button-group>
@@ -27,14 +36,22 @@ import 'echarts/theme/macarons'
 require('echarts/lib/component/tooltip')
 require('echarts/lib/component/title')
 
-import { getQCPJTimeVisitCount, getYDHYTimeVisitCount } from '@/api/system'
+import { getQCPJTimeVisitCount, getQCPJdayTimeVisitCount, getQCPJmonthTimeVisitCount } from '@/api/system'
+import { getYDHYTimeVisitCount, getYDHYdayTimeVisitCount, getYDHYmonthTimeVisitCount } from '@/api/system'
 
 export default {
   data() {
     return {
+      selectedRangeType: 'date', // 所选的统计范围类型（时、日、月）
+
+      startPlaceholder: '', // 日期选择器提示语
+      endPlaceholder: '',
+
+      valueFormat: 'yyyy-MM-dd', // 日期的格式化
+
       QCPJplain: true,
       YDHYplain: true,
-      selectedDate: '',
+      selectedDate: '', // 所选日期
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now() - 3600 * 1000 * 24
@@ -55,6 +72,7 @@ export default {
           }
         }]
       },
+
       chartOption: {
         title: {
           text: '时段访问统计'
@@ -117,6 +135,118 @@ export default {
       }
     }
   },
+  watch: {
+    // 选择统计范围类型后设定日期选择器相关参数
+    selectedRangeType(newVal) {
+      // console.log(newVal)
+      switch (newVal) {
+        // 分时访问
+        case 'date':
+          this.valueFormat = 'yyyy-MM-dd'
+          this.selectedDate = ''
+          this.pickerOptions = {
+            disabledDate(time) {
+              return time.getTime() > Date.now() - 3600 * 1000 * 24
+            },
+            shortcuts: [{
+              text: '昨天',
+              onClick(picker) {
+                const date = new Date()
+                date.setTime(date.getTime() - 3600 * 1000 * 24)
+                picker.$emit('pick', date)
+              }
+            }, {
+              text: '一周前',
+              onClick(picker) {
+                const date = new Date()
+                date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
+                picker.$emit('pick', date)
+              }
+            }]
+          }
+
+          this.chartOption.legend.data = ['分时访问']
+          this.chartOption.series[0].name = '分时访问'
+          break
+
+          // 每日访问
+        case 'daterange' :
+          this.valueFormat = 'yyyy-MM-dd'
+          this.selectedDate = ''
+          this.pickerOptions = {
+            disabledDate(time) {
+              return time.getTime() > Date.now() - 3600 * 1000 * 24
+            },
+            shortcuts: [{
+              text: '最近一周',
+              onClick(picker) {
+                const end = new Date()
+                const start = new Date()
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+                end.setTime(end.getTime() - 3600 * 1000 * 24 * 1)
+                picker.$emit('pick', [start, end])
+              }
+            }, {
+              text: '最近一个月',
+              onClick(picker) {
+                const end = new Date()
+                const start = new Date()
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+                end.setTime(end.getTime() - 3600 * 1000 * 24 * 1)
+                picker.$emit('pick', [start, end])
+              }
+            }, {
+              text: '最近三个月',
+              onClick(picker) {
+                const end = new Date()
+                const start = new Date()
+                start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+                end.setTime(end.getTime() - 3600 * 1000 * 24 * 1)
+                picker.$emit('pick', [start, end])
+              }
+            }]
+          }
+          this.startPlaceholder = '开始日期'
+          this.endPlaceholder = '结束日期'
+
+          this.chartOption.legend.data = ['每日访问']
+          this.chartOption.series[0].name = '当日访问'
+          break
+
+          // 月访问
+        case 'monthrange' :
+          this.valueFormat = 'yyyy-MM'
+          this.selectedDate = ''
+          this.pickerOptions = {
+            shortcuts: [{
+              text: '今年至今',
+              onClick(picker) {
+                const end = new Date()
+                const start = new Date(new Date().getFullYear(), 0)
+                picker.$emit('pick', [start, end])
+              }
+            }, {
+              text: '最近六个月',
+              onClick(picker) {
+                const end = new Date()
+                const start = new Date()
+                start.setMonth(start.getMonth() - 6)
+                picker.$emit('pick', [start, end])
+              }
+            }]
+          }
+          this.startPlaceholder = '开始月份'
+          this.endPlaceholder = '结束月份'
+
+          this.chartOption.legend.data = ['每月访问']
+          this.chartOption.series[0].name = '当月访问'
+          break
+
+        default:
+          break
+      }
+    }
+  },
   mounted() {
     // this.drawChart()
   },
@@ -124,13 +254,42 @@ export default {
     getQCPJTimeVisitCount() {
       this.QCPJplain = false
       this.YDHYplain = true
+      let param = null
       if (this.selectedDate && this.selectedDate !== null) {
-        getQCPJTimeVisitCount({ date: this.selectedDate }).then((result) => {
-          this.dataHandle(result.data.data)
-          this.drawChart()
-        }).catch((err) => {
-          console.log(err)
-        })
+        switch (this.selectedRangeType) {
+          case 'date':
+            param = { date: this.selectedDate }
+            getQCPJTimeVisitCount(param).then((result) => {
+              this.dataHandle(result.data.data)
+              this.drawChart()
+            }).catch((err) => {
+              console.log(err)
+            })
+            break
+
+          case 'daterange':
+            param = { sDate: this.selectedDate[0], eDate: this.selectedDate[1] }
+            getQCPJdayTimeVisitCount(param).then((result) => {
+              this.dataHandle(result.data.data)
+              this.drawChart()
+            }).catch((err) => {
+              console.log(err)
+            })
+            break
+
+          case 'monthrange':
+            param = { sDate: this.selectedDate[0] + '-01', eDate: this.selectedDate[1] + '-01' }
+            getQCPJmonthTimeVisitCount(param).then((result) => {
+              this.dataHandle(result.data.data)
+              this.drawChart()
+            }).catch((err) => {
+              console.log(err)
+            })
+            break
+
+          default:
+            break
+        }
       } else {
         this.$message.error('请先选择日期范围')
       }
@@ -138,13 +297,40 @@ export default {
     getYDHYTimeVisitCount() {
       this.QCPJplain = true
       this.YDHYplain = false
+      let param = null
       if (this.selectedDate && this.selectedDate !== null) {
-        getYDHYTimeVisitCount({ date: this.selectedDate }).then((result) => {
-          this.dataHandle(result.data.data)
-          this.drawChart()
-        }).catch((err) => {
-          console.log(err)
-        })
+        switch (this.selectedRangeType) {
+          case 'date':
+            param = { date: this.selectedDate }
+            getYDHYTimeVisitCount(param).then((result) => {
+              this.dataHandle(result.data.data)
+              this.drawChart()
+            }).catch((err) => {
+              console.log(err)
+            })
+            break
+          case 'daterange':
+            param = { sDate: this.selectedDate[0], eDate: this.selectedDate[1] }
+            getYDHYdayTimeVisitCount(param).then((result) => {
+              this.dataHandle(result.data.data)
+              this.drawChart()
+            }).catch((err) => {
+              console.log(err)
+            })
+            break
+          case 'monthrange':
+            param = { sDate: this.selectedDate[0] + '-01', eDate: this.selectedDate[1] + '-01' }
+            getYDHYmonthTimeVisitCount(param).then((result) => {
+              this.dataHandle(result.data.data)
+              this.drawChart()
+            }).catch((err) => {
+              console.log(err)
+            })
+            break
+
+          default:
+            break
+        }
       } else {
         this.$message.error('请先选择日期范围')
       }
@@ -164,7 +350,7 @@ export default {
       this.chartOption.xAxis[0].data = xAxisData
       this.chartOption.series[0].data = seriesData
 
-      console.log(this.chartOption)
+      // console.log(this.chartOption)
       return data
     }
   }
