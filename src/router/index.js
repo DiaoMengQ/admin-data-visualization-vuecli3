@@ -239,16 +239,16 @@ export const constantRoutes = [
     meta: { title: '系统相关数据', icon: 'histogram' },
     children: [
       {
-        path: 'accessDevicesData',
-        name: 'AccessDevicesData',
-        component: () => import('@/views/systemData/accessDevicesData/index'),
-        meta: { title: '系统访问设备统计', icon: 'devices' }
-      },
-      {
         path: 'accessAreaData',
         name: 'AccessAreaData',
         component: () => import('@/views/systemData/accessAreaData'),
         meta: { title: '用户访问区域统计', icon: 'international' }
+      },
+      {
+        path: 'accessDevicesData',
+        name: 'AccessDevicesData',
+        component: () => import('@/views/systemData/accessDevicesData/index'),
+        meta: { title: '系统访问设备统计', icon: 'devices' }
       },
       {
         path: 'responseCodeCount',
@@ -260,7 +260,7 @@ export const constantRoutes = [
         path: 'accessDurationData',
         name: 'accessDurationData',
         component: () => import('@/views/systemData/accessDurationData'),
-        meta: { title: '每日时段访问统计', icon: 'time' }
+        meta: { title: '系统访问数统计', icon: 'time' }
       }
     ]
   },
