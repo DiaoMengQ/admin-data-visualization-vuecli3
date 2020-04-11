@@ -1,31 +1,58 @@
 <!-- 每日时段访问统计 -->
 <template>
-  <div id="app-container" style="margin:20px;text-align:center;">
-    <el-radio-group v-model="selectedRangeType" style="margin:20px 0">
-      <el-radio label="date">分时统计</el-radio>
-      <el-radio label="daterange">日统计</el-radio>
-      <el-radio label="monthrange">月统计</el-radio>
-    </el-radio-group>
-    <div>
-      <!-- 参考文档：https://element.eleme.cn/#/zh-CN/component/date-picker -->
-      <el-date-picker
-        v-model="selectedDate"
-        align="right"
-        :type="selectedRangeType"
-        placeholder="选择日期"
-        :value-format="valueFormat"
-        :start-placeholder="startPlaceholder"
-        :end-placeholder="endPlaceholder"
-        range-separator="-"
-        :picker-options="pickerOptions"
-      />
-      <el-button-group>
-        <el-button type="primary" :plain="QCPJplain" @click="getQCPJTimeVisitCount">七彩评价</el-button>
-        <el-button type="primary" :plain="YDHYplain" @click="getYDHYTimeVisitCount">阅读海洋</el-button>
-      </el-button-group>
-    </div>
-    <div id="chart-main" style="width:100%; height:650px" />
+  <div id="app-container" style="margin:20px;">
+    <el-row style="text-align:center;">
+      <el-col :sm="24" :md="12" :lg="12" :xl="6">
+        <el-radio-group v-model="selectedRangeType" style="margin:20px 20px 0 20px">
+          <el-radio label="date">分时统计</el-radio>
+          <el-radio label="daterange">日统计</el-radio>
+          <el-radio label="monthrange">月统计</el-radio>
+        </el-radio-group>
+        <div>
+          <!-- 参考文档：https://element.eleme.cn/#/zh-CN/component/date-picker -->
+          <el-date-picker
+            v-model="selectedDate"
+            align="right"
+            :type="selectedRangeType"
+            placeholder="选择日期"
+            :value-format="valueFormat"
+            :start-placeholder="startPlaceholder"
+            :end-placeholder="endPlaceholder"
+            range-separator="-"
+            :picker-options="pickerOptions"
+            style="margin:1.3em 0"
+          />
+          <el-button-group>
+            <el-button type="primary" :plain="QCPJplain" @click="getQCPJTimeVisitCount">七彩评价</el-button>
+            <el-button type="primary" :plain="YDHYplain" @click="getYDHYTimeVisitCount">阅读海洋</el-button>
+          </el-button-group>
+        </div>
+      </el-col>
 
+      <el-col :sm="24" :md="12" :lg="12" :xl="6">
+        <!-- <el-card> -->
+        <el-row :gutter="20">
+          <el-col :sm="12" :md="12" :lg="12" :xl="12">
+            <el-card shadow="never" header="累计访问">
+              <!-- <div slot="header">
+                  <span>累计访问</span>
+                </div> -->
+              <p class="count" style="color:#79C5BC">{{ totalAccessCount }}</p>
+            </el-card>
+          </el-col>
+
+          <el-col :sm="12" :md="12" :lg="12" :xl="12">
+            <el-card shadow="never" header="所选时间范围访问">
+              <p class="count" style="color:#5A708B">{{ dateRangeAccessCount }}</p>
+            </el-card>
+          </el-col>
+        </el-row>
+
+        <!-- </el-card> -->
+      </el-col>
+    </el-row>
+
+    <div id="chart-main" style="width:100%; height:650px; margin:2em 0" />
   </div>
 </template>
 
@@ -36,8 +63,8 @@ import 'echarts/theme/macarons'
 require('echarts/lib/component/tooltip')
 require('echarts/lib/component/title')
 
-import { getQCPJTimeVisitCount, getQCPJdayTimeVisitCount, getQCPJmonthTimeVisitCount } from '@/api/system'
-import { getYDHYTimeVisitCount, getYDHYdayTimeVisitCount, getYDHYmonthTimeVisitCount } from '@/api/system'
+import { getQCPJTimeVisitCount, getQCPJdayTimeVisitCount, getQCPJmonthTimeVisitCount, getQCPJallTimeVisitCount } from '@/api/system'
+import { getYDHYTimeVisitCount, getYDHYdayTimeVisitCount, getYDHYmonthTimeVisitCount, getYDHYallTimeVisitCount } from '@/api/system'
 
 export default {
   data() {
@@ -52,6 +79,7 @@ export default {
       QCPJplain: true,
       YDHYplain: true,
       selectedDate: '', // 所选日期
+      // 选择器快捷选项
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now() - 3600 * 1000 * 24
@@ -72,6 +100,9 @@ export default {
           }
         }]
       },
+
+      totalAccessCount: 0,
+      dateRangeAccessCount: 0,
 
       chartOption: {
         title: {
@@ -165,7 +196,7 @@ export default {
             }]
           }
 
-          this.chartOption.legend.data = ['分时访问']
+          this.chartOption.legend.data[0] = '分时访问'
           this.chartOption.series[0].name = '分时访问'
           break
 
@@ -209,7 +240,7 @@ export default {
           this.startPlaceholder = '开始日期'
           this.endPlaceholder = '结束日期'
 
-          this.chartOption.legend.data = ['每日访问']
+          this.chartOption.legend.data[0] = '当日访问'
           this.chartOption.series[0].name = '当日访问'
           break
 
@@ -238,8 +269,8 @@ export default {
           this.startPlaceholder = '开始月份'
           this.endPlaceholder = '结束月份'
 
-          this.chartOption.legend.data = ['每月访问']
-          this.chartOption.series[0].name = '当月访问'
+          this.chartOption.legend.data[0] = '每月访问'
+          this.chartOption.series[0].name = '每月访问'
           break
 
         default:
@@ -247,18 +278,17 @@ export default {
       }
     }
   },
-  mounted() {
-    // this.drawChart()
-  },
   methods: {
     getQCPJTimeVisitCount() {
       this.QCPJplain = false
       this.YDHYplain = true
       let param = null
+      let allTimeVisitParam = null
       if (this.selectedDate && this.selectedDate !== null) {
         switch (this.selectedRangeType) {
           case 'date':
             param = { date: this.selectedDate }
+            allTimeVisitParam = { sDate: this.selectedDate }
             getQCPJTimeVisitCount(param).then((result) => {
               this.dataHandle(result.data.data)
               this.drawChart()
@@ -269,6 +299,7 @@ export default {
 
           case 'daterange':
             param = { sDate: this.selectedDate[0], eDate: this.selectedDate[1] }
+            allTimeVisitParam = { sDate: this.selectedDate[0], eDate: this.selectedDate[1] }
             getQCPJdayTimeVisitCount(param).then((result) => {
               this.dataHandle(result.data.data)
               this.drawChart()
@@ -279,6 +310,7 @@ export default {
 
           case 'monthrange':
             param = { sDate: this.selectedDate[0] + '-01', eDate: this.selectedDate[1] + '-01' }
+            allTimeVisitParam = { sDate: this.selectedDate[0] + '-01', eDate: this.selectedDate[1] + '-01' }
             getQCPJmonthTimeVisitCount(param).then((result) => {
               this.dataHandle(result.data.data)
               this.drawChart()
@@ -290,6 +322,15 @@ export default {
           default:
             break
         }
+
+        // 给累计访问数和所选日期范围访问数赋值
+        getQCPJallTimeVisitCount(allTimeVisitParam).then((result) => {
+          const data = result.data.data
+          this.totalAccessCount = data.totalnum
+          this.dateRangeAccessCount = data.count
+        }).catch((err) => {
+          console.log(err)
+        })
       } else {
         this.$message.error('请先选择日期范围')
       }
@@ -298,10 +339,12 @@ export default {
       this.QCPJplain = true
       this.YDHYplain = false
       let param = null
+      let allTimeVisitParam = null
       if (this.selectedDate && this.selectedDate !== null) {
         switch (this.selectedRangeType) {
           case 'date':
             param = { date: this.selectedDate }
+            allTimeVisitParam = { sDate: this.selectedDate }
             getYDHYTimeVisitCount(param).then((result) => {
               this.dataHandle(result.data.data)
               this.drawChart()
@@ -311,6 +354,7 @@ export default {
             break
           case 'daterange':
             param = { sDate: this.selectedDate[0], eDate: this.selectedDate[1] }
+            allTimeVisitParam = { sDate: this.selectedDate[0], eDate: this.selectedDate[1] }
             getYDHYdayTimeVisitCount(param).then((result) => {
               this.dataHandle(result.data.data)
               this.drawChart()
@@ -320,6 +364,7 @@ export default {
             break
           case 'monthrange':
             param = { sDate: this.selectedDate[0] + '-01', eDate: this.selectedDate[1] + '-01' }
+            allTimeVisitParam = { sDate: this.selectedDate[0] + '-01', eDate: this.selectedDate[1] + '-01' }
             getYDHYmonthTimeVisitCount(param).then((result) => {
               this.dataHandle(result.data.data)
               this.drawChart()
@@ -331,11 +376,21 @@ export default {
           default:
             break
         }
+
+        // 给累计访问数和所选日期范围访问数赋值
+        getYDHYallTimeVisitCount(allTimeVisitParam).then((result) => {
+          const data = result.data.data
+          this.totalAccessCount = data.totalnum
+          this.dateRangeAccessCount = data.count
+        }).catch((err) => {
+          console.log(err)
+        })
       } else {
         this.$message.error('请先选择日期范围')
       }
     },
     drawChart() {
+      echarts.init(document.getElementById('chart-main')).dispose()
       var myChart = echarts.init(document.getElementById('chart-main'), 'macarons')
 
       myChart.setOption(this.chartOption)
@@ -350,6 +405,22 @@ export default {
       this.chartOption.xAxis[0].data = xAxisData
       this.chartOption.series[0].data = seriesData
 
+      switch (this.selectedRangeType) {
+        case 'data':
+
+          break
+        case 'datarange':
+
+          break
+        case 'monthrange':
+
+          break
+        default:
+          break
+      }
+      // this.chartOption.legend.data[0] = '每日访问'
+      // this.chartOption.series[0].name = '当日访问'
+      console.log(this.chartOption.legend.data[0], this.chartOption.series[0].name)
       // console.log(this.chartOption)
       return data
     }
@@ -358,5 +429,12 @@ export default {
 </script>
 
 <style>
-
+.count{
+  font-size: 2em;
+  font-weight: bold;
+  margin: 0
+}
+.el-card__header{
+  padding: 0.8em
+}
 </style>

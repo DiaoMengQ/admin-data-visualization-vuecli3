@@ -247,3 +247,33 @@ export function getYDHYmonthTimeVisitCount(para) {
     params: para
   })
 }
+
+/**
+ * 七彩评价获取累计访问统计及某日期区间内的访问统计
+ *
+ * @export
+ * @param {date} para 日期范围
+ * @returns
+ */
+export function getQCPJallTimeVisitCount(para) {
+  return request({
+    url: '/qcpj/log/allTimeVisitCount',
+    method: 'GET',
+    params: para
+  })
+}
+
+/**
+ * 阅读海洋获取某时间内的用户日访问统计
+ *
+ * @export
+ * @param {date} para 日期范围
+ * @returns
+ */
+export function getYDHYallTimeVisitCount(para) {
+  return request({
+    url: '/ro/log/allTimeVisitCount',
+    method: 'GET',
+    params: para
+  })
+}
