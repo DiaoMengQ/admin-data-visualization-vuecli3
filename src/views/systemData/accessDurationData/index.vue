@@ -1,8 +1,8 @@
-<!-- 每日时段访问统计 -->
+<!-- 系统访问数统计 -->
 <template>
   <div id="app-container" style="margin:20px;">
     <el-row style="text-align:center;">
-      <el-col :sm="24" :md="12" :lg="12" :xl="6">
+      <el-col :sm="24" :md="12" :lg="12" :xl="12">
         <el-radio-group v-model="selectedRangeType" style="margin:20px 20px 0 20px">
           <el-radio label="date">分时统计</el-radio>
           <el-radio label="daterange">日统计</el-radio>
@@ -29,7 +29,7 @@
         </div>
       </el-col>
 
-      <el-col :sm="24" :md="12" :lg="12" :xl="6">
+      <el-col :sm="24" :md="12" :lg="12" :xl="12">
         <!-- <el-card> -->
         <el-row :gutter="20">
           <el-col :sm="12" :md="12" :lg="12" :xl="12">
@@ -52,7 +52,7 @@
       </el-col>
     </el-row>
 
-    <div id="chart-main" style="width:100%; height:650px; margin:2em 0" />
+    <div id="chart-main" style="width:100%; height:650px; margin:3em 0" />
   </div>
 </template>
 
