@@ -37,13 +37,13 @@
               <!-- <div slot="header">
                   <span>累计访问</span>
                 </div> -->
-              <p class="count" style="color:#79C5BC">{{ totalAccessCount }}</p>
+              <p class="count" style="color:#5A708B">{{ totalAccessCount }}</p>
             </el-card>
           </el-col>
 
           <el-col :sm="12" :md="12" :lg="12" :xl="12">
             <el-card shadow="never" header="所选时间范围访问">
-              <p class="count" style="color:#5A708B">{{ dateRangeAccessCount }}</p>
+              <p class="count" style="color:#79C5BC">{{ dateRangeAccessCount }}</p>
             </el-card>
           </el-col>
         </el-row>
