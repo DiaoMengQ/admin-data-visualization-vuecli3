@@ -411,6 +411,11 @@ export default {
           trigger: 'axis',
           showContent: false
         },
+        toolbox: {
+          feature: {
+            saveAsImage: {}
+          }
+        },
         dataset: {
           source: c
         },

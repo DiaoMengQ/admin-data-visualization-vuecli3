@@ -9,6 +9,7 @@
 
 <script>
 import echarts from 'echarts'
+import 'echarts/theme/macarons'
 import YDHYClassPicker from '@/components/class/YDHYClassPicker'
 import SchoolPicker from '@/components/class/SchoolPicker'
 
@@ -67,7 +68,7 @@ export default {
       })
     },
     makePieChart() {
-      const barChart = echarts.init(this.$refs.chart)
+      const barChart = echarts.init(this.$refs.chart, 'macarons')
       // 清空echarts画布，避免图像重叠显示
       barChart.clear()
       barChart.setOption({
@@ -81,6 +82,11 @@ export default {
         tooltip: {
           trigger: 'item',
           formatter: '{a} <br/>{b}: {c} ({d}%)'
+        },
+        toolbox: {
+          feature: {
+            saveAsImage: {}
+          }
         },
         legend: {
           orient: 'vertical',

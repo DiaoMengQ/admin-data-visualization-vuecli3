@@ -85,7 +85,8 @@ export default {
             dataZoom: {},
             brush: {
               type: ['rect', 'polygon', 'clear']
-            }
+            },
+            saveAsImage: {}
           }
         },
         brush: {
@@ -235,6 +236,7 @@ export default {
       // 自动生成某一类的数据集
       for (let i = 0; i < this.taskDetail.k; i++) {
         const SeriesItem = {
+          symbolSize: 10,
           name: i, // 应与 legend.data 的其中一项一致
           type: 'scatter',
           data: Series_sum[i],

@@ -109,6 +109,11 @@ export default {
         tooltip: {
           trigger: 'item'
         },
+        toolbox: {
+          feature: {
+            saveAsImage: {}
+          }
+        },
         // 左侧小导航图标
         visualMap: [{
           show: true,

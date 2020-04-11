@@ -117,6 +117,12 @@ export default {
             }
           }
         },
+        toolbox: {
+          feature: {
+            restore: {},
+            saveAsImage: {}
+          }
+        },
         legend: {
           data: ['分时访问']
         },
@@ -405,22 +411,6 @@ export default {
       this.chartOption.xAxis[0].data = xAxisData
       this.chartOption.series[0].data = seriesData
 
-      switch (this.selectedRangeType) {
-        case 'data':
-
-          break
-        case 'datarange':
-
-          break
-        case 'monthrange':
-
-          break
-        default:
-          break
-      }
-      // this.chartOption.legend.data[0] = '每日访问'
-      // this.chartOption.series[0].name = '当日访问'
-      console.log(this.chartOption.legend.data[0], this.chartOption.series[0].name)
       // console.log(this.chartOption)
       return data
     }

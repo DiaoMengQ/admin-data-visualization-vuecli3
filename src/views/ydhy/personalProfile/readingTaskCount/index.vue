@@ -350,6 +350,11 @@ export default {
           textAlign: 'center'
         }],
         tooltip: { },
+        toolbox: {
+          feature: {
+            saveAsImage: {}
+          }
+        },
         grid: [{
           left: '5%',
           right: '50%',

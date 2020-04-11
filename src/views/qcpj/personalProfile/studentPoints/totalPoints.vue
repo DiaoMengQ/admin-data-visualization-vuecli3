@@ -433,6 +433,11 @@ export default {
               type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
             }
           },
+          toolbox: {
+            feature: {
+              saveAsImage: {}
+            }
+          },
           legend: {
             data: this.subType
           },

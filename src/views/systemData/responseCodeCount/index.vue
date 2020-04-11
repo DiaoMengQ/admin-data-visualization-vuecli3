@@ -102,6 +102,11 @@ export default {
           trigger: 'axis',
           showContent: true
         },
+        toolbox: {
+          feature: {
+            saveAsImage: {}
+          }
+        },
         dataset: {
           source: [
           ]
