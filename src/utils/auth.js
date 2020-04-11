@@ -6,7 +6,7 @@
 
 // 参考文档: https://www.npmjs.com/package/vue-cookies
 import cookies from 'vue-cookies'
-cookies.config('120h') // 配置cookie过期时间
+cookies.config('2h') // 配置cookie过期时间
 
 const TokenKey = 'user-token'
 const userIDKey = 'user-id'
