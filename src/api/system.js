@@ -299,7 +299,7 @@ export function getQCPJavgTimeVisitCount() {
  */
 export function getYDHYavgTimeVisitCount() {
   return request({
-    url: '/ydhy/log/avgTimeVisitCount',
+    url: '/ro/log/avgTimeVisitCount',
     method: 'GET'
   })
 }

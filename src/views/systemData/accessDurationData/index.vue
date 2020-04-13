@@ -169,8 +169,12 @@ export default {
             data: [],
             markLine: {
               lineStyle: {
-                type: 'solid'
-              }
+                type: 'solid',
+                width: 2
+              },
+              data: [
+                { type: 'average', name: '平均值' }
+              ]
             }
           },
           {
@@ -213,7 +217,7 @@ export default {
             }]
           }
 
-          this.chartOption.legend.data[0] = '分时访问'
+          this.chartOption.legend.data = ['分时访问', '历史平均访问']
           this.chartOption.series[0].name = '分时访问'
           break
 
@@ -257,7 +261,8 @@ export default {
           this.startPlaceholder = '开始日期'
           this.endPlaceholder = '结束日期'
 
-          this.chartOption.legend.data[0] = '当日访问'
+          this.chartOption.series[1].data = []
+          this.chartOption.legend.data = ['当日访问']
           this.chartOption.series[0].name = '当日访问'
           break
 
@@ -286,7 +291,8 @@ export default {
           this.startPlaceholder = '开始月份'
           this.endPlaceholder = '结束月份'
 
-          this.chartOption.legend.data[0] = '每月访问'
+          this.chartOption.series[1].data = []
+          this.chartOption.legend.data = ['每月访问']
           this.chartOption.series[0].name = '每月访问'
           break
 
@@ -304,26 +310,27 @@ export default {
       let y = 0
       let m = 0
       if (this.selectedDate && this.selectedDate !== null) {
-        getQCPJavgTimeVisitCount().then((result) => {
-          this.chartOption.series[1].data = []
-          const data = result.data.data
-          for (const i in data) {
-            this.chartOption.series[1].data.push(data[i].count)
-          }
-        }).catch((err) => {
-          console.log(err)
-        })
-
         switch (this.selectedRangeType) {
           case 'date':
-            param = { date: this.selectedDate }
-            allTimeVisitParam = { sDate: this.selectedDate }
-            getQCPJTimeVisitCount(param).then((result) => {
-              this.dataHandle(result.data.data)
-              this.drawChart()
+            getQCPJavgTimeVisitCount().then((result) => {
+              this.chartOption.series[1].data = []
+              const data = result.data.data
+              for (const i in data) {
+                this.chartOption.series[1].data.push(data[i].count)
+              }
+
+              param = { date: this.selectedDate }
+              allTimeVisitParam = { sDate: this.selectedDate }
+              getQCPJTimeVisitCount(param).then((result) => {
+                this.dataHandle(result.data.data)
+                this.drawChart()
+              }).catch((err) => {
+                console.log(err)
+              })
             }).catch((err) => {
               console.log(err)
             })
+
             break
 
           case 'daterange':
@@ -375,26 +382,27 @@ export default {
       let y = 0
       let m = 0
       if (this.selectedDate && this.selectedDate !== null) {
-        getYDHYavgTimeVisitCount().then((result) => {
-          this.chartOption.series[1].data = []
-          const data = result.data.data
-          for (const i in data) {
-            this.chartOption.series[1].data.push(data[i].count)
-          }
-        }).catch((err) => {
-          console.log(err)
-        })
-
         switch (this.selectedRangeType) {
           case 'date':
-            param = { date: this.selectedDate }
-            allTimeVisitParam = { sDate: this.selectedDate }
-            getYDHYTimeVisitCount(param).then((result) => {
-              this.dataHandle(result.data.data)
-              this.drawChart()
+            getYDHYavgTimeVisitCount().then((result) => {
+              this.chartOption.series[1].data = []
+              const data = result.data.data
+              for (const i in data) {
+                this.chartOption.series[1].data.push(data[i].count)
+              }
+
+              param = { date: this.selectedDate }
+              allTimeVisitParam = { sDate: this.selectedDate }
+              getYDHYTimeVisitCount(param).then((result) => {
+                this.dataHandle(result.data.data)
+                this.drawChart()
+              }).catch((err) => {
+                console.log(err)
+              })
             }).catch((err) => {
               console.log(err)
             })
+
             break
           case 'daterange':
             param = { sDate: this.selectedDate[0], eDate: this.selectedDate[1] }
