@@ -87,7 +87,8 @@ export default {
         '404': 8,
         '405': 9,
         '500': 10,
-        '501': 11
+        '501': 11,
+        '505': 12
       },
 
       QCPJplain: true,
@@ -114,33 +115,7 @@ export default {
         xAxis: { type: 'category' },
         yAxis: { gridIndex: 0 },
         grid: { top: '55%' },
-        series: [
-          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
-          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
-          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
-          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
-          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
-          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
-          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
-          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
-          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
-          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
-          { type: 'line', smooth: true, seriesLayoutBy: 'row' },
-          {
-            type: 'pie',
-            id: 'pie',
-            radius: '30%',
-            center: ['50%', '31%'],
-            label: {
-              formatter: '{b}: {@2012} ({d}%)'
-            },
-            encode: {
-              itemName: 'date',
-              value: '2012',
-              tooltip: '2012'
-            }
-          }
-        ]
+        series: []
       }
     }
   },
@@ -155,48 +130,15 @@ export default {
       if (this.selectedDate && this.selectedDate !== null) {
         this.dateList = getMiddleDateList(this.selectedDate[0], this.selectedDate[1])
 
-        this.chartOption.series[11].label.formatter = '{b}: {@' + this.dateList[0] + '} ({d}%)'
-        this.chartOption.series[11].encode.value = this.dateList[0]
-        this.chartOption.series[11].encode.tooltip = this.dateList[0]
+        const codeList = Object.keys(this.responseCodeList)
+        const len = codeList.length
+        this.chartOption.series[len].label.formatter = '{b}: {@' + this.dateList[0] + '} ({d}%)'
+        this.chartOption.series[len].encode.value = this.dateList[0]
+        this.chartOption.series[len].encode.tooltip = this.dateList[0]
 
         for (let i = 0; i < this.dateList.length; i++) {
           this.chartOption.dataset.source[0].push(this.dateList[i])
         }
-      }
-    },
-    // 获取阅读海洋响应码统计数值
-    getYDHYrespCode() {
-      this.QCPJplain = true
-      this.YDHYplain = false
-
-      const codeList = Object.keys(this.responseCodeList)
-      if (this.selectedDate && this.selectedDate !== null) {
-        // 请求每一天的统计数据
-        for (let i = 0; i < this.dateList.length; i++) {
-        //  单天数据填充0
-          for (let ci = 1; ci < codeList.length + 1; ci++) {
-            this.chartOption.dataset.source[ci].push(0)
-          }
-
-          // 请求阅读海洋响应码数据
-          YDHYresponseCodeCount({ sDate: this.dateList[i], eDate: this.dateList[i + 1] }).then((result) => {
-            const data = result.data.data
-
-            for (let di = 0; di < data.length; di++) {
-              const codePos = this.responseCodeList[parseInt(data[di].code)]
-              this.chartOption.dataset.source[codePos][i + 1] = parseInt(data[di].count)
-            }
-            this.drawChart()
-          }).catch((err) => {
-            console.log(err)
-          })
-        }
-      } else {
-        Message({
-          message: '请先选择日期范围',
-          type: 'error',
-          duration: 3 * 1000
-        })
       }
     },
     // 获取七彩评价响应码统计数值
@@ -206,28 +148,57 @@ export default {
 
       const codeList = Object.keys(this.responseCodeList)
       if (this.selectedDate && this.selectedDate !== null) {
-        // 请求每一天的统计数据
-        for (let i = 0; i < this.dateList.length; i++) {
-          // 单天数据填充0
-          for (let ci = 1; ci < codeList.length + 1; ci++) {
-            this.chartOption.dataset.source[ci].push(0)
-          }
-
-          // 请求七彩评价响应码数据
-          QCPJresponseCodeCount({ sDate: this.dateList[i], eDate: this.dateList[i + 1] }).then((result) => {
-            const data = result.data.data
-
-            for (let di = 0; di < data.length; di++) {
-              const codePos = this.responseCodeList[parseInt(data[di].code)]
-              this.chartOption.dataset.source[codePos][i + 1] = parseInt(data[di].count)
+        QCPJresponseCodeCount({ sDate: this.dateList[0], eDate: this.dateList[this.dateList.length - 1] }).then((result) => {
+          const data = result.data.data
+          // console.log(data)
+          for (let i = 0; i < data.length; i++) {
+            // 单天数据的每一个响应码数量填充0
+            for (let ci = 1; ci < codeList.length + 1; ci++) {
+              this.chartOption.dataset.source[ci].push(0)
             }
-            // 注意:这里的网络请都是异步操作
-            // 画图操作放到外层,数据只有空数据;放里层绘制多次浪费资源(待修复)
-            this.drawChart()
-          }).catch((err) => {
-            console.log(err)
-          })
-        }
+
+            for (let di = 0; di < data[i].list.length; di++) {
+              // console.log('响应码', parseInt(data[i].list[di].code))
+              const codePos = this.responseCodeList[parseInt(data[i].list[di].code)] // 响应码在响应码表中的定位
+              this.chartOption.dataset.source[codePos][i + 1] = parseInt(data[i].list[di].count)
+            }
+          }
+          // console.log(this.chartOption.dataset.source)
+          this.drawChart()
+        })
+      } else {
+        Message({
+          message: '请先选择日期范围',
+          type: 'error',
+          duration: 3 * 1000
+        })
+      }
+    },
+    // 获取阅读海洋响应码统计数值
+    getYDHYrespCode() {
+      this.QCPJplain = true
+      this.YDHYplain = false
+
+      const codeList = Object.keys(this.responseCodeList)
+      if (this.selectedDate && this.selectedDate !== null) {
+        YDHYresponseCodeCount({ sDate: this.dateList[0], eDate: this.dateList[this.dateList.length - 1] }).then((result) => {
+          const data = result.data.data
+          // console.log(data)
+          for (let i = 0; i < data.length; i++) {
+            // console.log(data[i])
+            // 单天数据的每一个响应码数量填充0
+            for (let ci = 1; ci < codeList.length + 1; ci++) {
+              this.chartOption.dataset.source[ci].push(0)
+            }
+            for (let di = 0; di < data[i].list.length; di++) {
+              // console.log('响应码', parseInt(data[i].list[di].code))
+              const codePos = this.responseCodeList[parseInt(data[i].list[di].code)] // 响应码在响应码表中的定位
+              this.chartOption.dataset.source[codePos][i + 1] = parseInt(data[i].list[di].count)
+            }
+          }
+          // console.log(this.chartOption.dataset.source)
+          this.drawChart()
+        })
       } else {
         Message({
           message: '请先选择日期范围',
@@ -237,6 +208,7 @@ export default {
       }
     },
     drawChart() {
+      echarts.init(document.getElementById('chart-main')).dispose()
       var myChart = echarts.init(document.getElementById('chart-main'), 'macarons')
 
       myChart.on('updateAxisPointer', function(event) {
@@ -257,6 +229,7 @@ export default {
           })
         }
       })
+      // console.log(this.chartOption)
       myChart.setOption(this.chartOption)
     },
     // 初始化数据
@@ -264,10 +237,26 @@ export default {
       const codeList = Object.keys(this.responseCodeList)
       this.chartOption.dataset.source = []
       this.chartOption.dataset.source.push(['date'])
+      this.chartOption.series = []
       for (let i = 0; i < codeList.length; i++) {
         this.chartOption.dataset.source.push([codeList[i]])
+        this.chartOption.series.push({ symbolSize: 5, type: 'line', smooth: true, seriesLayoutBy: 'row' })
       }
-    //   console.log(this.chartOption.dataset.source)
+      this.chartOption.series.push({
+        type: 'pie',
+        id: 'pie',
+        radius: '30%',
+        center: ['50%', '31%'],
+        label: {
+          formatter: '{b}: {@2012} ({d}%)'
+        },
+        encode: {
+          itemName: 'date',
+          value: '2012',
+          tooltip: '2012'
+        }
+      })
+      // console.log('初始化数据', this.chartOption)
     }
   }
 }
