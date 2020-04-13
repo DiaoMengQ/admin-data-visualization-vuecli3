@@ -415,7 +415,7 @@ export default {
       })
         .then(res => {
           if (res.data.data[0] == null) {
-            alert('此学生暂无数据')
+            this.$message.error('此学生暂无数据')
           } else {
             // console.log(res.data.data)
             // console.log(this.stunum)
