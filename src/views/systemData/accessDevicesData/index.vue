@@ -71,7 +71,7 @@ export default {
           }
         }]
       },
-      selectedDate: [],
+      selectedDate: null,
 
       QCPJplain: true,
       YDHYplain: true,
@@ -129,7 +129,7 @@ export default {
       this.QCPJplain = true
       this.YDHYplain = false
 
-      if (this.selectedDate.length === 0 || this.selectedDate.length === null) {
+      if (!this.selectedDate) {
         YDHYequipmentCount().then((result) => {
           this.dataHandle(result.data.data)
           this.drawChinaMap()
@@ -149,7 +149,7 @@ export default {
     getQCPJdevicesData() {
       this.QCPJplain = false
       this.YDHYplain = true
-      if (this.selectedDate.length === 0 || this.selectedDate.length === null) {
+      if (!this.selectedDate) {
         QCPJequipmentCount().then((result) => {
           this.dataHandle(result.data.data)
           this.drawChinaMap()
@@ -166,6 +166,7 @@ export default {
       }
     },
     drawChinaMap() {
+      echarts.init(document.getElementById('chart-main')).dispose()
       var myChart = echarts.init(document.getElementById('chart-main'), 'macarons')
 
       myChart.setOption(this.chartOption)
