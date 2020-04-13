@@ -72,6 +72,16 @@
     </el-form>
 
     <div v-if="ifShowChart" id="chart-main" ref="chart" :style="[{ 'height': chartHeight + 'px' },{'width':'100%'}]" />
+
+    <el-pagination
+      v-if="ifShowChart"
+      style="text-align: center;"
+      :current-page.sync="pageInf.cur_page"
+      :page-size="pageInf.offset"
+      layout="prev, pager, next, jumper"
+      :total="pageInf.totle"
+      @current-change="handleCurrentChange"
+    />
   </div>
 </template>
 
@@ -91,8 +101,8 @@ export default {
   components: { AuthJudge, ClassPicker, SchoolPicker },
   data() {
     return {
-      chartHeight: 600,
-
+      chartHeight: 1200,
+      clusterChart: null,
       chartData: [
         [
           [10.0, 8.04],
@@ -147,38 +157,7 @@ export default {
           [8.0, 6.89]
         ]
       ],
-
-      option: {
-        title: {
-          text: 'Anscombe\'s quartet',
-          left: 'center',
-          top: 0
-        },
-        grid: [
-          { x: '7%', y: '7%', width: '38%', height: '38%' }
-        ],
-        tooltip: {
-          formatter: 'Group {a}: ({c})'
-        },
-        xAxis: [
-          { gridIndex: 0, name: '1', nameGap: 25, nameLocation: 'middle' }
-        ],
-        yAxis: [
-          { gridIndex: 0 }
-        ],
-        series: [
-          {
-            name: 'I',
-            type: 'scatter',
-            xAxisIndex: 0,
-            yAxisIndex: 0,
-            // data: this.chartData[0],
-            data: null,
-            // markLine: markLineOpt
-            markLine: null
-          }
-        ]
-      },
+      stuNameList: [],
 
       areaCode: null,
       schoolId: null,
@@ -188,11 +167,11 @@ export default {
       subjectLabel: null,
       subjectList: [],
 
-      ifShowChart: true, // 是否显示图表
+      ifShowChart: false, // 是否显示图表
 
       modelScore: 0,
       modelScoreStep: 0.1,
-      coef: [0, 180],
+      coef: [-180, 180],
       coefRange: [-180, 180],
       coefStep: 10,
 
@@ -201,117 +180,204 @@ export default {
         { weekId: '1-9', weekLabel: '上半学期' },
         { weekId: '10-18', weekLabel: '下半学期' },
         { weekId: '1-18', weekLabel: '全学年' }
-      ]
+      ],
+
+      // 分页信息
+      pageInf: {
+        totle: 0,
+        cur_page: 1,
+        offset: 9
+      }
     }
   },
   methods: {
+    handleCurrentChange(val) {
+      // console.log(`当前页: ${val}`)
+      this.getPageIndex(this.pageInf.cur_page, this.pageInf.offset, this.chartData.length)
+    },
+
     // 获取QCPJ学校科目线性回归相关数据
     getQcpjEvaStat() {
-    //   const para = {
-    //     schoolId: this.schoolId,
-    //     gradeId: this.gradeId,
-    //     startCoef: this.coef[0], // 斜率范围
-    //     endCoef: this.coef[1], // 斜率范围
-    //     modelScore: this.modelScore, // 线性回归模型的拟合度得分
-    //     subject: this.subjectLabel, // 科目
-    //     weekRange: this.weekRange // 可选周数: 1-9/9-18/1-18
-    //   }
+      this.ifShowChart = true
+      // const para = {
+      //   schoolId: this.schoolId,
+      //   gradeId: this.gradeId,
+      //   startCoef: this.coef[0], // 斜率范围
+      //   endCoef: this.coef[1], // 斜率范围
+      //   modelScore: this.modelScore, // 线性回归模型的拟合度得分
+      //   subject: this.subjectLabel, // 科目
+      //   weekRange: this.weekRange // 可选周数: 1-9/9-18/1-18
+      // }
+      // console.log(para)
 
       // 测试数据
       const para = {
         schoolId: 1100002,
-        gradeId: 4,
+        gradeId: 2,
         startCoef: this.coef[0], // 斜率范围
         endCoef: this.coef[1], // 斜率范围
         modelScore: this.modelScore, // 线性回归模型的拟合度得分
-        subject: '数学', // 科目
-        weekRange: this.weekRange // 可选周数: 1-9/9-18/1-18
+        subject: '数学',
+        weekRange: '1-18',
+        classId: 'bd3f7adf-3386-40f6-b2ca-bf60487bf6cb'
       }
-
-      if (this.classId === null || this.classId === '') {
-        schoolSubLinearRegress(para).then((result) => {
-        //   console.log('线性回归返回数据', result.data.data)
-        //   this.dataProcess(result.data.data)
-          this.drawChart()
-        }).catch((err) => {
-          console.log(err)
-        })
-      } else {
-        para.classId = this.classId
-        classSubLinearRegress(para).then((result) => {
-          // console.log('线性回归返回数据', result.data.data)
-          this.dataProcess(result.data.data)
-          this.drawChart()
-        }).catch((err) => {
-          console.log(err)
-        })
-      }
-    },
-
-    // 绘制图形
-    drawChart() {
-      this.ifShowChart = true
-      // 基于准备好的dom，初始化echarts实例
-      var clusterChart = echarts.init(document.getElementById('chart-main'), 'macarons')
-
-      this.chartOptionAssignment()
-
-      // 绘制图表
-      if (this.option && typeof this.option === 'object') {
-        console.log(this.option)
-        clusterChart.setOption(this.option, true)
-      }
-    },
-
-    // chart配置项处理
-    chartOptionAssignment() {
-      // See https://github.com/ecomfe/echarts-stat
-      const myRegression = ecStat.regression('linear', this.chartData[0])
-      myRegression.points.sort(function(a, b) {
-        return a[0] - b[0]
+      classSubLinearRegress(para).then((result) => {
+        this.dataProcess(result.data.data)
+        this.clusterChart = echarts.init(document.getElementById('chart-main'), 'macarons')
+        this.getPageIndex(this.pageInf.cur_page, this.pageInf.offset, this.chartData.length)
       })
 
-      const markLineOpt = {
-        animation: true,
-        label: {
-          formatter: myRegression.expression,
-          align: 'right'
-        },
-        lineStyle: {
-          type: 'solid'
-        },
-        tooltip: {
-          formatter: myRegression.expression
-        },
-        data: [
-          [{
-            coord: myRegression.points[0],
-            symbol: 'none'
-          },
-          {
-            coord: myRegression.points[myRegression.points.length - 1],
-            symbol: 'none'
-          }]
-        ]
-      }
-
-      this.option.series[0].data = this.chartData[0]
-
-      this.option.series[0].markLine = markLineOpt
+      // if (this.classId === null || this.classId === '') {
+      //   schoolSubLinearRegress(para).then((result) => {
+      //     // console.log('线性回归返回数据', result.data.data)
+      //     this.dataProcess(result.data.data)
+      //     this.clusterChart = echarts.init(document.getElementById('chart-main'), 'macarons')
+      //     this.getPageIndex(this.pageInf.cur_page, this.pageInf.offset, this.chartData.length)
+      //   }).catch((err) => {
+      //     console.log(err)
+      //   })
+      // } else {
+      //   para.classId = this.classId
+      //   classSubLinearRegress(para).then((result) => {
+      //   // console.log('线性回归返回数据', result.data.data)
+      //     this.dataProcess(result.data.data)
+      //     this.clusterChart = echarts.init(document.getElementById('chart-main'), 'macarons')
+      //     this.getPageIndex(this.pageInf.cur_page, this.pageInf.offset, this.chartData.length)
+      //   }).catch((err) => {
+      //     console.log(err)
+      //   })
+      // }
     },
 
     // 数据处理
     dataProcess(data) {
-      console.log('处理前数据', data)
-      const scoreList = []
+      // console.log('处理前数据', data)
+      this.pageInf.totle = data.length
+      this.chartData = []
+      this.stuNameList = []
       for (let i = 0; i < data.length; i++) {
         const score = JSON.parse(data[i].score)
+        const scoreList = []
+        this.stuNameList.push(data[i].studentName)
         for (let j = 0; j < score.length; j++) {
           scoreList.push([score[j].week, score[j].score])
         }
+        this.chartData.push(scoreList)
       }
-      // console.log('处理后', scoreList)
-      this.chartData = scoreList
+      // console.log('处理后', this.chartData)
+    },
+
+    getPageIndex(page, offset, total) {
+      if (page < 1) {
+        return 1
+      }
+      var max_page = Math.ceil(total / offset)
+      if (page <= max_page) {
+        var start_idx = (page - 1) * offset
+        // 如果超出最大学生数
+        if (start_idx + offset < total) {
+          this.drawLines(start_idx, offset)
+          return page
+        } else {
+          this.drawLines(start_idx, offset - (page * offset - total))
+          return max_page
+        }
+      } else {
+        return max_page
+      }
+    },
+
+    drawLines(idx, offset) {
+      var c_axis = []
+      var titles = []
+      var c_grid = []
+      var c_series = []
+      var grid = [
+        { x: '2%', y: '5%', width: '28%', height: '25%' },
+        { x: '35%', y: '5%', width: '28%', height: '25%' },
+        { x: '68%', y: '5%', width: '28%', height: '25%' },
+        { x: '2%', y: '38%', width: '28%', height: '25%' },
+        { x: '35%', y: '38%', width: '28%', height: '25%' },
+        { x: '68%', y: '38%', width: '28%', height: '25%' },
+        { x: '2%', y: '71%', width: '28%', height: '25%' },
+        { x: '35%', y: '71%', width: '28%', height: '25%' },
+        { x: '68%', y: '71%', width: '28%', height: '25%' }
+      ]
+
+      var title_grid = [
+        [16, 5],
+        [49, 5],
+        [82, 5],
+        [16, 38],
+        [49, 38],
+        [82, 38],
+        [16, 71],
+        [49, 71],
+        [82, 71]
+      ]
+
+      for (var i = 0; i < offset; i++) {
+        c_axis.push({ gridIndex: i })
+        c_grid.push(grid[i])
+        var myRegression = ecStat.regression('linear', this.chartData[idx + i])
+        var series_unit = {
+          type: 'scatter',
+          symbolSize: 10,
+          xAxisIndex: i,
+          yAxisIndex: i,
+          data: this.chartData[idx + i]
+        }
+        var linear_series_unit = {
+          name: 'line',
+          type: 'line',
+          xAxisIndex: i,
+          yAxisIndex: i,
+          showSymbol: false,
+          data: myRegression.points,
+          markPoint: {
+            itemStyle: {
+              color: 'transparent'
+            },
+            label: {
+              show: true,
+              position: 'left',
+              formatter: myRegression.expression,
+              color: '#333',
+              fontSize: 14
+            },
+            data: [
+              {
+                coord: myRegression.points[myRegression.points.length - 1]
+              }
+            ]
+          }
+        }
+
+        c_series.push(series_unit, linear_series_unit)
+        titles.push({
+          textAlign: 'center',
+          text: this.stuNameList[idx + i],
+          textStyle: {
+            fontSize: 13,
+            fontWeight: 'normal'
+          },
+          left: title_grid[i][0] + '%',
+          top: title_grid[i][1] + '%'
+        })
+      }
+
+      const option = {
+        title: titles,
+        grid: c_grid,
+        tooltip: {
+          formatter: 'Group {a}: ({c})'
+        },
+        xAxis: c_axis,
+        yAxis: c_axis,
+        series: c_series
+      }
+      this.clusterChart.clear()
+      this.clusterChart.setOption(option)
     },
 
     // 获取子组件传入的学校

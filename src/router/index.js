@@ -72,7 +72,7 @@ export const constantRoutes = [
     path: '/qcpj',
     component: Layout,
     meta: { title: '七彩评价', icon: 'qcpj' },
-    redirect: '/qcpj/teaEvaAvg',
+    redirect: '/qcpj/groupProfile/studentsLinear',
     children: [
       {
         path: 'groupProfile',
@@ -87,17 +87,16 @@ export const constantRoutes = [
             meta: { title: '班级评价积分平均值' }
           },
           {
-            path: 'linearRegression',
-            component: () => import('@/views/qcpj/groupProfile/LinearRegression'), // Parent router-view
-            name: 'LinearRegression',
-            meta: { title: '评价积分趋势' }
-          },
-          {
             path: 'studentsLinear',
             component: () => import('@/views/qcpj/groupProfile/LinearRegression/studentsLiner'), // Parent router-view
             name: 'studentsLinear',
-            meta: { title: '班级线性回归' },
-            hidden: true
+            meta: { title: '评价积分趋势' }
+          },
+          {
+            path: 'linearRegression',
+            component: () => import('@/views/qcpj/groupProfile/LinearRegression'), // Parent router-view
+            name: 'LinearRegression',
+            meta: { title: 'backup' }
           }
         ]
       },
