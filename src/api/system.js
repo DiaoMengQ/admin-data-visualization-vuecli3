@@ -277,3 +277,29 @@ export function getYDHYallTimeVisitCount(para) {
     params: para
   })
 }
+
+/**
+ * 七彩评价获取分时访问累计平均值
+ *
+ * @export
+ * @returns
+ */
+export function getQCPJavgTimeVisitCount() {
+  return request({
+    url: '/qcpj/log/avgTimeVisitCount',
+    method: 'GET'
+  })
+}
+
+/**
+ * 阅读海洋获取分时访问累计平均值
+ *
+ * @export
+ * @returns
+ */
+export function getYDHYavgTimeVisitCount() {
+  return request({
+    url: '/ydhy/log/avgTimeVisitCount',
+    method: 'GET'
+  })
+}

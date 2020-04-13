@@ -63,8 +63,8 @@ import 'echarts/theme/macarons'
 require('echarts/lib/component/tooltip')
 require('echarts/lib/component/title')
 
-import { getQCPJTimeVisitCount, getQCPJdayTimeVisitCount, getQCPJmonthTimeVisitCount, getQCPJallTimeVisitCount } from '@/api/system'
-import { getYDHYTimeVisitCount, getYDHYdayTimeVisitCount, getYDHYmonthTimeVisitCount, getYDHYallTimeVisitCount } from '@/api/system'
+import { getQCPJTimeVisitCount, getQCPJdayTimeVisitCount, getQCPJmonthTimeVisitCount, getQCPJallTimeVisitCount, getQCPJavgTimeVisitCount } from '@/api/system'
+import { getYDHYTimeVisitCount, getYDHYdayTimeVisitCount, getYDHYmonthTimeVisitCount, getYDHYallTimeVisitCount, getYDHYavgTimeVisitCount } from '@/api/system'
 import { getMonthLast } from '@/utils/index'
 
 export default {
@@ -125,9 +125,8 @@ export default {
           }
         },
         legend: {
-          data: ['分时访问']
+          data: ['分时访问', '历史平均访问']
         },
-
         grid: {
           left: '3%',
           right: '4%',
@@ -167,7 +166,18 @@ export default {
             smooth: false, // 设置曲线是否平滑
             stack: '总量',
             areaStyle: {},
-            data: [120, 132, 101, 134, 90, 230, 210]
+            data: [],
+            markLine: {
+              lineStyle: {
+                type: 'solid'
+              }
+            }
+          },
+          {
+            name: '历史平均访问',
+            type: 'line',
+            smooth: false,
+            data: []
           }
         ]
       }
@@ -286,7 +296,6 @@ export default {
     }
   },
   methods: {
-
     getQCPJTimeVisitCount() {
       this.QCPJplain = false
       this.YDHYplain = true
@@ -295,6 +304,16 @@ export default {
       let y = 0
       let m = 0
       if (this.selectedDate && this.selectedDate !== null) {
+        getQCPJavgTimeVisitCount().then((result) => {
+          this.chartOption.series[1].data = []
+          const data = result.data.data
+          for (const i in data) {
+            this.chartOption.series[1].data.push(data[i].count)
+          }
+        }).catch((err) => {
+          console.log(err)
+        })
+
         switch (this.selectedRangeType) {
           case 'date':
             param = { date: this.selectedDate }
@@ -356,6 +375,16 @@ export default {
       let y = 0
       let m = 0
       if (this.selectedDate && this.selectedDate !== null) {
+        getYDHYavgTimeVisitCount().then((result) => {
+          this.chartOption.series[1].data = []
+          const data = result.data.data
+          for (const i in data) {
+            this.chartOption.series[1].data.push(data[i].count)
+          }
+        }).catch((err) => {
+          console.log(err)
+        })
+
         switch (this.selectedRangeType) {
           case 'date':
             param = { date: this.selectedDate }
