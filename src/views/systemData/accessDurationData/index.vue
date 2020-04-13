@@ -65,6 +65,7 @@ require('echarts/lib/component/title')
 
 import { getQCPJTimeVisitCount, getQCPJdayTimeVisitCount, getQCPJmonthTimeVisitCount, getQCPJallTimeVisitCount } from '@/api/system'
 import { getYDHYTimeVisitCount, getYDHYdayTimeVisitCount, getYDHYmonthTimeVisitCount, getYDHYallTimeVisitCount } from '@/api/system'
+import { getMonthLast } from '@/utils/index'
 
 export default {
   data() {
@@ -285,11 +286,14 @@ export default {
     }
   },
   methods: {
+
     getQCPJTimeVisitCount() {
       this.QCPJplain = false
       this.YDHYplain = true
       let param = null
       let allTimeVisitParam = null
+      let y = 0
+      let m = 0
       if (this.selectedDate && this.selectedDate !== null) {
         switch (this.selectedRangeType) {
           case 'date':
@@ -315,8 +319,11 @@ export default {
             break
 
           case 'monthrange':
-            param = { sDate: this.selectedDate[0] + '-01', eDate: this.selectedDate[1] + '-01' }
-            allTimeVisitParam = { sDate: this.selectedDate[0] + '-01', eDate: this.selectedDate[1] + '-01' }
+            y = parseInt(this.selectedDate[1].slice(0, 4))
+            m = parseInt(this.selectedDate[1].slice(5, 7))
+
+            param = { sDate: this.selectedDate[0] + '-01', eDate: this.selectedDate[1] + '-' + getMonthLast(y, m) }
+            allTimeVisitParam = { sDate: this.selectedDate[0] + '-01', eDate: this.selectedDate[1] + '-' + getMonthLast(y, m) }
             getQCPJmonthTimeVisitCount(param).then((result) => {
               this.dataHandle(result.data.data)
               this.drawChart()
@@ -346,6 +353,8 @@ export default {
       this.YDHYplain = false
       let param = null
       let allTimeVisitParam = null
+      let y = 0
+      let m = 0
       if (this.selectedDate && this.selectedDate !== null) {
         switch (this.selectedRangeType) {
           case 'date':
@@ -369,8 +378,11 @@ export default {
             })
             break
           case 'monthrange':
-            param = { sDate: this.selectedDate[0] + '-01', eDate: this.selectedDate[1] + '-01' }
-            allTimeVisitParam = { sDate: this.selectedDate[0] + '-01', eDate: this.selectedDate[1] + '-01' }
+            y = parseInt(this.selectedDate[1].slice(0, 4))
+            m = parseInt(this.selectedDate[1].slice(5, 7))
+
+            param = { sDate: this.selectedDate[0] + '-01', eDate: this.selectedDate[1] + '-' + getMonthLast(y, m) }
+            allTimeVisitParam = { sDate: this.selectedDate[0] + '-01', eDate: this.selectedDate[1] + '-' + getMonthLast(y, m) }
             getYDHYmonthTimeVisitCount(param).then((result) => {
               this.dataHandle(result.data.data)
               this.drawChart()

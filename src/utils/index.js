@@ -5,6 +5,20 @@
  */
 
 /**
+ * 获取某月的最后一天
+ *
+ * @export
+ * @param {int} year
+ * @param {int} month
+ * @returns 月份的最后一天
+ */
+export function getMonthLast(year, month) {
+  const nextMonthFirstDay = new Date(year, month, 1)
+  const oneDay = 1000 * 60 * 60 * 24
+  return new Date(nextMonthFirstDay - oneDay).getDate()
+}
+
+/**
  * 课程JSON数据转对象
  *
  * @export
@@ -14,8 +28,6 @@ export function json2Obj(SubjectsJson) {
   const subjects = []
   // 创建JSON数组
   for (var key in SubjectsJson) {
-    // console.log(key)
-    // console.log(SubjectsJson[key])
     var tempSubj = {}
     tempSubj['subjectId'] = SubjectsJson[key]
     tempSubj['subjectLabel'] = key
