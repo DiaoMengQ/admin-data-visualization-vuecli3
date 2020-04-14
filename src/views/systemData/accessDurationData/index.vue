@@ -312,6 +312,7 @@ export default {
       if (this.selectedDate && this.selectedDate !== null) {
         switch (this.selectedRangeType) {
           case 'date':
+            allTimeVisitParam = { sDate: this.selectedDate }
             getQCPJavgTimeVisitCount().then((result) => {
               this.chartOption.series[1].data = []
               const data = result.data.data
@@ -320,7 +321,6 @@ export default {
               }
 
               param = { date: this.selectedDate }
-              allTimeVisitParam = { sDate: this.selectedDate }
               getQCPJTimeVisitCount(param).then((result) => {
                 this.dataHandle(result.data.data)
                 this.drawChart()
@@ -384,6 +384,7 @@ export default {
       if (this.selectedDate && this.selectedDate !== null) {
         switch (this.selectedRangeType) {
           case 'date':
+            allTimeVisitParam = { sDate: this.selectedDate }
             getYDHYavgTimeVisitCount().then((result) => {
               this.chartOption.series[1].data = []
               const data = result.data.data
@@ -392,7 +393,6 @@ export default {
               }
 
               param = { date: this.selectedDate }
-              allTimeVisitParam = { sDate: this.selectedDate }
               getYDHYTimeVisitCount(param).then((result) => {
                 this.dataHandle(result.data.data)
                 this.drawChart()
