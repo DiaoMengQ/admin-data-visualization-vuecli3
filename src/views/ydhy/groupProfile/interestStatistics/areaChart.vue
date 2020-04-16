@@ -19,6 +19,7 @@
 
 <script>
 import echarts from 'echarts'
+import 'echarts/theme/macarons'
 import SchoolPicker from '@/components/class/SchoolPicker'
 import YDHYClassPicker from '@/components/class/YDHYClassPicker'
 import BookTypePicker from '@/components/class/BookTypePicker'
@@ -69,7 +70,7 @@ export default {
       })
     },
     makeLineChart() {
-      const barChart = echarts.init(this.$refs.chart)
+      const barChart = echarts.init(this.$refs.chart, 'macarons')
       // 清空echarts画布，避免图像重叠显示
       barChart.clear()
       barChart.setOption({
@@ -105,7 +106,17 @@ export default {
           trigger: 'item',
           formatter: '{b}: 平均{c}'
         },
+        toolbox: {
+          feature: {
+            dataZoom: {
+              yAxisIndex: 'none'
+            },
+            restore: {},
+            saveAsImage: {}
+          }
+        },
         series: [{
+          symbolSize: 10,
           data: this.historyAvg,
           type: 'line',
           lineStyle: {

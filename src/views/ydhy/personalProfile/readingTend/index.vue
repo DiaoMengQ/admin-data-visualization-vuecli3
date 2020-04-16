@@ -360,7 +360,7 @@ export default {
         .then(res => {
           console.log(res.data.data)
           if (res.data.data[0] == null) {
-            alert('该科目本学期没有成绩')
+            this.$message.error('该科目本学期没有成绩')
           } else {
             this.historyScore = res.data.data[0].historyScore
             this.scrore = res.data.data[0].nearSevInter
@@ -397,6 +397,15 @@ export default {
           trigger: 'axis',
           axisPointer: {
             type: 'cross'
+          }
+        },
+        toolbox: {
+          feature: {
+            dataZoom: {
+              yAxisIndex: 'none'
+            },
+            restore: {},
+            saveAsImage: {}
           }
         },
         xAxis: {

@@ -1,3 +1,4 @@
+<!-- 系统访问设备统计 -->
 <template>
   <div id="app-container">
     <div style="margin:20px;text-align: center;">
@@ -38,12 +39,16 @@ export default {
   data() {
     return {
       pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now() - 3600 * 1000 * 24
+        },
         shortcuts: [{
           text: '最近一周',
           onClick(picker) {
             const end = new Date()
             const start = new Date()
             start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+            end.setTime(end.getTime() - 3600 * 1000 * 24 * 1)
             picker.$emit('pick', [start, end])
           }
         }, {
@@ -52,6 +57,7 @@ export default {
             const end = new Date()
             const start = new Date()
             start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+            end.setTime(end.getTime() - 3600 * 1000 * 24 * 1)
             picker.$emit('pick', [start, end])
           }
         }, {
@@ -60,11 +66,12 @@ export default {
             const end = new Date()
             const start = new Date()
             start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+            end.setTime(end.getTime() - 3600 * 1000 * 24 * 1)
             picker.$emit('pick', [start, end])
           }
         }]
       },
-      selectedDate: [],
+      selectedDate: null,
 
       QCPJplain: true,
       YDHYplain: true,
@@ -77,6 +84,11 @@ export default {
         tooltip: {
           trigger: 'item',
           formatter: '{a} <br/>{b} : {c} ({d}%)'
+        },
+        toolbox: {
+          feature: {
+            saveAsImage: {}
+          }
         },
         legend: {
           type: 'scroll',
@@ -117,7 +129,7 @@ export default {
       this.QCPJplain = true
       this.YDHYplain = false
 
-      if (this.selectedDate.length === 0 || this.selectedDate.length === null) {
+      if (!this.selectedDate) {
         YDHYequipmentCount().then((result) => {
           this.dataHandle(result.data.data)
           this.drawChinaMap()
@@ -137,7 +149,7 @@ export default {
     getQCPJdevicesData() {
       this.QCPJplain = false
       this.YDHYplain = true
-      if (this.selectedDate.length === 0 || this.selectedDate.length === null) {
+      if (!this.selectedDate) {
         QCPJequipmentCount().then((result) => {
           this.dataHandle(result.data.data)
           this.drawChinaMap()
@@ -154,6 +166,7 @@ export default {
       }
     },
     drawChinaMap() {
+      echarts.init(document.getElementById('chart-main')).dispose()
       var myChart = echarts.init(document.getElementById('chart-main'), 'macarons')
 
       myChart.setOption(this.chartOption)

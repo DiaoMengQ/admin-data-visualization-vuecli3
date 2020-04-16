@@ -63,6 +63,7 @@
 
 <script>
 import echarts from 'echarts'
+import 'echarts/theme/macarons'
 import ClassPicker from '@/components/class/ClassPicker'
 import { getClassTeaEvaAvg } from '@/api/qcpj'
 import { provinceList } from '@/utils/multiple'
@@ -228,7 +229,7 @@ export default {
       })
     },
     makeBarChart() {
-      const barChart = echarts.init(this.$refs.chart)
+      const barChart = echarts.init(this.$refs.chart, 'macarons')
       // 清空echarts画布，避免图像重叠显示
       barChart.clear()
       barChart.setOption({
@@ -238,6 +239,15 @@ export default {
           right: '4%',
           bottom: '3%',
           containLabel: true
+        },
+        toolbox: {
+          feature: {
+            dataZoom: {
+              yAxisIndex: 'none'
+            },
+            restore: {},
+            saveAsImage: {}
+          }
         },
         xAxis: {
           data: this.labels,

@@ -72,7 +72,7 @@ export const constantRoutes = [
     path: '/qcpj',
     component: Layout,
     meta: { title: '七彩评价', icon: 'qcpj' },
-    redirect: '/qcpj/teaEvaAvg',
+    redirect: '/qcpj/groupProfile/studentsLinear',
     children: [
       {
         path: 'groupProfile',
@@ -87,17 +87,16 @@ export const constantRoutes = [
             meta: { title: '班级评价积分平均值' }
           },
           {
-            path: 'linearRegression',
-            component: () => import('@/views/qcpj/groupProfile/LinearRegression'), // Parent router-view
-            name: 'LinearRegression',
-            meta: { title: '评价积分线性回归分析' }
-          },
-          {
             path: 'studentsLinear',
             component: () => import('@/views/qcpj/groupProfile/LinearRegression/studentsLiner'), // Parent router-view
             name: 'studentsLinear',
-            meta: { title: '班级线性回归' },
-            hidden: true
+            meta: { title: '评价积分趋势' }
+          },
+          {
+            path: 'linearRegression',
+            component: () => import('@/views/qcpj/groupProfile/LinearRegression'), // Parent router-view
+            name: 'LinearRegression',
+            meta: { title: 'backup' }
           }
         ]
       },
@@ -239,16 +238,16 @@ export const constantRoutes = [
     meta: { title: '系统相关数据', icon: 'histogram' },
     children: [
       {
-        path: 'accessDevicesData',
-        name: 'AccessDevicesData',
-        component: () => import('@/views/systemData/accessDevicesData/index'),
-        meta: { title: '系统访问设备统计', icon: 'devices' }
-      },
-      {
         path: 'accessAreaData',
         name: 'AccessAreaData',
         component: () => import('@/views/systemData/accessAreaData'),
         meta: { title: '用户访问区域统计', icon: 'international' }
+      },
+      {
+        path: 'accessDevicesData',
+        name: 'AccessDevicesData',
+        component: () => import('@/views/systemData/accessDevicesData/index'),
+        meta: { title: '系统访问设备统计', icon: 'devices' }
       },
       {
         path: 'responseCodeCount',
@@ -260,7 +259,7 @@ export const constantRoutes = [
         path: 'accessDurationData',
         name: 'accessDurationData',
         component: () => import('@/views/systemData/accessDurationData'),
-        meta: { title: '每日时段访问统计', icon: 'time' }
+        meta: { title: '系统访问数统计', icon: 'time' }
       }
     ]
   },

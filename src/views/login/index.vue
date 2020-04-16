@@ -1,5 +1,7 @@
 <template>
   <div class="login-container">
+    <!-- https://github.com/ZYSzys/vue-canvas-nest -->
+    <vue-canvas-nest :config="{color:'0,112,255', count: 50}" style="z-index:1" />
     <el-form
       ref="loginForm"
       :model="loginForm"
@@ -59,9 +61,11 @@
 
 <script>
 import { validUsername } from '@/utils/multiple'
+import vueCanvasNest from 'vue-canvas-nest'
 
 export default {
   name: 'Login',
+  components: { vueCanvasNest },
   data() {
     // 判断用户名是否有效
     const validateUsername = (rule, value, callback) => {

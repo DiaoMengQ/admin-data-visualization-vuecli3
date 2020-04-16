@@ -1,3 +1,4 @@
+<!-- 用户访问区域统计 -->
 <template>
 
   <div id="app-container">
@@ -68,6 +69,7 @@ require('echarts/lib/component/title')
 require('echarts/lib/component/tooltip')
 
 import { QCPJcityDistribution, QCPJprovDistribution, YDHYcityDistribution, YDHYprovDistribution } from '@/api/system'
+import { Message } from 'element-ui'
 
 export default {
   data() {
@@ -106,6 +108,11 @@ export default {
         },
         tooltip: {
           trigger: 'item'
+        },
+        toolbox: {
+          feature: {
+            saveAsImage: {}
+          }
         },
         // 左侧小导航图标
         visualMap: [{
@@ -199,13 +206,14 @@ export default {
 
     // 绘制矢量地图
     drawVectorMap() {
-      var myChart = echarts.init(document.getElementById('chinaMap'))
+      // 先把已有的实例销毁，防止多次绘制地图叠加
+      echarts.init(document.getElementById('chinaMap')).dispose()
+      const myChart = echarts.init(document.getElementById('chinaMap'))
       window.addEventListener('resize', function() {
         myChart.resize()
       })
 
       // 使用刚指定的配置项和数据显示图表。
-      myChart.clear() // 用于清除城市地图上设置的数据
       myChart.setOption(this.option)
 
       const selectedDate = this.selectedDate // 所选时间
@@ -250,29 +258,35 @@ export default {
       // 点击省份的单个块跳转至省级地图
       myChart.on('click', function(chinaParam) {
         // console.log('点击地图事件', chinaParam)
+        // 如果点击的是省份
         if (isProvince(chinaParam.name)) {
-          const para = { province: chinaParam.name }
-          if (selectedDate) {
-            para.date = selectedDate
-          }
+          // 如果省份有数据
+          if (chinaParam.data) {
+            const para = { province: chinaParam.name }
+            if (selectedDate) {
+              para.date = selectedDate
+            }
 
-          switch (selected) {
-            case 'QCPJ':
-              QCPJcityDistribution(para).then((result) => {
-                drawMap(result.data.data, chinaParam.name)
-              }).catch((err) => {
-                console.log(err)
-              })
-              break
-            case 'YDHY':
-              YDHYcityDistribution(para).then((result) => {
-                drawMap(result.data.data, chinaParam.name)
-              }).catch((err) => {
-                console.log(err)
-              })
-              break
-            default:
-              break
+            switch (selected) {
+              case 'QCPJ':
+                QCPJcityDistribution(para).then((result) => {
+                  drawMap(result.data.data, chinaParam.name)
+                }).catch((err) => {
+                  console.log(err)
+                })
+                break
+              case 'YDHY':
+                YDHYcityDistribution(para).then((result) => {
+                  drawMap(result.data.data, chinaParam.name)
+                }).catch((err) => {
+                  console.log(err)
+                })
+                break
+              default:
+                break
+            }
+          } else {
+            Message.error('抱歉，您所选省份暂无数据')
           }
         }
       })

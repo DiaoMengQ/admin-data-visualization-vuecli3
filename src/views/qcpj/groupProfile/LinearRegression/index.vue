@@ -98,6 +98,11 @@ export default {
           text: '群体线性回归分析',
           left: 'center'
         },
+        toolbox: {
+          feature: {
+            saveAsImage: {}
+          }
+        },
         xAxis: {
           type: 'value',
           splitLine: {
@@ -116,6 +121,7 @@ export default {
           }
         },
         series: [{
+          symbolSize: 10,
           name: 'scatter',
           type: 'scatter',
           emphasis: {

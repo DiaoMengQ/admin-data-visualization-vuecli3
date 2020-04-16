@@ -9,6 +9,7 @@
 
 <script>
 import echarts from 'echarts'
+import 'echarts/theme/macarons'
 import ecStat from 'echarts-stat'
 import BookTypePicker from '@/components/class/BookTypePicker'
 import SchoolPicker from '@/components/class/SchoolPicker'
@@ -53,7 +54,7 @@ export default {
     makeLineChart() {
       const myRegression = ecStat.regression('linear', this.wrappedData)
       myRegression.points.sort(function(a, b) { return a[0] - b[0] })
-      const barChart = echarts.init(this.$refs.chart)
+      const barChart = echarts.init(this.$refs.chart, 'macarons')
       // 清空echarts画布，避免图像重叠显示
       barChart.clear()
       barChart.setOption({
@@ -89,7 +90,17 @@ export default {
           trigger: 'item',
           formatter: '{b}: 平均{c}'
         },
+        toolbox: {
+          feature: {
+            dataZoom: {
+              yAxisIndex: 'none'
+            },
+            restore: {},
+            saveAsImage: {}
+          }
+        },
         series: [{
+          symbolSize: 10,
           name: 'scatter',
           type: 'scatter',
           emphasis: {

@@ -178,6 +178,7 @@ import { getAreaInfo } from '@/api/system'
 import { provinceList } from '@/utils/multiple'
 import store from '@/store/index.js'
 import echarts from 'echarts'
+import 'echarts/theme/macarons'
 import ecStat from 'echarts-stat'
 import { getSchoolInfo, getClassinGrade, getStuinClass, getstudentSubLinearRegress } from '@/api/qcpj'
 export default {
@@ -414,7 +415,7 @@ export default {
       })
         .then(res => {
           if (res.data.data[0] == null) {
-            alert('此学生暂无数据')
+            this.$message.error('此学生暂无数据')
           } else {
             // console.log(res.data.data)
             // console.log(this.stunum)
@@ -447,7 +448,7 @@ export default {
     drawLinear(c) {
       const myRegression = ecStat.regression('linear', c)
       myRegression.points.sort(function(a, b) { return a[0] - b[0] })
-      const myChart = echarts.init(this.$refs.chart)
+      const myChart = echarts.init(this.$refs.chart, 'macarons')
       myChart.clear()
       // 折线图属性设置
       myChart.setOption({
@@ -459,6 +460,11 @@ export default {
           trigger: 'axis',
           axisPointer: {
             type: 'cross'
+          }
+        },
+        toolbox: {
+          feature: {
+            saveAsImage: {}
           }
         },
         xAxis: {
@@ -478,7 +484,7 @@ export default {
           }
         },
         series: [{
-          symbolSize: 20,
+          symbolSize: 10,
           name: 'scatter',
           type: 'scatter',
           emphasis: {

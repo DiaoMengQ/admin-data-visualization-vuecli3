@@ -41,10 +41,13 @@
                   <el-input
                     v-if="ifShowAuthRange"
                     v-model="authRange"
-                    :autosize="{ minRows: 1, maxRows: 6}"
+                    type="textarea"
+                    resize="none"
+                    :autosize="{ minRows: 1, maxRows: 10}"
                     readonly
                     class="data-cannot-be-change"
                     remote
+                    style="max-width:450px"
                   />
                   <el-button v-if="ifShowAddAuth" :disabled="disableChangeInfo" type="primary" plain @click="addAuth">授予权限范围</el-button>
                 </el-form-item>
@@ -292,6 +295,8 @@ export default {
     // 用户授权
     addAuth() {
       this.ifDataIsReady = true
+      this.disableChangeInfo = true
+      this.ifShowAddAuth = false
     },
     // 获取所查看用户的权限范围
     getUserManaRange(userId) {
@@ -308,13 +313,21 @@ export default {
           switch (this.adminInfo.roleType) {
             case 'SCHOOL_ADMIN':
               for (let i = 0; i < data.length; i++) {
-                this.authRange += data[i].schoolName + ' '
+                if (i === data.length - 1) {
+                  this.authRange += data[i].schoolName
+                } else {
+                  this.authRange += data[i].schoolName + '\n'
+                }
               }
               this.ifShowAuthRange = true
               break
             case 'CITY_ADMIN':
               for (let i = 0; i < data.length; i++) {
-                this.authRange += data[i].cityName + ' '
+                if (i === data.length - 1) {
+                  this.authRange += data[i].cityName
+                } else {
+                  this.authRange += data[i].cityName + '\n'
+                }
               }
               this.ifShowAuthRange = true
               break
