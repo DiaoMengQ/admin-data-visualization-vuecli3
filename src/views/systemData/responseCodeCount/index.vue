@@ -13,7 +13,6 @@
         end-placeholder="结束日期"
         :picker-options="pickerOptions"
         value-format="yyyy-MM-dd"
-        @change="selectedDateChange"
       />
 
       <el-button-group>
@@ -61,35 +60,10 @@ export default {
             end.setTime(end.getTime() - 3600 * 1000 * 24 * 1)
             picker.$emit('pick', [start, end])
           }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            end.setTime(end.getTime() - 3600 * 1000 * 24 * 1)
-            picker.$emit('pick', [start, end])
-          }
         }]
       },
       selectedDate: '',
       dateList: [],
-
-      //   响应状态码
-      responseCodeList: {
-        '200': 1,
-        '206': 2,
-        '302': 3,
-        '304': 4,
-        '400': 5,
-        '401': 6,
-        '403': 7,
-        '404': 8,
-        '405': 9,
-        '500': 10,
-        '501': 11,
-        '505': 12
-      },
 
       QCPJplain: true,
       YDHYplain: true,
@@ -119,52 +93,15 @@ export default {
       }
     }
   },
-  created() {
-    this.initData()
-  },
-  mounted() {
-  },
   methods: {
-    selectedDateChange() {
-      this.initData()
-      if (this.selectedDate && this.selectedDate !== null) {
-        this.dateList = getMiddleDateList(this.selectedDate[0], this.selectedDate[1])
-
-        const codeList = Object.keys(this.responseCodeList)
-        const len = codeList.length
-        this.chartOption.series[len].label.formatter = '{b}: {@' + this.dateList[0] + '} ({d}%)'
-        this.chartOption.series[len].encode.value = this.dateList[0]
-        this.chartOption.series[len].encode.tooltip = this.dateList[0]
-
-        for (let i = 0; i < this.dateList.length; i++) {
-          this.chartOption.dataset.source[0].push(this.dateList[i])
-        }
-      }
-    },
     // 获取七彩评价响应码统计数值
     getQCPJrespCode() {
       this.QCPJplain = false
       this.YDHYplain = true
 
-      const codeList = Object.keys(this.responseCodeList)
       if (this.selectedDate && this.selectedDate !== null) {
-        QCPJresponseCodeCount({ sDate: this.dateList[0], eDate: this.dateList[this.dateList.length - 1] }).then((result) => {
-          const data = result.data.data
-          // console.log(data)
-          for (let i = 0; i < data.length; i++) {
-            // 单天数据的每一个响应码数量填充0
-            for (let ci = 1; ci < codeList.length + 1; ci++) {
-              this.chartOption.dataset.source[ci].push(0)
-            }
-
-            for (let di = 0; di < data[i].list.length; di++) {
-              // console.log('响应码', parseInt(data[i].list[di].code))
-              const codePos = this.responseCodeList[parseInt(data[i].list[di].code)] // 响应码在响应码表中的定位
-              this.chartOption.dataset.source[codePos][i + 1] = parseInt(data[i].list[di].count)
-            }
-          }
-          // console.log(this.chartOption.dataset.source)
-          this.drawChart()
+        QCPJresponseCodeCount({ sDate: this.selectedDate[0], eDate: this.selectedDate[1] }).then((result) => {
+          this.dataProcess(result.data.data)
         })
       } else {
         Message({
@@ -179,25 +116,9 @@ export default {
       this.QCPJplain = true
       this.YDHYplain = false
 
-      const codeList = Object.keys(this.responseCodeList)
       if (this.selectedDate && this.selectedDate !== null) {
-        YDHYresponseCodeCount({ sDate: this.dateList[0], eDate: this.dateList[this.dateList.length - 1] }).then((result) => {
-          const data = result.data.data
-          // console.log(data)
-          for (let i = 0; i < data.length; i++) {
-            // console.log(data[i])
-            // 单天数据的每一个响应码数量填充0
-            for (let ci = 1; ci < codeList.length + 1; ci++) {
-              this.chartOption.dataset.source[ci].push(0)
-            }
-            for (let di = 0; di < data[i].list.length; di++) {
-              // console.log('响应码', parseInt(data[i].list[di].code))
-              const codePos = this.responseCodeList[parseInt(data[i].list[di].code)] // 响应码在响应码表中的定位
-              this.chartOption.dataset.source[codePos][i + 1] = parseInt(data[i].list[di].count)
-            }
-          }
-          // console.log(this.chartOption.dataset.source)
-          this.drawChart()
+        YDHYresponseCodeCount({ sDate: this.selectedDate[0], eDate: this.selectedDate[1] }).then((result) => {
+          this.dataProcess(result.data.data)
         })
       } else {
         Message({
@@ -232,31 +153,67 @@ export default {
       // console.log(this.chartOption)
       myChart.setOption(this.chartOption)
     },
-    // 初始化数据
-    initData() {
-      const codeList = Object.keys(this.responseCodeList)
+    // c图表配置项
+    initChartOption(codeList) {
       this.chartOption.dataset.source = []
       this.chartOption.dataset.source.push(['date'])
       this.chartOption.series = []
       for (let i = 0; i < codeList.length; i++) {
-        this.chartOption.dataset.source.push([codeList[i]])
+        this.chartOption.dataset.source.push([codeList[i].toString()])
         this.chartOption.series.push({ symbolSize: 5, type: 'line', smooth: true, seriesLayoutBy: 'row' })
       }
-      this.chartOption.series.push({
-        type: 'pie',
-        id: 'pie',
-        radius: '30%',
-        center: ['50%', '31%'],
-        label: {
-          formatter: '{b}: {@2012} ({d}%)'
-        },
-        encode: {
-          itemName: 'date',
-          value: '2012',
-          tooltip: '2012'
+
+      if (this.selectedDate && this.selectedDate !== null) {
+        this.dateList = getMiddleDateList(this.selectedDate[0], this.selectedDate[1])
+
+        for (let i = 0; i < this.dateList.length; i++) {
+          this.chartOption.dataset.source[0].push(this.dateList[i])
         }
-      })
-      // console.log('初始化数据', this.chartOption)
+
+        this.chartOption.series.push({
+          type: 'pie',
+          id: 'pie',
+          radius: '30%',
+          center: ['50%', '31%'],
+          label: { formatter: '{b}: {@' + this.dateList[0] + '} ({d}%)' },
+          encode: {
+            itemName: 'date',
+            value: this.dateList[0],
+            tooltip: this.dateList[0] }
+        })
+      }
+      // console.log('初始化', this.chartOption)
+    },
+    // 数据处理
+    dataProcess(data) {
+      console.log(data)
+      const codeList = [] // 响应码列表
+
+      // 统计一共有哪些验证码
+      for (let i = 0; i < data.length; i++) {
+        for (let di = 0; di < data[i].list.length; di++) {
+          if (!codeList.includes(parseInt(data[i].list[di].code))) {
+            codeList.push(parseInt(data[i].list[di].code))
+          }
+        }
+      }
+
+      this.initChartOption(codeList)
+
+      for (let i = 0; i < data.length; i++) {
+        // 单天数据的每一个响应码数量填充0
+        for (let ci = 1; ci < codeList.length + 1; ci++) {
+          this.chartOption.dataset.source[ci].push(0)
+        }
+
+        for (let di = 0; di < data[i].list.length; di++) {
+          const codePos = codeList.indexOf(parseInt(data[i].list[di].code)) + 1 // 响应码在响应码表中的定位
+          // console.log('定位', codePos, '响应码', parseInt(data[i].list[di].code))
+          this.chartOption.dataset.source[codePos][i + 1] = parseInt(data[i].list[di].count)
+        }
+      }
+      // console.log(this.chartOption.dataset.source)
+      this.drawChart()
     }
   }
 }
