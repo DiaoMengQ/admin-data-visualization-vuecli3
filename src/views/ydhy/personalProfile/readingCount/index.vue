@@ -324,7 +324,16 @@ export default {
     GetuserReadHabit(stunum) {
       getuserReadHabit({ userId: stunum })
         .then(res => {
-        //   console.log(res.data.data)
+          var a = []
+          var b = []
+          var d = []
+          this.seriesData = []
+          this.Source = []
+          this.bookType = []
+          this.score = []
+          this.historyscore = []
+
+          //   console.log(res.data.data)
           const data = res.data.data
           // console.log(data)
           for (let i = 0; i < data.length; i++) {
@@ -332,38 +341,30 @@ export default {
             this.score[i] = data[i].score
             this.historyscore[i] = data[i].historyScore.replace([], '')
           }
-          console.log(this.historyscore)
-          console.log(this.bookType)
-          var a = []
-          var b = []
-          var d = []
-          this.seriesData = []
-          this.Source = []
+
           // 获取到横坐标的长度
           for (var n = this.historyscore[0].split(',').length; n > 0; n--) {
             b.push(JSON.stringify(n))
           }
           b.unshift('product')
-          // console.log(b)
+
           // 去掉历史成绩的括号
           for (var j = 0; j < this.historyscore.length; j++) {
             a[j] = this.historyscore[j].replace(/\[|]/g, '')
           }
-          // console.log(b)
 
           for (var m = 0; m < a.length; m++) {
-            var st = []
+            const st = []
             const s = a[m].split(',')
             for (var k = 0; k < s.length; k++) {
               st.push(parseFloat(s[k]))
             }
             d.push(st)
-            // console.log(s)
           }
-          // console.log(d)
           d.forEach((item, index) => {
             item.unshift(this.mapBookType(this.bookType[index]))
           })
+
           for (var x = 0; x < this.bookType.length; x++) {
             this.seriesData[x] = { type: 'line', smooth: true, seriesLayoutBy: 'row' }
           }
@@ -381,12 +382,13 @@ export default {
               tooltip: '1'
             }
           })
-          console.log(this.seriesData)
+          // console.log(this.seriesData)
 
-          console.log(d)
+          // console.log(d)
           // 将横坐标添加到最前方
           d.unshift(b)
           this.Source = d
+          console.log(this.Source)
           this.drawMyChart()
         })
     },
@@ -428,7 +430,7 @@ export default {
         return '小说'
       }
     },
-    drawMyChart(c) {
+    drawMyChart() {
       const myChart = echarts.init(this.$refs.chart, 'macarons')
       myChart.clear()
       myChart.setOption({
