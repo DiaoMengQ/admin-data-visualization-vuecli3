@@ -203,6 +203,7 @@ export const constantRoutes = [
       {
         path: 'personalReadingProf',
         component: () => import('@/views/ydhy/personalProfile/index'), // Parent router-view
+        redirect: '/ydhy/personalReadingProf/readingCount',
         name: 'personalReadingProf',
         meta: { title: '学生阅读数据', icon: 'person' },
         children: [
