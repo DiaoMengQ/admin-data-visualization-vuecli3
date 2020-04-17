@@ -228,15 +228,18 @@ export const constantRoutes = [
         ]
       }
     ]
-  },
+  }
+]
 
-  // 系统相关数据
+export const asyncRoutes = [
+  // *系统相关数据
   {
     path: '/systemData',
+    replace: true,
     component: Layout,
     redirect: '/systemData/accessDevicesData',
     name: 'systemData',
-    meta: { title: '系统相关数据', icon: 'histogram' },
+    meta: { title: '系统相关数据', roles: ['SUPER_ADMIN'], icon: 'histogram' },
     children: [
       {
         path: 'accessAreaData',
@@ -269,7 +272,7 @@ export const constantRoutes = [
   {
     path: '/administration',
     component: Layout,
-    meta: { title: '人员管理', icon: 'member' },
+    meta: { title: '人员管理', roles: ['SUPER_ADMIN', 'CITY_ADMIN'], icon: 'member' },
     redirect: '/administration/adminList',
     children: [{
       path: 'adminList',
@@ -294,7 +297,7 @@ export const constantRoutes = [
   },
 
   // 此处是所有路由地址都找不到后的最后路径,必须放在末尾
-  { path: '*', redirect: '/404', hidden: true }
+  { path: '*', replace: true, redirect: '/404', hidden: true }
 ]
 
 const createRouter = () => new Router({
@@ -305,10 +308,12 @@ const createRouter = () => new Router({
 })
 
 const router = createRouter()
+
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {
   const newRouter = createRouter()
-  router.matcher = newRouter.matcher // reset router
+  router.matcher = newRouter.matcher // reset router（未生效，未查明原因）
+  location.reload()
 }
 
 export default router

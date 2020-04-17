@@ -1,10 +1,7 @@
-import {
-  asyncRoutes,
-  constantRoutes
-} from '@/router'
+import { asyncRoutes, constantRoutes } from '@/router'
 
 /**
- * Use meta.role to determine if the current user has permission
+ * 通过meta.role确定当前用户是否具有权限
  * @param roles
  * @param route
  */
@@ -17,7 +14,7 @@ function hasPermission(roles, route) {
 }
 
 /**
- * Filter asynchronous routing tables by recursion
+ * 递归过滤异步加载路由表
  * @param routes asyncRoutes
  * @param roles
  */
@@ -55,11 +52,11 @@ const actions = {
   generateRoutes({ commit }, roles) {
     return new Promise(resolve => {
       let accessedRoutes
-      // if (roles.includes('admin')) {
-      accessedRoutes = asyncRoutes || []
-      // } else {
-      //   accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
-      // }
+      if (roles.includes('SUPER_ADMIN')) {
+        accessedRoutes = asyncRoutes || []
+      } else {
+        accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
+      }
       commit('SET_ROUTES', accessedRoutes)
       resolve(accessedRoutes)
     })

@@ -34,7 +34,17 @@ router.beforeEach(async(to, from, next) => {
     } else {
       try {
         // 同步获取用户信息
-        await store.dispatch('user/getUserInfo')
+        const { roleType } = await store.dispatch('user/getUserInfo')
+
+        // 基于角色生成可访问路由图
+        const accessRoutes = await store.dispatch('permission/generateRoutes', [roleType])
+
+        // 动态添加可访问路由
+        router.options.routes.push(...accessRoutes)
+
+        // 确保addRoutes完整的hack方法
+        // replace:true，导航不会留下历史记录
+        // next({ ...to, replace: true }) // 发生无限重载情况，未查出原因
         next()
       } catch (error) {
         // 如果获取错误,则删除token,进入登录页面重新登录
