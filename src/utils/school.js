@@ -1,7 +1,5 @@
 /**
  * 临时信息存取(cookie)
- * @author 刁梦齐 <dmq1212@qq.com>
- * @version 0.0.1
  */
 
 const SchoolId = 'school-id'

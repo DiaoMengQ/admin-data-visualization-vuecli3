@@ -1,8 +1,5 @@
 /**
  * 七彩评价平台相关操作
- * @author 刁梦齐 <dmq1212@qq.com>
- * @version 0.0.1
- * @last 刁梦齐 2020-02-21
  */
 
 import request from '@/utils/request'

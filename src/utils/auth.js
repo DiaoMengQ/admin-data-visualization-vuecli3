@@ -1,7 +1,5 @@
 /**
  * 本地用户信息存取操作(cookie)
- * @author 刁梦齐 <dmq1212@qq.com>
- * @version 0.0.1
  */
 
 // 参考文档: https://www.npmjs.com/package/vue-cookies

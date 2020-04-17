@@ -1,8 +1,39 @@
 /**
  * 工具集
- * @author 刁梦齐 <dmq1212@qq.com>
- * @version 0.0.1
  */
+
+/**
+ * 获取某月的最后一天
+ *
+ * @export
+ * @param {int} year
+ * @param {int} month
+ * @returns 月份的最后一天
+ */
+export function getMonthLast(year, month) {
+  const nextMonthFirstDay = new Date(year, month, 1)
+  const oneDay = 1000 * 60 * 60 * 24
+  return new Date(nextMonthFirstDay - oneDay).getDate()
+}
+
+/**
+ * 课程JSON数据转对象
+ *
+ * @export
+ * @param {*} SubjectsJson
+ */
+export function json2Obj(SubjectsJson) {
+  const subjects = []
+  // 创建JSON数组
+  for (var key in SubjectsJson) {
+    var tempSubj = {}
+    tempSubj['subjectId'] = SubjectsJson[key]
+    tempSubj['subjectLabel'] = key
+    subjects.push(tempSubj)
+  }
+  // console.log(subjects)
+  return subjects
+}
 
 /**
  * 将base64转换为文件

@@ -140,7 +140,7 @@
 
 <script>
 import { getClassinGrade, getSchoolSubjects, getSchoolInfo, createSubjectCluster } from '@/api/qcpj'
-import { json2Obj } from '@/utils/index'
+import { json2Obj } from '@/utils/multiple'
 import { MessageBox, Message } from 'element-ui'
 import { gradeList } from '@/utils/multiple'
 

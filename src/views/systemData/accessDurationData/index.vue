@@ -65,7 +65,7 @@ require('echarts/lib/component/title')
 
 import { getQCPJTimeVisitCount, getQCPJdayTimeVisitCount, getQCPJmonthTimeVisitCount, getQCPJallTimeVisitCount, getQCPJavgTimeVisitCount } from '@/api/system'
 import { getYDHYTimeVisitCount, getYDHYdayTimeVisitCount, getYDHYmonthTimeVisitCount, getYDHYallTimeVisitCount, getYDHYavgTimeVisitCount } from '@/api/system'
-import { getMonthLast } from '@/utils/index'
+import { getMonthLast } from '@/utils/multiple'
 
 export default {
   data() {

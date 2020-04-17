@@ -1,8 +1,5 @@
 /**
  * 阅读海洋平台相关操作
- * @author 刁梦齐 <dmq1212@qq.com>
- * @version 0.0.1
- * @last 王博 2020-03-08
  */
 
 import request from '@/utils/request'
@@ -119,4 +116,3 @@ export function getuserTaskStat(para) {
     params: para
   })
 }
-
