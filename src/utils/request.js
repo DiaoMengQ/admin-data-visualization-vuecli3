@@ -84,33 +84,38 @@ error => {
   console.log('response error: ', error.response) // for debug
   const res = error.response
 
-  // 403: 密码错误
-  if (res.status === 403) {
-    Message({
-      message: '密码错误！请检查输入的密码',
-      type: 'error',
-      duration: 3 * 1000
-    })
-  }
+  Message({
+    message: res.data.msg,
+    type: 'error',
+    duration: 3 * 1000
+  })
+  // // 403: 密码错误
+  // if (res.status === 403) {
+  //   Message({
+  //     message: '密码错误！请检查输入的密码',
+  //     type: 'error',
+  //     duration: 3 * 1000
+  //   })
+  // }
 
-  // 401: token过期
-  if (res.status === 401) {
-    Message({
-      message: 'Token已过期',
-      type: 'error',
-      duration: 3 * 1000
-    })
-    store.dispatch('user/updateToken')
-  }
+  // // 401: token过期
+  // if (res.status === 401) {
+  //   Message({
+  //     message: 'Token已过期',
+  //     type: 'error',
+  //     duration: 3 * 1000
+  //   })
+  //   store.dispatch('user/updateToken')
+  // }
 
-  // 500: 服务器错误
-  if (res.status === 500) {
-    Message({
-      message: '服务器错误',
-      type: 'error',
-      duration: 3 * 1000
-    })
-  }
+  // // 500: 服务器错误
+  // if (res.status === 500) {
+  //   Message({
+  //     message: '服务器错误',
+  //     type: 'error',
+  //     duration: 3 * 1000
+  //   })
+  // }
   return Promise.reject(error)
 }
 )

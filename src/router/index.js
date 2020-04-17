@@ -228,7 +228,73 @@ export const constantRoutes = [
         ]
       }
     ]
-  }
+  },
+  // *系统相关数据
+  {
+    path: '/systemData',
+    replace: true,
+    component: Layout,
+    redirect: '/systemData/accessDevicesData',
+    name: 'systemData',
+    meta: { title: '系统相关数据', roles: ['SUPER_ADMIN'], icon: 'histogram' },
+    children: [
+      {
+        path: 'accessAreaData',
+        name: 'AccessAreaData',
+        component: () => import('@/views/systemData/accessAreaData'),
+        meta: { title: '用户访问区域统计', icon: 'international' }
+      },
+      {
+        path: 'accessDevicesData',
+        name: 'AccessDevicesData',
+        component: () => import('@/views/systemData/accessDevicesData/index'),
+        meta: { title: '系统访问设备统计', icon: 'devices' }
+      },
+      {
+        path: 'responseCodeCount',
+        name: 'responseCodeCount',
+        component: () => import('@/views/systemData/responseCodeCount'),
+        meta: { title: '访问响应码统计', icon: 'warn' }
+      },
+      {
+        path: 'accessDurationData',
+        name: 'accessDurationData',
+        component: () => import('@/views/systemData/accessDurationData'),
+        meta: { title: '系统访问数统计', icon: 'time' }
+      }
+    ]
+  },
+
+  // *人员管理
+  {
+    path: '/administration',
+    component: Layout,
+    meta: { title: '人员管理', roles: ['SUPER_ADMIN', 'CITY_ADMIN'], icon: 'member' },
+    redirect: '/administration/adminList',
+    children: [{
+      path: 'adminList',
+      name: 'adminList',
+      component: () => import('@/views/adminList/list'),
+      meta: { title: '账户列表', icon: 'tree' }
+    },
+    {
+      path: 'adminCreate',
+      name: 'adminCreate',
+      component: () => import('@/views/adminList/create'),
+      meta: { title: '添加账户', icon: 'cteate-member', noCache: true }
+    },
+    {
+      path: 'adminEdit/:id(\\d+)',
+      name: 'adminEdit',
+      component: () => import('@/views/adminList/edit'),
+      meta: { title: '账户信息', noCache: true },
+      hidden: true
+    }
+    ]
+  },
+
+  // 此处是所有路由地址都找不到后的最后路径,必须放在末尾
+  { path: '*', replace: true, redirect: '/404', hidden: true }
 ]
 
 export const asyncRoutes = [
@@ -313,7 +379,7 @@ const router = createRouter()
 export function resetRouter() {
   const newRouter = createRouter()
   router.matcher = newRouter.matcher // reset router（未生效，未查明原因）
-  location.reload()
+  // location.reload()
 }
 
 export default router

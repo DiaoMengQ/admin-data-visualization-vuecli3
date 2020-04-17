@@ -38,7 +38,7 @@ router.beforeEach(async(to, from, next) => {
         const accessRoutes = await store.dispatch('permission/generateRoutes', [roleType])
 
         // 动态添加可访问路由
-        router.options.routes.push(...accessRoutes)
+        // router.options.routes.push(...accessRoutes)
 
         // 确保addRoutes完整的hack方法
         // replace:true，导航不会留下历史记录
