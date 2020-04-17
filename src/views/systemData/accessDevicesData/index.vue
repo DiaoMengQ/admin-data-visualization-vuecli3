@@ -34,6 +34,7 @@ require('echarts/lib/component/tooltip')
 require('echarts/lib/component/title')
 
 import { QCPJequipmentCount, YDHYequipmentCount } from '@/api/system'
+import { MessageBox } from 'element-ui'
 
 export default {
   data() {
@@ -123,7 +124,27 @@ export default {
       }
     }
   },
+  mounted() {
+    this.JudgeManaRange()
+  },
   methods: {
+    // 用户权限判断
+    JudgeManaRange() {
+      switch (this.$store.state.user['roleType']) {
+        case 'SUPER_ADMIN':
+          break
+        default:
+          MessageBox.confirm('抱歉，您没有权限查看当前页面', '错误', {
+            confirmButtonText: '确定',
+            type: 'error'
+          }).then(() => {
+            this.$router.push('/home')
+          }).catch(() => {
+            this.$router.push('/home')
+          })
+          break
+      }
+    },
     // 获取阅读海洋地区访问统计数值
     getYDHYdevicesData() {
       this.QCPJplain = true

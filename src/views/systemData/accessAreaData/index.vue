@@ -69,7 +69,7 @@ require('echarts/lib/component/title')
 require('echarts/lib/component/tooltip')
 
 import { QCPJcityDistribution, QCPJprovDistribution, YDHYcityDistribution, YDHYprovDistribution } from '@/api/system'
-import { Message } from 'element-ui'
+import { Message, MessageBox } from 'element-ui'
 
 export default {
   data() {
@@ -150,9 +150,26 @@ export default {
     }
   },
   mounted() {
-    // this.drawChart()
+    this.JudgeManaRange()
   },
   methods: {
+    // 用户权限判断
+    JudgeManaRange() {
+      switch (this.$store.state.user['roleType']) {
+        case 'SUPER_ADMIN':
+          break
+        default:
+          MessageBox.confirm('抱歉，您没有权限查看当前页面', '错误', {
+            confirmButtonText: '确定',
+            type: 'error'
+          }).then(() => {
+            this.$router.push('/home')
+          }).catch(() => {
+            this.$router.push('/home')
+          })
+          break
+      }
+    },
     // 对请求的省份数据进行处理
     handleMapData(data) {
       // 设置地名的数值

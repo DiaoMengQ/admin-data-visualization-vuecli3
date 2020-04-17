@@ -66,6 +66,7 @@ require('echarts/lib/component/title')
 import { getQCPJTimeVisitCount, getQCPJdayTimeVisitCount, getQCPJmonthTimeVisitCount, getQCPJallTimeVisitCount, getQCPJavgTimeVisitCount } from '@/api/system'
 import { getYDHYTimeVisitCount, getYDHYdayTimeVisitCount, getYDHYmonthTimeVisitCount, getYDHYallTimeVisitCount, getYDHYavgTimeVisitCount } from '@/api/system'
 import { getMonthLast } from '@/utils/multiple'
+import { MessageBox } from 'element-ui'
 
 export default {
   data() {
@@ -301,7 +302,27 @@ export default {
       }
     }
   },
+  mounted() {
+    this.JudgeManaRange()
+  },
   methods: {
+    // 用户权限判断
+    JudgeManaRange() {
+      switch (this.$store.state.user['roleType']) {
+        case 'SUPER_ADMIN':
+          break
+        default:
+          MessageBox.confirm('抱歉，您没有权限查看当前页面', '错误', {
+            confirmButtonText: '确定',
+            type: 'error'
+          }).then(() => {
+            this.$router.push('/home')
+          }).catch(() => {
+            this.$router.push('/home')
+          })
+          break
+      }
+    },
     getQCPJTimeVisitCount() {
       this.QCPJplain = false
       this.YDHYplain = true

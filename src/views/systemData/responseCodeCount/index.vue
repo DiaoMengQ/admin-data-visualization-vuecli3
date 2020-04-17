@@ -33,7 +33,7 @@ require('echarts/lib/component/title')
 
 import { QCPJresponseCodeCount, YDHYresponseCodeCount } from '@/api/system'
 import { getMiddleDateList } from '@/utils/multiple'
-import { Message } from 'element-ui'
+import { Message, MessageBox } from 'element-ui'
 
 export default {
   data() {
@@ -93,7 +93,27 @@ export default {
       }
     }
   },
+  mounted() {
+    this.JudgeManaRange()
+  },
   methods: {
+    // 用户权限判断
+    JudgeManaRange() {
+      switch (this.$store.state.user['roleType']) {
+        case 'SUPER_ADMIN':
+          break
+        default:
+          MessageBox.confirm('抱歉，您没有权限查看当前页面', '错误', {
+            confirmButtonText: '确定',
+            type: 'error'
+          }).then(() => {
+            this.$router.push('/home')
+          }).catch(() => {
+            this.$router.push('/home')
+          })
+          break
+      }
+    },
     // 获取七彩评价响应码统计数值
     getQCPJrespCode() {
       this.QCPJplain = false
