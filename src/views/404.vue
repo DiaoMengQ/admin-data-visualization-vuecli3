@@ -8,13 +8,13 @@
         <img class="pic-404__child right" src="@/assets/404_images/404_cloud.png" alt="404">
       </div>
       <div class="bullshit">
-        <div class="bullshit__oops">哦豁!</div>
+        <div class="bullshit__oops">哦豁！出错啦</div>
         <div class="bullshit__info">All rights reserved
           <a style="color:#20a0ff" href="https://wallstreetcn.com" target="_blank">wallstreetcn</a>
         </div>
         <div class="bullshit__headline">{{ message }}</div>
-        <div class="bullshit__info">请检查您输入的网址是否正确，或者点击下面的按钮返回首页。</div>
-        <a href="" class="bullshit__return-home">返回首页</a>
+        <div class="bullshit__info">请检查您输入的网址是否正确以及是否有该页面的对应权限，或者点击下面的按钮返回首页。</div>
+        <router-link :to="{path:'/home'}" class="bullshit__return-home">返回首页</router-link>
       </div>
     </div>
   </div>
