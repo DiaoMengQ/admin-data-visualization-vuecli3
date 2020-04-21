@@ -2,11 +2,9 @@ import Layout from '@/layout'
 
 /**
  * 固定的路由
- * 与路由的index文件中重复，因为登录时会动态增加路由，导致路由选项被修改
- * 在重置路由选项时导致无法重置
- * 只能设定备份路由路径，用于用户退出时的路由重置
- *
- * 注意：当 index.js 中的 constantRoutes 更新时，应将 constantRoutes 更新到此处
+ * 由于登录时会动态增加路由，导致路由选项被修改，在重置路由选项时无法重置
+ * 在此设定固定的路由路径，并于index中调用
+ * 注意：不能直接暴露变量，否则也会被修改
  */
 export function routes() {
   const constantRoutes = [
@@ -45,7 +43,6 @@ export function routes() {
     },
 
     // *七彩评价相关
-    // 页面加载时默认获取市级管理员管辖区域，提供选择学校功能
     {
       path: '/qcpj',
       component: Layout,
@@ -66,13 +63,13 @@ export function routes() {
             },
             {
               path: 'studentsLinear',
-              component: () => import('@/views/qcpj/groupProfile/LinearRegression/studentsLiner'), // Parent router-view
+              component: () => import('@/views/qcpj/groupProfile/LinearRegression/studentsLiner'),
               name: 'studentsLinear',
               meta: { title: '评价积分趋势' }
             },
             {
               path: 'linearRegression',
-              component: () => import('@/views/qcpj/groupProfile/LinearRegression'), // Parent router-view
+              component: () => import('@/views/qcpj/groupProfile/LinearRegression'),
               name: 'LinearRegression',
               meta: { title: 'backup' },
               hidden: true
@@ -181,7 +178,7 @@ export function routes() {
         },
         {
           path: 'personalReadingProf',
-          component: () => import('@/views/ydhy/personalProfile/index'), // Parent router-view
+          component: () => import('@/views/ydhy/personalProfile/index'),
           redirect: '/ydhy/personalReadingProf/readingCount',
           name: 'personalReadingProf',
           meta: { title: '学生阅读数据', icon: 'person' },
