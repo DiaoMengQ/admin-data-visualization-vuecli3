@@ -110,35 +110,6 @@ const actions = {
           // *注意刷新页面后内存中数据会清空
           // 同步改变全局参数的数值，任何由 commit(XXX) 中XXX导致的状态变更都应该在此刻完成。
           commit('SET_TOKEN', response.headers['access_token'])
-          commit('SET_ROLES', data['roleType'])
-          commit('SET_NAME', data['nickname'])
-          commit('SET_USERID', data['userId'])
-          commit('SET_AVATAR', process.env.VUE_APP_HEADIMG_API + data['headImg'])
-          // commit('SET_AVATAR', 'http://172.20.13.20/default.jpg')
-
-          switch (data.roleType) {
-            case 'SUPER_ADMIN':
-              commit('SET_ROLESLABEL', '最高权限')
-              break
-            case 'SCHOOL_ADMIN':
-              commit('SET_ROLESLABEL', '校级')
-              break
-            case 'CITY_ADMIN':
-              commit('SET_ROLESLABEL', '市级')
-              break
-
-            default:
-              break
-          }
-
-          const tRoleType = data['roleType']
-          // 获取用户权限
-          getManaRange().then(response => {
-            const { data } = response.data
-            setUserManaRange(tRoleType, data)
-          }).catch(error => {
-            console.log('req4login: ', '用户权限请求错误 ' + error)
-          })
 
           resolve()// 注意不能漏掉这句，这是告诉调用该方法的方法此异步方法已完成
         }).catch(error => {
@@ -161,13 +132,11 @@ const actions = {
         const userInfo = { token: getToken(), userid: data['userId'] }
         setUserInfo(userInfo)
 
-        commit('SET_TOKEN', response.headers['access_token'])
         commit('SET_ROLES', data['roleType'])
         commit('SET_NAME', data['nickname'])
         commit('SET_USERID', data['userId'])
         if (data['headImg'] !== '') {
           commit('SET_AVATAR', process.env.VUE_APP_HEADIMG_API + data['headImg'])
-          // commit('SET_AVATAR', 'http://172.20.13.20/default.jpg')
         }
 
         switch (data.roleType) {
@@ -188,8 +157,9 @@ const actions = {
         const tRoleType = data['roleType']
         // 获取用户权限
         getManaRange().then(response => {
-          const { data } = response.data
-          setUserManaRange(tRoleType, data)
+          const roles = response.data.data
+          setUserManaRange(tRoleType, roles)
+          resolve(data)
         }).catch(error => {
           console.log('getUserInfo: ', '用户权限请求错误 ' + error)
         })
@@ -197,7 +167,6 @@ const actions = {
         if (!state.roleType || state.roleType.length <= 0) {
           reject('获取用户角色失败: 请重新登录!')
         }
-        resolve(data)
       }).catch(error => {
         reject(error)
       })
@@ -209,6 +178,10 @@ const actions = {
     return new Promise((resolve, reject) => {
       commit('SET_TOKEN', '')
       commit('SET_ROLES', '')
+      commit('SET_NAME', '')
+      commit('SET_USERID', '')
+      commit('SET_AVATAR', '')
+      commit('SET_ROLESLABEL', '')
       removeToken()
       resetRouter()
       resolve()
