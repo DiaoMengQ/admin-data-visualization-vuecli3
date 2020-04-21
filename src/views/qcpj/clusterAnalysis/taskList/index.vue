@@ -144,8 +144,8 @@ export default {
       } else {
         const searchParam = {}
         if (this.selectedDate !== null) {
-          searchParam.startTime = this.selectedDate[0]
-          searchParam.endTime = this.selectedDate[1]
+          searchParam.startTime = `${this.selectedDate[0]} 00:00:00`
+          searchParam.endTime = `${this.selectedDate[1]} 23:59:59`
         }
         if (this.curStatus !== null) {
           searchParam.curStatus = this.curStatus
