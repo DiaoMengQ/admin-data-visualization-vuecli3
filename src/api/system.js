@@ -111,6 +111,34 @@ export function YDHYequipmentCount(para) {
 }
 
 /**
+ * 七彩评价获取某日期内的访问浏览器统计信息
+ *
+ * @export
+ * @returns
+ */
+export function getQCPJbrowserCount(para) {
+  return request({
+    url: '/qcpj/log/browserCount',
+    method: 'GET',
+    params: para
+  })
+}
+
+/**
+ * 阅读海洋获取某日期内的访问浏览器统计信息
+ *
+ * @export
+ * @returns
+ */
+export function getYDHYbrowserCount(para) {
+  return request({
+    url: '/ro/log/browserCount',
+    method: 'GET',
+    params: para
+  })
+}
+
+/**
  * 七彩评价获取响应状态码统计信息
  *
  * @export
