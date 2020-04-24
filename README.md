@@ -1,6 +1,6 @@
-# vue-admin-template
+# admin-data-visualization-vuecli3
 
-> 这是一个数据可视化管理平台的前端项目，使用 vue-cli 3.0+ 版本搭建。包含 Element UI & axios & iconfont & permission control & lint 等工具
+> 这是一个数据可视化管理平台的前端项目，使用 vue-cli 3.0+ 版本搭建。使用了 Element UI & axios & iconfont & vuex & router 等工具
 
 ## Build Setup
 
@@ -24,9 +24,6 @@ npm run dev
 ## 发布
 
 ```bash
-# 构建测试环境
-npm run build:stage
-
 # 构建生产环境
 npm run build:prod
 ```
