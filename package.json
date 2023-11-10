@@ -19,7 +19,7 @@
     "svgo": "svgo -f src/icons/svg --config=src/icons/svgo.yml"
   },
   "dependencies": {
-    "axios": "0.18.1",
+    "axios": "1.6.0",
     "crypto-js": "^3.1.9-1",
     "echarts": "^4.5.0",
     "echarts-stat": "^1.1.1",
